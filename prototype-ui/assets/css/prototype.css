@@ -1,4 +1,4 @@
-* {
+﻿* {
   box-sizing: border-box;
 }
 
@@ -169,7 +169,7 @@ textarea {
 
 .zgs-auth-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--zgs-space-8);
 }
 
@@ -638,6 +638,33 @@ textarea {
   cursor: not-allowed;
 }
 
+.zgs-action-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.zgs-action-btn {
+  border: 1px solid #cfdbea;
+  background: #ffffff;
+  color: #3f556f;
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.zgs-action-btn.is-primary {
+  background: #172332;
+  border-color: #172332;
+  color: #ffffff;
+}
+
+.zgs-quick-btn[aria-disabled="true"] {
+  opacity: 0.58;
+  cursor: default;
+}
 .zgs-launcher-panel {
   min-height: 220px;
 }
@@ -1156,7 +1183,7 @@ textarea {
 
   .zgs-shell-content {
     padding: 10px;
-    padding-bottom: calc(max(12px, env(safe-area-inset-bottom)) + 74px);
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 
   .zgs-launcher-head h2,
@@ -1202,19 +1229,16 @@ textarea {
   }
 
   .zgs-mobile-dock {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: max(8px, env(safe-area-inset-bottom));
+    position: static;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     padding: 6px;
+    margin: 0 8px max(8px, env(safe-area-inset-bottom));
     border-radius: 12px;
     border: 1px solid #cdd9e9;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 10px 26px rgba(21, 35, 53, 0.12);
-    z-index: 5;
   }
 
   .zgs-mobile-dock-btn {
@@ -1267,3 +1291,4 @@ textarea {
     transition: none;
   }
 }
+
