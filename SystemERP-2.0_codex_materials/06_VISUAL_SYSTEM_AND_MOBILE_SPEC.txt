@@ -1,0 +1,91 @@
+SYSTEM ERP 2.0 - VISUAL SYSTEM AND MOBILE SPEC
+
+1. ESTETYKA GŁÓWNA
+Kierunek:
+- nowoczesny minimalizm
+- premium
+- spokojny
+- elegancki
+- czytelny
+- kompaktowy
+
+To ma być spójne z:
+- marką Zegger
+- kalkulatorem
+- starym Panelem Ofertowym
+
+2. CZEGO NIE CHCEMY
+- białych ścian
+- cienkich ramek wszędzie
+- generic admin panel look
+- taniego SaaS dashboardu
+- korpo-blue
+- wielkich pustych kart
+- desktopu ściśniętego na mobile
+
+3. KOLORY
+- tło sceny: bardzo jasny chłodny szary / soft gray
+- okno ERP: biały / off-white
+- primary: grafit / granatowo-czarny / ciemny neutral
+- border: subtelny chłodny szary
+- tekst główny: ciemny grafit
+- tekst pomocniczy: średni chłodny szary
+
+4. KONTENERY
+- większe radiusy
+- miękkie cienie
+- mniej ramek, więcej prawdziwej kompozycji
+- kontenery mają budować hierarchię, a nie tylko istnieć
+
+5. TYPOGRAFIA
+- mocne, czytelne nagłówki
+- dobra hierarchia rozmiarów
+- czytelne opisy i etykiety
+- żadnego chaosu font-size
+
+6. SPACING
+Rytm spacingu:
+- 8
+- 12
+- 16
+- 24
+- 32
+
+Cel:
+- zwarte, ale nie ciasne UI
+- lepszy pionowy rytm
+- mniej pustych bezcelowych obszarów
+
+7. MOBILE - ZASADY TWARDZE
+Mobile projektujesz osobno.
+
+Zakazy:
+- zero poziomego scrolla
+- zero obcinanych kart
+- zero tabs/pills wychodzących poza ekran
+- zero desktopowego layoutu wciskanego na telefon
+
+Auth mobile:
+- karta niemal full width
+- poprawne paddingi 16-20px
+- inputy pełna szerokość
+- CTA full width
+- tabs dostosowane do telefonu
+
+Launcher mobile:
+- jedna kolumna
+- karty stacked
+- sensowne odstępy
+- nie może przypominać przewijanego fragmentu desktopu
+
+Moduły mobile:
+- jedna kolumna lub dobrze kontrolowany stacking
+- topbar uproszczony
+- treść czytelna bez scrolla poziomego
+
+8. EFEKT KOŃCOWY
+Interfejs ma sprawiać wrażenie:
+- dopracowanego produktu premium
+- narzędzia roboczego
+- estetycznego i spokojnego systemu
+- czegoś, co można pokazać klientowi bez wstydu

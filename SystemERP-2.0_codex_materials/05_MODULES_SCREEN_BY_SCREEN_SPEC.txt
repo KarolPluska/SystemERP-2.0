@@ -1,0 +1,98 @@
+SYSTEM ERP 2.0 - MODULES SCREEN BY SCREEN SPEC
+
+1. AUTH SCREEN
+Status: kierunek obecnie najbliższy oczekiwaniom.
+
+Wymagania:
+- fullscreen scena
+- centralna karta
+- blur tła
+- premium minimal feel
+- brak shell UI przed logowaniem
+
+Do poprawienia:
+- mobile-first tabs
+- brak overflow na mobile
+- lepsze pionowe paddingi przy stanach rejestracji
+- logo ma być prawidłowe i elegancko osadzone
+
+2. LAUNCHER PO ZALOGOWANIU
+To nie ma być korpo-dashboard.
+
+Układ docelowy:
+- nagłówek systemowy / powitalny
+- 4 główne karty modułów:
+  - Panel Ofertowy
+  - Komunikator
+  - Firma i Użytkownicy
+  - Biblioteka Produktów
+- niżej mniej eksponowane: Powiadomienia i moduły w produkcji
+
+Charakter kart:
+- duże
+- eleganckie
+- produktowe
+- z ikoną/sygnaturą
+- z tytułem
+- z krótkim opisem
+- z wyraźnym CTA
+
+3. PANEL OFERTOWY
+Legacy module - jakościowa referencja.
+
+Wymagania:
+- nie wolno go wizualnie degradować
+- ma zostać naturalnie osadzony w nowym shell-u
+- ma być odczuwalny jako główne narzędzie pracy
+- przejście do niego ma być płynne i sensowne
+
+4. FIRMA I UŻYTKOWNICY
+Docelowy układ:
+- górna sekcja w 2 kolumnach:
+  - lewa: dane firmy
+  - prawa: relacje A↔B / status / szybkie akcje
+- dolna sekcja:
+  - użytkownicy firmy
+  - wnioski o dołączenie
+
+Wymagania:
+- lepszy grid
+- mniej rozlania formularza
+- mniej pustych kart
+- bardziej zarządczy, premium wygląd
+
+5. BIBLIOTEKA PRODUKTÓW
+Docelowy układ:
+- górny split 2-kolumnowy:
+  - źródło Google Sheets
+  - katalog lokalny
+- dół: workspace danych / scalona lista produktów
+
+Wymagania:
+- jasna hierarchia: konfiguracja -> status -> dane
+- żadnych pustych ścian
+- ma to przypominać studio pracy na danych
+
+6. KOMUNIKATOR
+Docelowy układ:
+- lista rozmów + aktywna rozmowa
+lub
+- dynamiczne okno robocze / modal workspace
+
+W tej fazie minimum:
+- ma wyglądać jak prawdziwe narzędzie komunikacyjne
+- nie jak pusta strona z błędem
+- ma mieć potencjał dalszego rozwoju do przesuwalnego okna
+
+7. POWIADOMIENIA
+Docelowy układ:
+- centrum zdarzeń
+- lista kart / timeline / inbox feel
+- logiczne grupowanie
+- filtry i stany
+
+Nie może to być pusta strona z alertem.
+
+8. MODUŁY W PRODUKCJI
+Mają być wyraźnie niżej w hierarchii niż moduły aktywne.
+Nie mogą konkurować wizualnie z głównymi modułami.

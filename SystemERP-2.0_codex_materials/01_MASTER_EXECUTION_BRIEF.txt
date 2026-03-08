@@ -1,0 +1,85 @@
+SYSTEM ERP 2.0 - MASTER EXECUTION BRIEF
+
+1. CEL PRODUKTU
+Zegger ERP 2.0 ma być nowym systemem nadrzędnym dla pracy handlowej i operacyjnej.
+Obecny Panel Ofertowy legacy pozostaje najważniejszym modułem referencyjnym jakości UX, ale cały system ma zostać zaprojektowany od zera poprawnie.
+
+2. STAN WEJŚCIOWY
+Repo zawiera:
+- rozpakowany legacy plugin zq-offer-suite-v1.2.18.7
+- plik kalkulatora Źródło - Kalkulator ogrodzeń ZEGGER v1.9.9.1.html
+To są jedyne punkty startowe.
+Nie traktuj żadnych poprzednich nieudanych ZIP-ów ERP jako bazy wdrożeniowej.
+
+3. GŁÓWNA DECYZJA PROJEKTOWA
+Najpierw projekt i akceptacja interfejsu.
+Dopiero potem wdrożenie do nowego pluginu.
+
+4. NOWY PODZIAŁ NA ETAPY
+ETAP A - Discovery i freeze wymagań
+ETAP B - Prototype UI/UX
+ETAP C - Stable plugin installer baseline
+ETAP D - Auth + shell + launcher
+ETAP E - Integracja modułów
+ETAP F - Runtime QA i poprawki
+
+5. ETAP A - DISCOVERY I FREEZE
+Zanim zaczniesz jakikolwiek większy kod:
+- przeanalizuj legacy Offer Panel
+- wypisz kluczowe cechy jakości UX, które trzeba zachować
+- przygotuj model docelowego shell-a app-window
+- nie implementuj od razu pluginu
+
+6. ETAP B - PROTOTYPE UI/UX
+Masz najpierw zbudować prototyp interfejsu:
+- auth screen
+- shell po zalogowaniu
+- launcher modułów
+- moduły: Panel Ofertowy view wrapper, Firma i Użytkownicy, Biblioteka Produktów, Komunikator, Powiadomienia
+- desktop + mobile
+To ma być warstwa preview/prototype, bez uzależnienia od runtime WordPress.
+Ten etap musi zostać zaakceptowany zanim zaczniesz duży refactor pluginu.
+
+7. ETAP C - STABLE PLUGIN INSTALLER BASELINE
+Dopiero po akceptacji prototype:
+- zbuduj nowy plugin z czystą strukturą
+- najpierw zapewnij stabilną instalację i aktywację
+- żadnych zmian UX nie łącz z bootstrap-risk, jeśli nie trzeba
+
+8. ETAP D - AUTH + SHELL + LAUNCHER
+Po stabilnej aktywacji dopiero wdrażasz:
+- ekran auth
+- przejście auth -> app window
+- launcher modułów
+- topbar / shell
+- clean start
+
+9. ETAP E - INTEGRACJA MODUŁÓW
+Moduły wdrażaj w tej kolejności:
+1. Panel Ofertowy
+2. Firma i Użytkownicy
+3. Biblioteka Produktów
+4. Powiadomienia
+5. Komunikator
+
+10. ETAP F - RUNTIME QA
+Dopiero na końcu:
+- smoke test instalacji
+- smoke test aktywacji
+- smoke test /?zegger_erp=1
+- clean start
+- podstawowe flow modułów
+
+11. LEKCJE Z POPRZEDNIEJ PRÓBY - NIE POWTARZAĆ
+- nie łączyć redesignu shell-a z ryzykowną zmianą bootstrapa
+- nie budować fullscreen admin shell-a
+- nie robić kolejnych CSS retuszy bez zmiany modelu UX
+- nie psuć mobile przez ściskanie desktopu
+- nie tworzyć chaosu repo
+- nie generować paczek nieaktywujących się w WP
+- nie zostawiać BOM/encoding issues
+- nie udawać clean start przy zalegających danych w DB
+
+12. WYMAGANIE KLUCZOWE
+To ma być system elegancki, kompaktowy i profesjonalny.
+Nie wolno powielać estetyki taniego panelu administracyjnego.

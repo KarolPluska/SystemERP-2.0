@@ -1,0 +1,68 @@
+SYSTEM ERP 2.0 - PLUGIN IMPLEMENTATION RULES
+
+1. STABLE INSTALL FIRST
+Żadna iteracja UI nie może psuć:
+- instalacji pluginu
+- aktywacji pluginu
+- bootstrapu
+- /?zegger_erp=1
+
+2. WORDPRESS INSTALLER RULES
+Finalna ścieżka po instalacji:
+/wp-content/plugins/zegger-erp/zegger-erp.php
+
+Root ZIP musi być:
+zegger-erp/
+
+Brak:
+- nested folderów
+- dodatkowych poziomów root
+- basename mismatch
+
+3. PHP FILES
+- wszystkie PHP: UTF-8 without BOM
+- zero output przed <?php
+- każdy require_once/include musi wskazywać na realny plik
+
+4. ENCODING
+- cały projekt tekstowy: UTF-8
+- brak mojibake
+- scan przed każdym ZIP
+
+5. CLEAN START
+- zero automatycznej migracji legacy przy aktywacji
+- zero seedów historycznych
+- dozwolony tylko minimalny seed techniczny, jeśli konieczny
+- reset clean start musi działać dynamicznie po realnym $wpdb->prefix
+
+6. KALKULATOR
+Plik kalkulatora zachowuje swoją logikę.
+Zmiana tylko w zakresie wejścia do ERP:
+- usunąć legacy bridge/logowanie starej wersji
+- zachować wygląd przycisku Zaloguj
+- uruchamiać nowe wejście do ERP
+Nie przebudowywać kalkulatora szerzej niż trzeba.
+
+7. LEGACY PANEL INTEGRATION
+Legacy Offer Panel jest dopuszczalny jako warstwa kompatybilności na etapie przejściowym, ale:
+- bez regresji
+- bez bałaganu
+- bez niszczenia UX shell-a
+
+8. STRICT SCOPE RULE
+Jeśli iteracja dotyczy tylko UI prototype, nie dotykasz plugin installer.
+Jeśli iteracja dotyczy tylko instalacji, nie robisz redesignu shell-a.
+Jeśli iteracja dotyczy clean start, nie ruszasz UI.
+
+9. BEFORE SHIPPING A ZIP
+Obowiązkowa walidacja:
+- root ZIP
+- basename pluginu
+- PHP BOM count = 0
+- include/require scan = 0 missing
+- main file starts with <?php
+- activation path unchanged if not intentionally changed
+
+10. NO CHAOS RULE
+Nie twórz wielu losowych ZIP-ów i preview bez kontroli.
+Każda paczka musi mieć jednoznaczny cel.

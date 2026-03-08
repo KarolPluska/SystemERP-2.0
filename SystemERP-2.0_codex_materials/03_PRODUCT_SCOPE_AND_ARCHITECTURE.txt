@@ -1,0 +1,74 @@
+SYSTEM ERP 2.0 - PRODUCT SCOPE AND ARCHITECTURE
+
+1. GŁÓWNA WIZJA
+Zegger ERP 2.0 to system modułowy.
+Panel Ofertowy jest jednym z modułów, ale jakościowo najważniejszym i referencyjnym.
+System ma łączyć:
+- oferty
+- firmy i użytkowników
+- źródła danych / produkty
+- komunikator
+- powiadomienia
+
+2. MODUŁY AKTYWNE NA START
+- Launcher / ekran wejścia po logowaniu
+- Panel Ofertowy
+- Firma i Użytkownicy
+- Biblioteka Produktów
+- Komunikator
+- Powiadomienia
+
+3. MODUŁY W PRODUKCJI / PRZYSZŁOŚĆ
+- Zamówienia
+- Magazyn
+- Faktury / Finanse
+- CRM / Leady
+- Statystyki / Raporty
+- Integracje
+- Zaawansowane ustawienia
+
+4. ZASADA FUNKCJONALNA
+Funkcje biznesowe, które były już ustalone wcześniej, pozostają ważne, ale ta nowa próba ma najpierw dowieźć poprawną bazę UX + plugin.
+Nie implementuj wszystkich przyszłych funkcji naraz.
+Najpierw doprowadź podstawowy system do poziomu stabilnego i estetycznego.
+
+5. AUTH I REJESTRACJA
+Ekran logowania i rejestracji pozostaje pełnoekranowy.
+Po rejestracji/logowaniu użytkownik nie przechodzi do fullscreen admin dashboardu, tylko do centralnego okna aplikacji.
+
+6. LAUNCHER PO ZALOGOWANIU
+Po zalogowaniu użytkownik widzi launcher modułów.
+To nie ma być korpo-dashboard.
+To ma być elegancki ekran startowy pracy w ramach głównego okna ERP.
+
+7. PANEL OFERTOWY
+Legacy panel pozostaje najważniejszym modułem.
+W tej nowej próbie trzeba zachować:
+- jego logikę pracy
+- PDF
+- historię
+- sposób czucia narzędzia
+- jego kompaktowość
+
+8. KALKULATOR
+Plik kalkulatora ma zostać zachowany jako niezależny kalkulator.
+Nie wolno rozwalić jego logiki.
+Zmiana dotyczy wyłącznie wejścia do ERP:
+- stary most/logowanie legacy usuwać
+- wstawić przycisk/launcher wejścia do ERP
+- zachować estetykę obecnego przycisku Zaloguj
+
+9. CLEAN START
+Nowy plugin ma wspierać prawdziwy clean start.
+Aktywacja nie może automatycznie migrować legacy danych.
+Nie może tworzyć historycznych ofert, PDF-ów, users/firm seedowanych z legacy.
+Dozwolone są tylko techniczne seedy niezbędne do działania systemu, jeśli są jasno udokumentowane.
+
+10. ARCHITEKTURA IMPLEMENTACYJNA
+Faza docelowa:
+- poprawny plugin installer
+- poprawny bootstrap
+- auth + app shell
+- moduły
+- runtime QA
+Ale nie wolno mieszać tego w jednym niekontrolowanym skoku.

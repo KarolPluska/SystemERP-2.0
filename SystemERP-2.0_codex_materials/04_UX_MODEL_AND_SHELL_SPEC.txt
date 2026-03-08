@@ -1,0 +1,112 @@
+SYSTEM ERP 2.0 - UX MODEL AND SHELL SPEC
+
+1. GŁÓWNA ZMIANA MODELUA UX
+Post-login UX ma być oparty o APP-WINDOW, nie fullscreen admin panel.
+
+To jest twardy wymóg.
+
+Nie chcemy:
+- pełnoekranowej ściany UI
+- ciężkiego sidebara
+- dużych pustych białych kart
+- generic admin dashboard look
+
+Chcemy:
+- scenę aplikacji
+- centralne główne okno ERP
+- premium workspace feel
+- płynne przejścia
+- launcher i moduły w obrębie tego samego okna
+
+2. FLOW GŁÓWNE
+A. Auth screen fullscreen
+B. Po sukcesie logowania -> animowane przejście do centralnego okna ERP
+C. W oknie ERP pokazuje się launcher modułów
+D. Klik w moduł -> płynne przejście do widoku roboczego modułu
+E. Powrót do launchera -> również w obrębie tego samego okna
+
+3. SCENA APLIKACJI
+Viewport po zalogowaniu nie jest samą aplikacją.
+Aplikacja jest osadzona na scenie.
+Scena ma być:
+- jasna
+- miękka
+- subtelna
+- z lekkim materiałowym/blur feel
+- bez pustej białej ściany
+
+4. GŁÓWNE OKNO ERP
+To jest centralny kontener systemu.
+Ma mieć:
+- wyraźny radius
+- miękki cień
+- dobrze kontrolowaną szerokość
+- elegancki topbar
+- wyraźnie wydzieloną przestrzeń roboczą
+
+Desktop:
+- shell window nie powinien być pełną szerokością viewportu
+- ma być wyraźnie „osadzony” na scenie
+
+Mobile:
+- nie udajemy mini-window desktopowego
+- mobile ma być osobną, sensowną wersją aplikacji o pełnej szerokości, ale nadal spójną wizualnie
+
+5. TOPBAR
+Topbar ma być:
+- lekki
+- niski
+- elegancki
+- logicznie wyrównany
+- bez adminowego feelingu
+
+Lewa strona:
+- logo
+- nazwa systemu / kontekst
+
+Prawa strona:
+- komunikator
+- powiadomienia
+- konto
+
+Ikony i przyciski:
+- subtelne
+- dobrze wyważone
+- spójny rozmiar
+- nie mogą dominować nad treścią
+
+6. NAWIGACJA
+Nawigacja nie może być ciężkim pionowym sidebar'em jako główny element całej kompozycji.
+
+Docelowo:
+- launcher modułów jako start
+- w widoku modułu subtelny switcher / breadcrumbs / przycisk powrotu
+- jeśli nawigacja modułów nadal występuje bocznie, ma być maksymalnie uproszczona, lekka i niedominująca
+
+7. DASHBOARD = LAUNCHER
+Ekran startowy po zalogowaniu nie jest dashboardem w starym sensie.
+To launcher modułów.
+
+Musi mieć:
+- dobry nagłówek
+- wyraźne główne moduły
+- dobre CTA
+- mniej pustych stref
+- brak suchych KPI wszędzie
+
+8. MODUŁY
+Każdy moduł ma być pełnym widokiem roboczym w obrębie shell window.
+Nie może wyglądać jak pusta strona z formularzami.
+
+9. KOMUNIKATOR
+Komunikator ma być myślany jako narzędzie dynamiczne.
+Docelowo osobne okno/modal/drawer roboczy.
+W tej fazie UI ma już sugerować ten kierunek.
+
+10. ZAKAZ SKRÓTÓW
+Nie wolno robić "redesignu" wyłącznie przez erp-shell.css.
+Jeśli model UX jest zły, trzeba zmienić także:
+- strukturę shell-a
+- render widoków
+- przejścia JS
+- układ kontenerów

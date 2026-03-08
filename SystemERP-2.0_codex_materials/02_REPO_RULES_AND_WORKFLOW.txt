@@ -1,0 +1,86 @@
+SYSTEM ERP 2.0 - REPO RULES AND WORKFLOW
+
+1. CEL
+Repo ma być czyste, przewidywalne i łatwe do audytu.
+Pierwsza próba wygenerowała chaos: duplikaty, preview rozrzucone po repo, wiele paczek, niejasne warstwy pracy. To ma się nie powtórzyć.
+
+2. DOCELOWY UKŁAD REPO
+Root powinien zawierać tylko klarowne strefy:
+- /legacy-reference/
+- /prototype-ui/
+- /zegger-erp/
+- /dist/
+- /docs/
+
+Jeżeli w repo startowym nazwy są inne, uporządkuj je, ale nie gub legacy referencji.
+
+3. LEGACY REFERENCE
+Legacy plugin zq-offer-suite-v1.2.18.7 traktujesz jako materiał referencyjny.
+Nie dotykasz go bez potrzeby.
+Nie tworzysz w nim eksperymentalnych wariantów.
+Nie duplikujesz go wielokrotnie.
+
+4. PROTOTYPE-UI
+Folder prototype-ui zawiera:
+- statyczny shell preview
+- auth preview
+- launcher preview
+- modułowe mocki/widoki
+- assety tylko dla prototypu
+To jest osobna warstwa od pluginu produkcyjnego.
+
+5. PLUGIN PRODUCTION
+Folder zegger-erp jest jedynym źródłem nowego pluginu produkcyjnego.
+To tu powstaje finalny kod pluginu.
+Nie wolno tworzyć drugiego, trzeciego, czwartego wariantu pluginu obok.
+
+6. DIST
+W dist mają trafiać wyłącznie:
+- finalne paczki ZIP
+- zaakceptowane screenshoty
+- ewentualnie jeden kontrolowany preview export
+Bez śmieci, bez losowych kopii.
+
+7. PREVIEW FILES
+Jeżeli tworzysz preview HTML/CSS/JS, trzymaj je w prototype-ui.
+Nie wrzucaj losowych shell-preview.html i innych artefaktów po repo bez kontroli.
+
+8. WERSJONOWANIE
+Nie twórz nazw typu fix3, fix5, r1, r2 bez jasnej mapy.
+Każda paczka i etap muszą mieć sensowne znaczenie.
+Przykład:
+- zegger-erp-prototype-v0.1.zip
+- zegger-erp-stable-install-v0.2.zip
+- zegger-erp-shell-v0.3.zip
+- zegger-erp-modules-v0.4.zip
+
+9. ZASADA JEDNEJ WARSTWY ZMIAN
+Jeśli iteracja dotyczy:
+- tylko prototype UI -> nie dotykasz bootstrapa pluginu
+- tylko bootstrap/instalacji -> nie robisz redesignu shell-a
+- tylko clean start -> nie robisz nowych feature'ów
+Ma być czysty zakres odpowiedzialności.
+
+10. CHECKLISTA PRZED KAŻDYM COMMITEM / ZIP
+- czy nie ma duplikatów plików?
+- czy nie ma BOM w PHP?
+- czy root ZIP jest poprawny?
+- czy zmiany są w odpowiedniej warstwie?
+- czy nie dotknąłeś stabilnej aktywacji bez potrzeby?
+- czy mobile nie został przypadkiem rozwalony?
+
+11. ZAKAZ BAŁAGANU
+Nie wolno:
+- mnożyć preview w root repo
+- trzymać kilku aktywnych pluginów obok siebie
+- wrzucać zduplikowanych katalogów z tym samym kodem
+- robić nested ZIP roots
+- mieszać wersji eksperymentalnych z produkcyjnymi
+
+12. DELIVERABLE DISCIPLINE
+Każde dostarczenie ma zawierać:
+- nazwę etapu
+- zakres zmian
+- listę zmienionych plików
+- informację czy dotknięto aktywacji/bootstrapa
+- informację czy runtime był testowany czy tylko walidowany statycznie

@@ -1,0 +1,66 @@
+SYSTEM ERP 2.0 - START HERE FOR CODEX
+
+CEL
+Zbudować nową wersję Zegger ERP od zera, ale tym razem bez chaosu, bez rozjechanej architektury instalacyjnej i bez powtarzania błędów z pierwszej próby.
+
+MATERIAŁ WEJŚCIOWY
+Repo: KarolPluska/SystemERP-2.0
+W repo są 2 rzeczy startowe:
+- legacy plugin: zq-offer-suite-v1.2.18.7
+- źródło kalkulatora: Źródło - Kalkulator ogrodzeń ZEGGER v1.9.9.1.html
+
+TO JEST NOWY PROCES PRACY
+Nie zaczynasz od wielkiej przebudowy pluginu i nie mieszasz UX z runtime.
+Pracujesz etapami:
+
+ETAP 1 - UI PROTOTYPE FIRST
+- najpierw projektujesz i budujesz zatwierdzalny prototype UI/UX
+- bez integracji z WP runtime
+- bez migracji
+- bez dotykania bootstrapa pluginu
+- celem jest zaakceptowany model interfejsu
+
+ETAP 2 - STABLE PLUGIN BASELINE
+- dopiero po akceptacji prototype UI budujesz nowy plugin
+- najpierw stabilna instalacja i aktywacja
+- potem auth + shell + launcher
+- potem moduły
+- Panel Ofertowy legacy integrowany ostrożnie, bez regresji
+
+ETAP 3 - RUNTIME QA
+- dopiero po stabilnej aktywacji i poprawnym UI przechodzisz do testów runtime
+
+NAJWAŻNIEJSZE LEKCJE Z PIERWSZEJ PRÓBY
+1. Nie wolno mieszać zmian UX z bootstrapem pluginu w tej samej iteracji.
+2. Nie wolno projektować fullscreen admin panelu. Kierunek to kompaktowe okno aplikacji premium.
+3. Nie wolno robić kolejnych "retuszy CSS" bez zmiany modelu UX.
+4. Nie wolno duplikować plików, robić bałaganu w repo, mnożyć preview, zipów i eksperymentalnych wersji bez kontroli.
+5. Nie wolno wrzucać paczek, które nie dają się aktywować.
+6. Nie wolno zostawiać BOM w PHP ani rozwalać UTF-8.
+7. Clean start ma być naprawdę czysty i nie może automatycznie migrować legacy danych przy aktywacji.
+8. Mobile nie może być ściśniętym desktopem.
+9. Panel Ofertowy legacy to referencja jakości UI/UX i nie może być degradowany.
+10. Najpierw ma być zaakceptowany model interfejsu, potem dopiero wdrożenie do pluginu.
+
+KOLEJNOŚĆ CZYTANIA PLIKÓW
+1. AGENTS.md
+2. 00_START_HERE_FOR_CODEX.txt
+3. 01_MASTER_EXECUTION_BRIEF.txt
+4. 02_REPO_RULES_AND_WORKFLOW.txt
+5. 03_PRODUCT_SCOPE_AND_ARCHITECTURE.txt
+6. 04_UX_MODEL_AND_SHELL_SPEC.txt
+7. 05_MODULES_SCREEN_BY_SCREEN_SPEC.txt
+8. 06_VISUAL_SYSTEM_AND_MOBILE_SPEC.txt
+9. 07_PLUGIN_IMPLEMENTATION_RULES.txt
+10. 08_ACCEPTANCE_GATES_AND_FAILURE_PATTERNS.txt
+11. 09_MESSAGE_TO_CODEX.txt
+
+DEFINICJA SUKCESU TEJ FAZY
+W tej nowej próbie sukces =
+- repo uporządkowane
+- prototype UI zaakceptowany
+- plugin instalowalny i aktywowalny
+- clean start prawdziwy
+- shell premium app-window, nie fullscreen admin
+- moduły czytelne i estetyczne
+- brak regresji Panelu Ofertowego

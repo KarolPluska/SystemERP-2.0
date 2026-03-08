@@ -1,0 +1,71 @@
+SYSTEM ERP 2.0 - PANEL LAYOUTS V2
+
+1. AUTH SCREEN
+Desktop:
+- centralna karta ok. 500-560 px szerokości
+- blur background
+- wyraźna hierarchia: logo -> tytuł -> opis -> tabs -> pola -> CTA
+- brak przeładowania
+
+Mobile:
+- karta prawie na pełną szerokość
+- bez overflow
+- CTA full width
+- tabs czytelne i zawijane lub przechodzące w vertical stack, jeśli potrzeba
+
+2. LAUNCHER WINDOW
+Desktop:
+- centralne okno ERP o kontrolowanej szerokości
+- topbar lekki
+- główna sekcja launchera w centrum
+- 4 główne moduły w układzie 2x2 lub 4 kart zależnie od szerokości
+- moduły w produkcji niżej i subtelniej
+
+Mobile:
+- jedna kolumna
+- duże karty modułów
+- brak KPI gridów na górze, jeśli robią chaos
+- fokus na prostym wejściu do modułów
+
+3. FIRMA I UŻYTKOWNICY
+Desktop:
+- 2 kolumny u góry
+- sekcja users jako pełna szerokość niżej
+- wnioski jako osobna karta niżej lub obok users zależnie od miejsca
+
+Mobile:
+- pełny stack sekcji
+- najpierw dane firmy
+- potem relacje
+- potem users
+- potem wnioski
+
+4. BIBLIOTEKA PRODUKTÓW
+Desktop:
+- split 2 kolumny: Google / Katalog lokalny
+- dół: pełna szerokość merged workspace
+
+Mobile:
+- stack: Google -> lokalny -> merged list
+- żadnych równoległych sekcji, jeśli robią bałagan
+
+5. KOMUNIKATOR
+Desktop:
+- lista rozmów po lewej, rozmowa po prawej
+albo
+- modal workspace jeśli gotowy
+
+Mobile:
+- najpierw lista rozmów
+- po wejściu pełny widok rozmowy
+- bez side-by-side
+
+6. POWIADOMIENIA
+Desktop:
+- lista/timeline kart
+- filtry u góry
+- czytelne grupowanie typów
+
+Mobile:
+- jedna kolumna kart
+- czytelne stany przeczytane/nieprzeczytane

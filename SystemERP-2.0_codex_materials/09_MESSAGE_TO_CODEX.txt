@@ -1,0 +1,40 @@
+Masz wykonać nowy start projektu Zegger ERP 2.0 na bazie repo SystemERP-2.0.
+
+To jest druga próba i masz bezwzględnie unikać błędów z pierwszej:
+- nie psuj instalacji i aktywacji pluginu
+- nie twórz chaosu w repo
+- nie duplikuj plików i preview bez kontroli
+- nie rób fullscreen admin panelu po zalogowaniu
+- nie rób kolejnych białych ścian i suchych kart
+- nie rób mobile przez ściskanie desktopu
+- nie mieszaj redesignu UI z ryzykownymi zmianami bootstrapa pluginu
+
+Repo startowe zawiera:
+- legacy plugin: zq-offer-suite-v1.2.18.7
+- plik kalkulatora: Źródło - Kalkulator ogrodzeń ZEGGER v1.9.9.1.html
+
+Masz pracować etapowo.
+
+ETAP 1
+Najpierw zbuduj i pokaż prototype UI/UX:
+- auth screen
+- launcher po zalogowaniu
+- shell jako app-window
+- moduły: Panel Ofertowy, Firma i Użytkownicy, Biblioteka Produktów, Komunikator, Powiadomienia
+- desktop + mobile
+
+ETAP 2
+Dopiero po akceptacji prototype UI wdrażasz to do nowego pluginu.
+Najpierw stabilna instalacja i aktywacja.
+Dopiero potem auth/shell/moduły.
+
+Najważniejsze założenie UX:
+Po zalogowaniu system ma działać jak kompaktowe, eleganckie okno aplikacji premium.
+Nie jak fullscreen admin dashboard.
+
+Przeczytaj wszystkie pliki z paczki materiałów dla Codex i traktuj je jako źródło prawdy.
+Nie interpretuj kierunku po swojemu.
+Nie upraszczaj go.
+
+Najpierw przygotuj właściwy prototype UI.
+Nie przechodź od razu do wielkiej implementacji pluginu.

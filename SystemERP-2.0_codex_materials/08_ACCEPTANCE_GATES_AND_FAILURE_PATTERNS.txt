@@ -1,0 +1,79 @@
+SYSTEM ERP 2.0 - ACCEPTANCE GATES AND FAILURE PATTERNS
+
+1. GATE A - PROTOTYPE UI ACCEPTANCE
+Przed wdrożeniem do pluginu musi być zaakceptowany prototype:
+- auth desktop
+- auth mobile
+- launcher desktop
+- launcher mobile
+- 4 główne moduły desktop
+- minimum 2 moduły mobile
+
+Nie przechodzisz dalej, jeśli:
+- to nadal wygląda jak fullscreen admin panel
+- mobile ma overflow lub poziomy scroll
+- jest za dużo białych ścian
+- to nadal jest tylko siatka suchych kart
+
+2. GATE B - STABLE INSTALL
+Plugin musi:
+- zainstalować się przez WP installer
+- aktywować się bez błędu
+- otworzyć /?zegger_erp=1
+
+Nie przechodzisz dalej, jeśli:
+- plugin nie aktywuje się
+- basename/root ZIP jest błędny
+- występuje require_once missing
+- występuje BOM/headers already sent
+
+3. GATE C - CLEAN START
+Po clean start:
+- firmy = 0
+- użytkownicy = 0
+- oferty ERP = 0
+- offers_with_pdf = 0
+- brak historycznych logów maintenance
+
+Nie przechodzisz dalej, jeśli widzisz legacy/historical data.
+
+4. GATE D - AUTH + LAUNCHER
+Po logowaniu:
+- użytkownik trafia do kompaktowego app-window UX
+- nie do fullscreen admin shell-a
+
+Nie przechodzisz dalej, jeśli nadal jest fullscreen dashboard.
+
+5. GATE E - MODULE UX
+Moduły:
+- czytelne
+- kompaktowe
+- spójne z shell-em
+- bez błędów routingu i bez pustych ścian
+
+6. GATE F - MOBILE
+Mobile:
+- zero poziomego scrolla
+- zero obciętych kart
+- zero desktop-compression feel
+
+7. FAILURE PATTERNS FROM FIRST ATTEMPT
+Traktuj te wzorce jako zakazane:
+- CSS retusz zamiast prawdziwej zmiany modelu UX
+- fullscreen admin shell po zalogowaniu
+- ciężki sidebar dominujący interfejs
+- białe ściany jako główny styl
+- broken mobile
+- broken activation after UI iteration
+- chaos repo i duplikaty plików
+- preview artefacts everywhere
+- encoding regressions
+- fake clean start
+
+8. FINAL REVIEW QUESTIONS
+Przed dostarczeniem iteracji odpowiedz sobie:
+- czy to naprawdę czuć jak premium app window?
+- czy to naprawdę przypomina jakością starego Offer Panelu?
+- czy mobile jest zaprojektowany, a nie ściśnięty?
+- czy nie wprowadziłeś chaosu w repo?
+- czy nie dotknąłeś instalacji bez potrzeby?
