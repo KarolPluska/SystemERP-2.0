@@ -25,21 +25,21 @@
             <p class="zgs-brand-name">ZEGGER ERP 2.0</p>
           </div>
           <h1>Wejscie do systemu</h1>
-          <p class="zgs-auth-subline">Auth zostaje pelnym ekranem. Po zalogowaniu przechodzimy do kompaktowego app-window workflow.</p>
+          <p class="zgs-auth-subline">Auth pozostaje pelnym ekranem. Po zalogowaniu uruchamiasz kompaktowy shell i launcher narzedzi pracy.</p>
         </header>
 
-        <div class="zgs-auth-meta" aria-label="Kontekst systemu">
-          <article class="zgs-auth-meta-item">
-            <strong>24</strong>
-            <span>Aktywne firmy</span>
+        <div class="zgs-auth-points" aria-label="Co otrzymujesz po zalogowaniu">
+          <article class="zgs-auth-point">
+            <h3>Panel Ofertowy 1:1</h3>
+            <p>Legacy modul pozostaje bez przepisywania i bez zmiany flow.</p>
           </article>
-          <article class="zgs-auth-meta-item">
-            <strong>7</strong>
-            <span>Moduly robocze</span>
+          <article class="zgs-auth-point">
+            <h3>Launcher roboczy</h3>
+            <p>Szybkie wejscie do narzedzi bez dashboardowego balastu.</p>
           </article>
-          <article class="zgs-auth-meta-item">
-            <strong>99.98%</strong>
-            <span>Dostepnosc</span>
+          <article class="zgs-auth-point">
+            <h3>Desktop + mobile</h3>
+            <p>Wspolny rytm pracy, osobno dopracowany dla telefonu.</p>
           </article>
         </div>
 
@@ -91,7 +91,7 @@
           </form>
         </section>
 
-        <p class="zgs-auth-footnote">Prototype ETAP 1 - brak integracji z backendem i brak zmian instalacyjnych pluginu.</p>
+        <p class="zgs-auth-footnote">Prototype ETAP 1 - bez integracji backend i bez zmian instalacyjnych pluginu.</p>
       </article>
     </section>
 
@@ -107,113 +107,111 @@
             <span class="zgs-shell-mark" aria-hidden="true"></span>
             <div class="zgs-shell-brand">
               <p class="zgs-shell-title">ZEGGER ERP</p>
-              <p class="zgs-shell-subtitle">Workspace 2.0 / Prototype</p>
+              <p class="zgs-shell-subtitle">Workspace handlowy</p>
             </div>
           </div>
 
           <div class="zgs-shell-center">
             <p id="zgs-shell-breadcrumb" class="zgs-shell-breadcrumb">Launcher modulow</p>
-            <p class="zgs-shell-context">Kompaktowe app-window, bez fullscreen admin dashboardu.</p>
+            <p class="zgs-shell-context">Kompaktowe app-window. Priorytet: narzedzia pracy i szybkie decyzje.</p>
           </div>
 
           <div class="zgs-shell-right">
-            <button class="zgs-icon-btn" type="button" aria-label="Komunikator" data-open-module="messenger">
-              <span aria-hidden="true">M</span>
-            </button>
-            <button class="zgs-icon-btn" type="button" aria-label="Powiadomienia" data-open-module="notifications">
-              <span aria-hidden="true">P</span>
-            </button>
-            <button class="zgs-icon-btn" type="button" aria-label="Firma i Uzytkownicy" data-open-module="company-users">
-              <span aria-hidden="true">U</span>
-            </button>
-            <button class="zgs-chip-btn" type="button" data-go-auth="1">Wyloguj preview</button>
+            <button class="zgs-quick-btn" type="button" data-open-view="launcher">Launcher</button>
+            <button class="zgs-quick-btn" type="button" data-open-module="messenger">Komunikator</button>
+            <button class="zgs-quick-btn" type="button" data-open-module="notifications">Powiadomienia</button>
+            <button class="zgs-chip-btn" type="button" data-go-auth="1">Wyloguj</button>
           </div>
         </header>
+
+        <nav class="zgs-shell-nav" aria-label="Nawigacja modulow">
+          <button class="zgs-nav-tab" type="button" data-open-view="launcher" data-nav-target="launcher">Start</button>
+          <button class="zgs-nav-tab" type="button" data-open-module="offer-panel" data-nav-target="offer-panel">Panel Ofertowy</button>
+          <button class="zgs-nav-tab" type="button" data-open-module="company-users" data-nav-target="company-users">Firma i Uzytkownicy</button>
+          <button class="zgs-nav-tab" type="button" data-open-module="product-library" data-nav-target="product-library">Biblioteka Produktow</button>
+          <button class="zgs-nav-tab" type="button" data-open-module="messenger" data-nav-target="messenger">Komunikator</button>
+          <button class="zgs-nav-tab" type="button" data-open-module="notifications" data-nav-target="notifications">Powiadomienia</button>
+        </nav>
 
         <div class="zgs-shell-content">
           <section id="zgs-view-launcher" class="zgs-view is-active" data-view="launcher">
             <header class="zgs-launcher-head">
               <p class="zgs-kicker">Start pracy</p>
-              <h2>Wybierz modul roboczy</h2>
-              <p>Launcher jest czytelny i gotowy pod realny rytm pracy. Panel Ofertowy pozostaje istniejacym modulem legacy.</p>
+              <h2>Launcher wejscia do narzedzi</h2>
+              <p>To nie jest dashboard kart - to szybki punkt wejscia do modulow roboczych i decyzji dnia.</p>
               <div class="zgs-launcher-pills">
-                <span class="zgs-chip is-active">5 modulow aktywnych</span>
-                <span class="zgs-chip">2 moduly roadmapy</span>
-                <span class="zgs-chip">Tryb: dzien roboczy</span>
+                <span class="zgs-chip is-active">Priorytet: Oferty</span>
+                <span class="zgs-chip">Tryb: Dzien roboczy</span>
+                <span class="zgs-chip">Focus: Inbox i komunikacja</span>
               </div>
             </header>
 
-            <div class="zgs-launcher-layout">
-              <div class="zgs-launcher-main">
-                <div class="zgs-launcher-grid">
-                  <article class="zgs-module-card is-primary">
-                    <p class="zgs-module-badge">Glowny</p>
+            <div class="zgs-launcher-workbench">
+              <section class="zgs-launcher-stream" aria-label="Glowne moduly robocze">
+                <article class="zgs-launch-row">
+                  <div class="zgs-launch-row-main">
+                    <p class="zgs-module-badge">Modul glowny</p>
                     <h3>Panel Ofertowy</h3>
-                    <p>Legacy modul roboczy do zachowania 1:1. W ETAPIE 2 osadzamy go bez zmian logiki i flow.</p>
-                    <ul class="zgs-mini-list">
-                      <li>Kalkulacje i pozycje ofertowe</li>
-                      <li>PDF i historia operacji</li>
-                    </ul>
-                    <button class="zgs-module-btn" type="button" data-open-module="offer-panel">Otworz widok</button>
-                  </article>
+                    <p>Legacy modul 1:1. W ETAPIE 2 osadzamy go bez zmiany wygladu, logiki i flow.</p>
+                    <div class="zgs-launch-tags"><span>Kalkulacje</span><span>Pozycje</span><span>PDF</span></div>
+                  </div>
+                  <div class="zgs-launch-row-action">
+                    <button class="zgs-module-btn" type="button" data-open-module="offer-panel">Otworz</button>
+                  </div>
+                </article>
 
-                  <article class="zgs-module-card is-primary">
-                    <p class="zgs-module-badge">Komunikacja</p>
-                    <h3>Komunikator</h3>
-                    <p>Rozmowy osadzone blisko procesu ofertowego i decyzji zespolu handlowego.</p>
-                    <ul class="zgs-mini-list">
-                      <li>Watki oferty i statusy</li>
-                      <li>Szybkie decyzje operacyjne</li>
-                    </ul>
-                    <button class="zgs-module-btn" type="button" data-open-module="messenger">Otworz widok</button>
-                  </article>
-
-                  <article class="zgs-module-card is-primary">
+                <article class="zgs-launch-row">
+                  <div class="zgs-launch-row-main">
                     <p class="zgs-module-badge">Organizacja</p>
                     <h3>Firma i Uzytkownicy</h3>
-                    <p>Relacje A-B, role i onboarding zespolu w jednym module administracyjnym.</p>
-                    <ul class="zgs-mini-list">
-                      <li>Profile firm i relacje</li>
-                      <li>Role, uprawnienia, zaproszenia</li>
-                    </ul>
-                    <button class="zgs-module-btn" type="button" data-open-module="company-users">Otworz widok</button>
-                  </article>
+                    <p>Role, relacje A-B i kontrola dostepu zespolu handlowego.</p>
+                    <div class="zgs-launch-tags"><span>Role</span><span>Relacje</span><span>Onboarding</span></div>
+                  </div>
+                  <div class="zgs-launch-row-action">
+                    <button class="zgs-module-btn" type="button" data-open-module="company-users">Otworz</button>
+                  </div>
+                </article>
 
-                  <article class="zgs-module-card is-primary">
+                <article class="zgs-launch-row">
+                  <div class="zgs-launch-row-main">
                     <p class="zgs-module-badge">Dane</p>
                     <h3>Biblioteka Produktow</h3>
-                    <p>Kontrola zrodel danych, synchronizacji i gotowosci katalogu do pracy handlowej.</p>
-                    <ul class="zgs-mini-list">
-                      <li>Google Sheets + lokalny katalog</li>
-                      <li>Scalanie i publikacja zmian</li>
-                    </ul>
-                    <button class="zgs-module-btn" type="button" data-open-module="product-library">Otworz widok</button>
-                  </article>
-                </div>
-              </div>
+                    <p>Kontrola sync, scalania i publikacji katalogu produktowego.</p>
+                    <div class="zgs-launch-tags"><span>Import</span><span>Walidacja</span><span>Publikacja</span></div>
+                  </div>
+                  <div class="zgs-launch-row-action">
+                    <button class="zgs-module-btn" type="button" data-open-module="product-library">Otworz</button>
+                  </div>
+                </article>
 
-              <aside class="zgs-launcher-side">
+                <article class="zgs-launch-row">
+                  <div class="zgs-launch-row-main">
+                    <p class="zgs-module-badge">Komunikacja</p>
+                    <h3>Komunikator</h3>
+                    <p>Szybkie watki decyzyjne i kontekst ofertowy w jednym miejscu.</p>
+                    <div class="zgs-launch-tags"><span>Watki</span><span>Statusy</span><span>Decyzje</span></div>
+                  </div>
+                  <div class="zgs-launch-row-action">
+                    <button class="zgs-module-btn" type="button" data-open-module="messenger">Otworz</button>
+                  </div>
+                </article>
+              </section>
+
+              <aside class="zgs-launcher-side" aria-label="Kontekst dnia">
                 <article class="zgs-surface zgs-launcher-panel">
-                  <h3>Dzisiaj</h3>
+                  <h3>Priorytety dzisiaj</h3>
                   <div class="zgs-inbox-list">
-                    <div class="zgs-inbox-item is-unread"><strong>2 oferty wymagaja decyzji</strong><span>Priorytet: Delta Fence, Nova Garden</span></div>
-                    <div class="zgs-inbox-item"><strong>Biblioteka Produktow</strong><span>Sync zakonczony, 6 zmian do zatwierdzenia</span></div>
-                    <div class="zgs-inbox-item"><strong>Nowe zaproszenie</strong><span>Jan Wrona chce dolaczyc do firmy</span></div>
+                    <div class="zgs-inbox-item is-unread"><strong>2 oferty wymagaja decyzji</strong><span>Delta Fence i Nova Garden czekaja na final.</span></div>
+                    <div class="zgs-inbox-item"><strong>Nowy wniosek o dolaczenie</strong><span>Jan Wrona - handlowiec regionalny.</span></div>
+                    <div class="zgs-inbox-item"><strong>Sync biblioteki zakonczony</strong><span>6 zmian oczekuje na publikacje.</span></div>
                   </div>
                 </article>
 
                 <article class="zgs-module-card is-secondary">
                   <p class="zgs-module-badge">In-box</p>
                   <h3>Powiadomienia</h3>
-                  <p>Timeline zdarzen i alertow operacyjnych w modelu inbox.</p>
-                  <button class="zgs-module-btn" type="button" data-open-module="notifications">Otworz widok</button>
-                </article>
-
-                <article class="zgs-module-card is-secondary">
-                  <p class="zgs-module-badge">Roadmapa</p>
-                  <h3>Zamowienia / CRM / Raporty</h3>
-                  <p>Moduly kolejnego etapu, widoczne bez dominacji nad glownym workflow.</p>
-                  <button class="zgs-module-btn is-muted" type="button" disabled>Status roadmapy</button>
+                  <p>Czytelne centrum alertow i wydarzen.</p>
+                  <button class="zgs-module-btn" type="button" data-open-module="notifications">Otworz</button>
                 </article>
               </aside>
             </div>
@@ -316,16 +314,16 @@
               <article class="zgs-surface">
                 <h3>Kolejka akcji</h3>
                 <div class="zgs-inbox-list">
-                  <div class="zgs-inbox-item"><strong>Zapros nowego handlowca</strong><span>Przygotuj role i ograniczenia katalogu</span></div>
-                  <div class="zgs-inbox-item"><strong>Potwierdz relacje B2B</strong><span>Delta Fence czeka na dostep do biblioteki</span></div>
+                  <div class="zgs-inbox-item"><strong>Zapros nowego handlowca</strong><span>Przygotuj role i ograniczenia katalogu.</span></div>
+                  <div class="zgs-inbox-item"><strong>Potwierdz relacje B2B</strong><span>Delta Fence czeka na dostep do biblioteki.</span></div>
                 </div>
               </article>
 
               <article class="zgs-surface">
                 <h3>Wnioski o dolaczenie</h3>
                 <div class="zgs-inbox-list">
-                  <div class="zgs-inbox-item"><strong>Jan Wrona</strong><span>Prosba o dolaczenie jako handlowiec regionalny</span></div>
-                  <div class="zgs-inbox-item"><strong>Magda Zielinska</strong><span>Prosba o role operatora katalogu</span></div>
+                  <div class="zgs-inbox-item"><strong>Jan Wrona</strong><span>Prosba o dolaczenie jako handlowiec regionalny.</span></div>
+                  <div class="zgs-inbox-item"><strong>Magda Zielinska</strong><span>Prosba o role operatora katalogu.</span></div>
                 </div>
               </article>
             </div>
@@ -404,17 +402,17 @@
             </header>
 
             <div class="zgs-chat-grid">
-              <article class="zgs-surface">
+              <article class="zgs-surface zgs-chat-pane-list">
                 <h3>Rozmowy</h3>
                 <ul class="zgs-chat-list">
-                  <li class="is-active"><strong>Oferta #4821</strong><span>Nowy komentarz od opiekuna klienta</span></li>
-                  <li><strong>Zespol handlowy</strong><span>Update cennika na poniedzialek</span></li>
-                  <li><strong>Produkcja</strong><span>Termin dostawy przesuniety o 1 dzien</span></li>
-                  <li><strong>Serwis terenowy</strong><span>Pytanie o konfiguracje slupkow</span></li>
+                  <li class="is-active"><strong>Oferta #4821</strong><span>Nowy komentarz od opiekuna klienta.</span></li>
+                  <li><strong>Zespol handlowy</strong><span>Update cennika na poniedzialek.</span></li>
+                  <li><strong>Produkcja</strong><span>Termin dostawy przesuniety o 1 dzien.</span></li>
+                  <li><strong>Serwis terenowy</strong><span>Pytanie o konfiguracje slupkow.</span></li>
                 </ul>
               </article>
 
-              <article class="zgs-surface zgs-chat-main">
+              <article class="zgs-surface zgs-chat-pane-thread">
                 <div class="zgs-chat-header">
                   <h3>Oferta #4821 - Delta Fence</h3>
                   <span class="zgs-chip">Status: Wysylka PDF</span>
@@ -429,9 +427,17 @@
                   <span>Pole szybkiej odpowiedzi (prototype)</span>
                   <button class="zgs-chip-btn" type="button">Wyslij</button>
                 </div>
+                <div class="zgs-chat-followup">
+                  <h4>Ostatnie decyzje</h4>
+                  <ul class="zgs-list">
+                    <li>Rabat 8% zaakceptowany przez Sales Admin.</li>
+                    <li>PDF wygenerowany i przekazany do klienta.</li>
+                    <li>Termin follow-up: dzisiaj 16:30.</li>
+                  </ul>
+                </div>
               </article>
 
-              <article class="zgs-surface">
+              <article class="zgs-surface zgs-chat-pane-context">
                 <h3>Kontekst sprawy</h3>
                 <ul class="zgs-list">
                   <li>Klient: Delta Fence</li>
@@ -439,6 +445,10 @@
                   <li>Wartosc oferty: 42 180 PLN</li>
                   <li>Termin decyzji: dzisiaj 16:30</li>
                 </ul>
+                <div class="zgs-inbox-list">
+                  <div class="zgs-inbox-item"><strong>Task</strong><span>Potwierdz warunki platnosci.</span></div>
+                  <div class="zgs-inbox-item"><strong>Task</strong><span>Przekaz status do produkcji.</span></div>
+                </div>
               </article>
             </div>
           </section>
@@ -452,8 +462,8 @@
               </div>
             </header>
 
-            <div class="zgs-notification-wrap">
-              <article class="zgs-surface">
+            <div class="zgs-notification-grid">
+              <article class="zgs-surface zgs-notification-filters">
                 <h3>Filtry i statusy</h3>
                 <div class="zgs-chip-list">
                   <span class="zgs-chip is-active">Wszystkie</span>
@@ -463,24 +473,48 @@
                   <span class="zgs-chip">System</span>
                 </div>
                 <div class="zgs-inbox-list">
-                  <div class="zgs-inbox-item"><strong>14 powiadomien dzisiaj</strong><span>5 wymaga akcji handlowca</span></div>
-                  <div class="zgs-inbox-item"><strong>3 alerty krytyczne</strong><span>2 oferty + 1 blad synchronizacji</span></div>
+                  <div class="zgs-inbox-item"><strong>14 powiadomien dzisiaj</strong><span>5 wymaga akcji handlowca.</span></div>
+                  <div class="zgs-inbox-item"><strong>3 alerty krytyczne</strong><span>2 oferty + 1 blad synchronizacji.</span></div>
+                </div>
+                <div class="zgs-chat-followup zgs-notification-rules">
+                  <h4>Obieg alertow</h4>
+                  <ul class="zgs-list">
+                    <li>Oferty krytyczne trafiaja do Sales Admin i opiekuna klienta.</li>
+                    <li>Alert systemowy bez akcji zamyka sie automatycznie po 24h.</li>
+                    <li>Wnioski firmowe eskaluja sie po 8h bez odpowiedzi.</li>
+                  </ul>
                 </div>
               </article>
 
-              <article class="zgs-surface">
+              <article class="zgs-surface zgs-notification-timeline">
                 <h3>Timeline zdarzen</h3>
-                <div class="zgs-inbox-list">
-                  <div class="zgs-inbox-item is-unread"><strong>Oferta #4821</strong><span>Klient zaakceptowal warunki handlowe.</span></div>
-                  <div class="zgs-inbox-item"><strong>Biblioteka Produktow</strong><span>Sync arkusza zakonczony powodzeniem.</span></div>
-                  <div class="zgs-inbox-item"><strong>Firma i Uzytkownicy</strong><span>Nowy wniosek o dolaczenie od Jan Wrona.</span></div>
-                  <div class="zgs-inbox-item"><strong>System</strong><span>Zaplanowano okno serwisowe na sobote 22:00.</span></div>
-                  <div class="zgs-inbox-item"><strong>Komunikator</strong><span>Zespol handlowy oznaczyl konwersacje jako pilna.</span></div>
+                <div class="zgs-notification-day">
+                  <h4>Dzisiaj</h4>
+                  <div class="zgs-inbox-list">
+                    <div class="zgs-inbox-item is-unread"><strong>Oferta #4821</strong><span>Klient zaakceptowal warunki handlowe.</span></div>
+                    <div class="zgs-inbox-item"><strong>Biblioteka Produktow</strong><span>Sync arkusza zakonczony powodzeniem.</span></div>
+                    <div class="zgs-inbox-item"><strong>Komunikator</strong><span>Zespol handlowy oznaczyl konwersacje jako pilna.</span></div>
+                  </div>
+                </div>
+                <div class="zgs-notification-day">
+                  <h4>Wczoraj</h4>
+                  <div class="zgs-inbox-list">
+                    <div class="zgs-inbox-item"><strong>Firma i Uzytkownicy</strong><span>Nowy wniosek o dolaczenie od Jan Wrona.</span></div>
+                    <div class="zgs-inbox-item"><strong>System</strong><span>Zaplanowano okno serwisowe na sobote 22:00.</span></div>
+                    <div class="zgs-inbox-item"><strong>Panel Ofertowy</strong><span>3 oferty oznaczone jako gotowe do wysylki.</span></div>
+                  </div>
                 </div>
               </article>
             </div>
           </section>
         </div>
+
+        <nav class="zgs-mobile-dock" aria-label="Nawigacja mobilna">
+          <button class="zgs-mobile-dock-btn" type="button" data-open-view="launcher" data-nav-target="launcher">Start</button>
+          <button class="zgs-mobile-dock-btn" type="button" data-open-module="offer-panel" data-nav-target="offer-panel">Oferty</button>
+          <button class="zgs-mobile-dock-btn" type="button" data-open-module="messenger" data-nav-target="messenger">Chat</button>
+          <button class="zgs-mobile-dock-btn" type="button" data-open-module="notifications" data-nav-target="notifications">Inbox</button>
+        </nav>
       </div>
     </section>
   </main>

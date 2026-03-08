@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   "use strict";
 
   var root = document.getElementById("zgs-app");
@@ -13,6 +13,7 @@
   var tabs = Array.prototype.slice.call(document.querySelectorAll("[data-auth-tab]"));
   var panels = Array.prototype.slice.call(document.querySelectorAll("[data-auth-panel]"));
   var views = Array.prototype.slice.call(document.querySelectorAll("[data-view]"));
+  var navTargets = Array.prototype.slice.call(document.querySelectorAll("[data-nav-target]"));
 
   var viewLabels = {
     launcher: "Launcher modulow",
@@ -51,6 +52,14 @@
     appScene.setAttribute("aria-hidden", authActive ? "true" : "false");
   }
 
+  function setNavActive(target) {
+    navTargets.forEach(function (button) {
+      var active = button.getAttribute("data-nav-target") === target;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-current", active ? "page" : "false");
+    });
+  }
+
   function setView(nextView) {
     var target = hasView(nextView) ? nextView : "launcher";
 
@@ -59,6 +68,8 @@
       view.classList.toggle("is-active", active);
       view.hidden = !active;
     });
+
+    setNavActive(target);
 
     if (breadcrumb) {
       breadcrumb.textContent = viewLabels[target] || viewLabels.launcher;
@@ -100,6 +111,7 @@
   viewButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       setView(button.getAttribute("data-open-view"));
+      setScreen("app");
     });
   });
 
