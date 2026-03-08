@@ -298,6 +298,7 @@ textarea {
   place-items: center;
 }
 
+.zgs-auth-scene[hidden],
 .zgs-app-scene[hidden] {
   display: none;
 }
