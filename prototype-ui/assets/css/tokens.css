@@ -1,0 +1,28 @@
+﻿:root {
+  --zgs-bg: #eef2f7;
+  --zgs-bg-noise: radial-gradient(circle at 12% 20%, #f6f9ff 0%, rgba(246, 249, 255, 0) 55%), radial-gradient(circle at 88% 80%, #e6edf7 0%, rgba(230, 237, 247, 0) 50%);
+  --zgs-window: #fbfcfe;
+  --zgs-window-strong: #ffffff;
+  --zgs-border: #d9e1eb;
+  --zgs-border-strong: #c7d2e0;
+  --zgs-text: #1a2533;
+  --zgs-text-soft: #5f6f83;
+  --zgs-primary: #141a23;
+  --zgs-primary-soft: #273548;
+  --zgs-accent: #cc9f6a;
+  --zgs-success: #1b8f5b;
+  --zgs-danger: #c84343;
+  --zgs-shadow-lg: 0 32px 76px rgba(18, 32, 53, 0.16);
+  --zgs-shadow-md: 0 16px 34px rgba(18, 32, 53, 0.1);
+  --zgs-shadow-sm: 0 10px 22px rgba(18, 32, 53, 0.08);
+  --zgs-radius-xl: 28px;
+  --zgs-radius-lg: 20px;
+  --zgs-radius-md: 14px;
+  --zgs-radius-sm: 10px;
+  --zgs-space-8: 8px;
+  --zgs-space-12: 12px;
+  --zgs-space-16: 16px;
+  --zgs-space-24: 24px;
+  --zgs-space-32: 32px;
+  --zgs-space-40: 40px;
+}
