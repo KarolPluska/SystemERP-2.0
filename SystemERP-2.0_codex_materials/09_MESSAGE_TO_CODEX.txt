@@ -1,40 +1,262 @@
-Masz wykonać nowy start projektu Zegger ERP 2.0 na bazie repo SystemERP-2.0.
+# System ERP 2.0 - Frozen UI Decisions for Prototype ETAP 1
 
-To jest druga próba i masz bezwzględnie unikać błędów z pierwszej:
-- nie psuj instalacji i aktywacji pluginu
-- nie twórz chaosu w repo
-- nie duplikuj plików i preview bez kontroli
-- nie rób fullscreen admin panelu po zalogowaniu
-- nie rób kolejnych białych ścian i suchych kart
-- nie rób mobile przez ściskanie desktopu
-- nie mieszaj redesignu UI z ryzykownymi zmianami bootstrapa pluginu
+## 1. Zasada nadrzędna
+Prototype ETAP 1 ma pokazywać finalny kierunek UX/UI.
+Nie ma opowiadać o projekcie.
+Nie ma zawierać ekranów „opisowych” typu:
+- „Zasada ETAPU 2”
+- „tu kiedyś będzie legacy panel”
+- „prototype / explanation screen”
 
-Repo startowe zawiera:
-- legacy plugin: zq-offer-suite-v1.2.18.7
-- plik kalkulatora: Źródło - Kalkulator ogrodzeń ZEGGER v1.9.9.1.html
+Prototype ma wyglądać jak realny system, nie jak dokumentacja wizualna.
 
-Masz pracować etapowo.
+---
 
-ETAP 1
-Najpierw zbuduj i pokaż prototype UI/UX:
-- auth screen
-- launcher po zalogowaniu
-- shell jako app-window
-- moduły: Panel Ofertowy, Firma i Użytkownicy, Biblioteka Produktów, Komunikator, Powiadomienia
-- desktop + mobile
+## 2. Auth screen - model obowiązkowy
+Auth screen ma być pełnoekranowy i zawierać realne tryby wejścia:
 
-ETAP 2
-Dopiero po akceptacji prototype UI wdrażasz to do nowego pluginu.
-Najpierw stabilna instalacja i aktywacja.
-Dopiero potem auth/shell/moduły.
+### Tryb A - Logowanie
+Pola:
+- E-mail służbowy / login
+- Hasło
+- Zapamiętaj sesję
+Akcje:
+- Zaloguj
+- Nie pamiętam hasła
 
-Najważniejsze założenie UX:
-Po zalogowaniu system ma działać jak kompaktowe, eleganckie okno aplikacji premium.
-Nie jak fullscreen admin dashboard.
+### Tryb B - Nowa firma
+Pola:
+- Nazwa firmy
+- NIP
+- Imię i nazwisko osoby kontaktowej
+- E-mail
+- Telefon
+- Hasło
+Akcja:
+- Utwórz konto firmy
 
-Przeczytaj wszystkie pliki z paczki materiałów dla Codex i traktuj je jako źródło prawdy.
-Nie interpretuj kierunku po swojemu.
-Nie upraszczaj go.
+### Tryb C - Dołącz do firmy
+Pola:
+- Kod dołączenia
+- Imię
+- Nazwisko
+- E-mail
+- Telefon
+- Hasło
+Akcja:
+- Dołącz do firmy
 
-Najpierw przygotuj właściwy prototype UI.
-Nie przechodź od razu do wielkiej implementacji pluginu.
+Dozwolona na górze jest krótka sekcja korzyści / 3 krótkie punkty.
+Niedozwolone są sztuczne metryki typu:
+- 24
+- 7
+- 99.98%
+jeśli nie wnoszą realnej wartości.
+
+Auth ma być czytelny, elegancki i praktyczny.
+To ma być ekran wejścia do systemu, nie marketingowy slajd.
+
+---
+
+## 3. Shell po zalogowaniu - model obowiązkowy
+Po zalogowaniu otwiera się kompaktowe app-window.
+
+### Desktop
+- topbar z brandem po lewej
+- nazwa aktualnego widoku / kontekst w środku
+- utility actions po prawej:
+  - Komunikator
+  - Powiadomienia
+  - Konto / Wyloguj
+
+### Drugi poziom nawigacji desktop
+Jedna, spójna linia nawigacji modułów:
+- Start
+- Panel Ofertowy
+- Firma i Użytkownicy
+- Biblioteka Produktów
+- Komunikator
+- Powiadomienia
+
+Nie dublujemy kilku systemów nawigacji o tym samym znaczeniu.
+
+### Mobile
+Na mobile:
+- uproszczony header
+- bez duplikowania górnych modułów
+- fixed bottom dock:
+  - Start
+  - Oferty
+  - Chat
+  - Inbox
+
+Bottom dock ma być jedyną główną nawigacją mobilną.
+Treść musi mieć zarezerwowany bottom padding pod dock.
+Zero nachodzenia docka na treść.
+
+---
+
+## 4. Launcher - model obowiązkowy
+Launcher nie jest dashboardem kart.
+Launcher jest szybkim wejściem do narzędzi pracy.
+
+### Desktop
+Launcher ma zawierać:
+- główny blok wejścia do Panelu Ofertowego
+- blok Firma i Użytkownicy
+- blok Biblioteka Produktów
+- blok Komunikator
+- poboczną sekcję „Priorytety dzisiaj”
+- poboczną sekcję „Powiadomienia / Inbox”
+
+Launcher ma być czytelny bez konieczności rozumienia wielu warstw.
+Najważniejszy moduł: Panel Ofertowy.
+
+### Mobile
+Launcher na mobile:
+- 1 kolumna
+- czytelne karty
+- zero poziomego scrolla
+- brak przeładowania treścią
+
+---
+
+## 5. Panel Ofertowy - zasada twarda
+Panel Ofertowy pozostaje legacy 1:1.
+
+To oznacza:
+- nie projektujemy od nowa jego wnętrza
+- nie robimy makiety jego nowego UI
+- nie robimy ekranu opisowego zamiast niego
+
+W prototype ETAP 1 ekran Panelu Ofertowego ma pokazać:
+- finalne osadzenie modułu legacy w nowym shellu
+- właściwe proporcje i otoczenie
+- miejsce na realny panel
+
+Jeżeli potrzeba wizualnego placeholdera, ma on wyglądać jak realny host modułu, a nie slajd opisowy.
+
+Niedozwolone:
+- „Zasada ETAPU 2”
+- „Legacy Panel Ofertowy - miejsce osadzenia 1:1” jako główna treść ekranu
+- rozpisywanie stref w formie dokumentacyjnej
+
+Dozwolone:
+- neutralny host container
+- ewentualnie osadzony static preview/screenshot istniejącego panelu
+- minimalny podpis: „Panel Ofertowy - moduł legacy 1:1”
+
+---
+
+## 6. Firma i Użytkownicy - sekcje obowiązkowe
+Ekran musi zawierać:
+
+### Góra
+- 3 małe summary cards:
+  - aktywni użytkownicy
+  - wnioski oczekujące
+  - relacje B2B do review
+
+### Sekcje główne
+- Dane firmy
+- Role i relacje
+- Zespół i dostępy
+- Kolejka akcji
+- Wnioski o dołączenie
+
+### CTA obowiązkowe
+- Zaproś użytkownika
+- Regeneruj kod dołączenia
+- Dodaj relację A->B / Powiąż firmę
+- Edytuj dane firmy
+
+---
+
+## 7. Biblioteka Produktów - sekcje obowiązkowe
+Ekran musi zawierać:
+
+### Summary cards
+- pozycje łącznie
+- zmiany do publikacji
+- ostatni sync
+
+### Sekcje główne
+- Źródło Google Sheets
+- Katalog lokalny
+- Pipeline danych
+- Merged workspace danych
+
+### CTA obowiązkowe
+- Edytuj źródło
+- Wymuś sync
+- Dodaj produkt
+- Edytuj pozycję
+- Archiwizuj / Ukryj pozycję
+- Publikuj zmiany
+
+Bez tych akcji moduł wygląda jak martwy dashboard danych.
+
+---
+
+## 8. Komunikator - sekcje obowiązkowe
+Ekran musi zawierać:
+
+### Kolumna lewa
+- lista rozmów
+- aktywna rozmowa zaznaczona
+- status/unread jeśli dotyczy
+
+### Kolumna środkowa
+- aktywny wątek
+- wiadomości
+- composer / szybka odpowiedź
+- ostatnie decyzje / notatki operacyjne
+
+### Kolumna prawa desktop
+- kontekst sprawy
+- klient
+- opiekun
+- wartość oferty
+- termin decyzji
+- taski / kolejne kroki
+
+### Mobile
+Na mobile prawy kontekst nie może zniknąć bez śladu.
+Ma być:
+- pod wątkiem
+lub
+- jako zwijana sekcja „Kontekst sprawy”
+
+---
+
+## 9. Powiadomienia - sekcje obowiązkowe
+Ekran musi zawierać:
+
+### Sekcja lewa
+- filtry i statusy
+- krótkie summary / alert boxes
+
+### Sekcja prawa
+- timeline zdarzeń pogrupowany:
+  - Dzisiaj
+  - Wczoraj
+
+### CTA / interakcje
+- otwórz moduł
+- oznacz jako przeczytane
+- filtruj po typie
+
+Powiadomienia muszą wyglądać jak prawdziwe centrum zdarzeń.
+Nie jak pasywna lista kart.
+
+---
+
+## 10. Zakazy
+Niedozwolone w ETAPIE 1:
+- ekrany opisowe zamiast realnych ekranów
+- prototypowe placeholdery jako główna treść
+- dublowanie top nav + tabs + dock bez sensu
+- pseudo-metryki bez znaczenia
+- rozjechany mobile
+- nachodzenie fixed dock na content
+- przebudowa wnętrza Panelu Ofertowego
