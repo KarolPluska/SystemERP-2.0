@@ -159,83 +159,86 @@
 
         <div class="zgs-shell-content">
           <section id="zgs-view-launcher" class="zgs-view is-active" data-view="launcher">
-            <header class="zgs-launcher-head">
-              <p class="zgs-kicker">Start pracy</p>
-              <h2>Launcher wej�cia do narz�dzi</h2>
-              <p>To nie jest dashboard kart - to szybki punkt wej�cia do modu��w roboczych i decyzji dnia.</p>
-              <div class="zgs-launcher-pills">
-                <span class="zgs-chip is-active">Priorytet: Oferty</span>
-                <span class="zgs-chip">Tryb: Dzie� roboczy</span>
-                <span class="zgs-chip">Focus: Inbox i komunikacja</span>
-              </div>
+            <header class="zgs-launcher-head zgs-start-head">
+              <p class="zgs-kicker">Dzisiaj</p>
+              <h2>Centrum pracy</h2>
+              <p>Zobacz sprawy wymagające decyzji, nowe wiadomości i zadania operacyjne.</p>
             </header>
 
-            <div class="zgs-launcher-workbench">
-              <section class="zgs-launcher-stream" aria-label="G��wne modu�y robocze">
-                <article class="zgs-launch-row">
-                  <div class="zgs-launch-row-main">
-                    <p class="zgs-module-badge">Modu� g��wny</p>
-                    <h3>Panel Ofertowy</h3>
-                    <p>Legacy modu� 1:1. W ETAPIE 2 osadzamy go bez zmiany wygl�du, logiki i flow.</p>
-                    <div class="zgs-launch-tags"><span>Kalkulacje</span><span>Pozycje</span><span>PDF</span></div>
-                  </div>
-                  <div class="zgs-launch-row-action">
-                    <button class="zgs-module-btn" type="button" data-open-module="offer-panel">Otw�rz</button>
+            <div class="zgs-start-layout">
+              <section class="zgs-start-main" aria-label="Priorytety i kontynuacja">
+                <article class="zgs-surface zgs-start-priority">
+                  <h3>Priorytety dnia</h3>
+                  <div class="zgs-start-priority-grid">
+                    <article class="zgs-start-priority-card">
+                      <div class="zgs-start-priority-head">
+                        <p class="zgs-start-priority-title">Oferty do decyzji</p>
+                        <span class="zgs-start-count">2</span>
+                      </div>
+                      <ul class="zgs-list zgs-start-priority-list">
+                        <li>Oferta #4821 - Delta Fence czeka na akceptację rabatu.</li>
+                        <li>Oferta #4818 - Nova Garden wymaga potwierdzenia terminu.</li>
+                      </ul>
+                      <button class="zgs-action-btn is-primary zgs-start-priority-cta" type="button" data-open-module="offer-panel">Przejdź do ofert</button>
+                    </article>
+
+                    <article class="zgs-start-priority-card">
+                      <div class="zgs-start-priority-head">
+                        <p class="zgs-start-priority-title">Nowe rozmowy / wiadomości</p>
+                        <span class="zgs-start-count">4</span>
+                      </div>
+                      <ul class="zgs-list zgs-start-priority-list">
+                        <li>Wątek Oferta #4821 - 3 nowe wiadomości od opiekuna klienta.</li>
+                        <li>Wiadomość od produkcji - korekta terminu realizacji.</li>
+                      </ul>
+                      <button class="zgs-action-btn is-primary zgs-start-priority-cta" type="button" data-open-module="messenger">Otwórz Komunikator</button>
+                    </article>
+
+                    <article class="zgs-start-priority-card">
+                      <div class="zgs-start-priority-head">
+                        <p class="zgs-start-priority-title">Alerty / synchronizacja / błędy</p>
+                        <span class="zgs-start-count">3</span>
+                      </div>
+                      <ul class="zgs-list zgs-start-priority-list">
+                        <li>Sync biblioteki: 1 konflikt SKU wymaga ręcznej decyzji.</li>
+                        <li>Alert systemowy: 2 rekordy oczekują na ponowną walidację.</li>
+                      </ul>
+                      <button class="zgs-action-btn is-primary zgs-start-priority-cta" type="button" data-open-module="notifications">Przejdź do Powiadomień</button>
+                    </article>
                   </div>
                 </article>
 
-                <article class="zgs-launch-row">
-                  <div class="zgs-launch-row-main">
-                    <p class="zgs-module-badge">Organizacja</p>
-                    <h3>Firma i U�ytkownicy</h3>
-                    <p>Role, relacje A-B i kontrola dost�pu zespo�u handlowego.</p>
-                    <div class="zgs-launch-tags"><span>Role</span><span>Relacje</span><span>Onboarding</span></div>
-                  </div>
-                  <div class="zgs-launch-row-action">
-                    <button class="zgs-module-btn" type="button" data-open-module="company-users">Otw�rz</button>
-                  </div>
-                </article>
-
-                <article class="zgs-launch-row">
-                  <div class="zgs-launch-row-main">
-                    <p class="zgs-module-badge">Dane</p>
-                    <h3>Biblioteka Produkt�w</h3>
-                    <p>Kontrola sync, scalania i publikacji katalogu produktowego.</p>
-                    <div class="zgs-launch-tags"><span>Import</span><span>Walidacja</span><span>Publikacja</span></div>
-                  </div>
-                  <div class="zgs-launch-row-action">
-                    <button class="zgs-module-btn" type="button" data-open-module="product-library">Otw�rz</button>
-                  </div>
-                </article>
-
-                <article class="zgs-launch-row">
-                  <div class="zgs-launch-row-main">
-                    <p class="zgs-module-badge">Komunikacja</p>
-                    <h3>Komunikator</h3>
-                    <p>W�tki ofertowe i szybkie decyzje zespo�u handlowego.</p>
-                    <div class="zgs-launch-tags"><span>W�tki</span><span>Decyzje</span><span>Statusy</span></div>
-                  </div>
-                  <div class="zgs-launch-row-action">
-                    <button class="zgs-module-btn" type="button" data-open-module="messenger">Otw�rz</button>
-                  </div>
+                <article class="zgs-surface zgs-start-resume">
+                  <h3>Kontynuuj pracę</h3>
+                  <ul class="zgs-start-resume-list">
+                    <li><strong>Ostatnia oferta</strong><span>#4821 - Delta Fence</span></li>
+                    <li><strong>Ostatnia rozmowa</strong><span>Wątek: Oferta #4821</span></li>
+                    <li><strong>Ostatnia firma / klient</strong><span>Nova Garden Sp. z o.o.</span></li>
+                    <li><strong>Ostatnia akcja biblioteki</strong><span>Sync cennika zakończony 10 min temu</span></li>
+                  </ul>
                 </article>
               </section>
 
-              <aside class="zgs-launcher-side" aria-label="Kontekst dnia">
-                <article class="zgs-surface zgs-launcher-panel">
-                  <h3>Priorytety dzisiaj</h3>
-                  <div class="zgs-inbox-list">
-                    <div class="zgs-inbox-item is-unread"><strong>2 oferty wymagaj� decyzji</strong><span>Delta Fence i Nova Garden czekaj� na fina�.</span></div>
-                    <div class="zgs-inbox-item"><strong>Nowy wniosek o do��czenie</strong><span>Jan Wrona - handlowiec regionalny.</span></div>
-                    <div class="zgs-inbox-item"><strong>Sync biblioteki zako�czony</strong><span>6 zmian oczekuje na publikacj�.</span></div>
+              <aside class="zgs-start-side" aria-label="Akcje i zdarzenia">
+                <article class="zgs-surface zgs-start-actions">
+                  <h3>Szybkie akcje</h3>
+                  <div class="zgs-start-action-grid">
+                    <button class="zgs-action-btn zgs-start-action-btn" type="button" data-open-module="offer-panel">Otwórz Panel Ofertowy</button>
+                    <button class="zgs-action-btn zgs-start-action-btn" type="button" data-open-module="messenger">Otwórz Komunikator</button>
+                    <button class="zgs-action-btn zgs-start-action-btn" type="button" data-open-module="notifications">Otwórz Powiadomienia</button>
+                    <button class="zgs-action-btn zgs-start-action-btn" type="button" data-open-module="company-users">Dodaj użytkownika</button>
+                    <button class="zgs-action-btn zgs-start-action-btn" type="button" data-open-module="product-library">Wymuś sync biblioteki</button>
                   </div>
                 </article>
 
-                <article class="zgs-module-card is-secondary">
-                  <p class="zgs-module-badge">In-box</p>
-                  <h3>Powiadomienia</h3>
-                  <p>Czytelne centrum alert�w i wydarze�.</p>
-                  <button class="zgs-module-btn" type="button" data-open-module="notifications">Otw�rz</button>
+                <article class="zgs-surface zgs-start-inbox">
+                  <h3>Inbox dnia</h3>
+                  <div class="zgs-inbox-list">
+                    <div class="zgs-inbox-item is-unread"><strong>Klient zaakceptował warunki</strong><span>Oferta #4809 przechodzi do finalnego PDF.</span></div>
+                    <div class="zgs-inbox-item"><strong>Nowy wniosek o dołączenie</strong><span>Jan Wrona czeka na zatwierdzenie roli handlowca.</span></div>
+                    <div class="zgs-inbox-item"><strong>Sync biblioteki zakończony</strong><span>6 zmian gotowych do publikacji po review.</span></div>
+                    <div class="zgs-inbox-item"><strong>Oferta gotowa do PDF</strong><span>Oferta #4821 oznaczona jako gotowa do wysyłki.</span></div>
+                  </div>
                 </article>
               </aside>
             </div>

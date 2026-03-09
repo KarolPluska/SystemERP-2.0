@@ -235,66 +235,81 @@
       return;
     }
 
-    var chips = Array.isArray(launcherData.chips) ? launcherData.chips : [];
-    var modules = Array.isArray(launcherData.primaryModules) ? launcherData.primaryModules : [];
-    var priorities = Array.isArray(launcherData.priorities) ? launcherData.priorities : [];
-    var inboxCard = launcherData.inboxCard || {};
+    var priorityBlocks = Array.isArray(launcherData.priorityBlocks) ? launcherData.priorityBlocks : [];
+    var continueItems = Array.isArray(launcherData.continueItems) ? launcherData.continueItems : [];
+    var quickActions = Array.isArray(launcherData.quickActions) ? launcherData.quickActions : [];
+    var inboxEvents = Array.isArray(launcherData.inboxEvents) ? launcherData.inboxEvents : [];
 
     view.innerHTML =
-      '<header class="zgs-launcher-head">' +
-        '<p class="zgs-kicker">Start</p>' +
+      '<header class="zgs-launcher-head zgs-start-head">' +
+        '<p class="zgs-kicker">' + esc(launcherData.subtitle || "Dzisiaj") + "</p>" +
         "<h2>" + esc(launcherData.title) + "</h2>" +
         "<p>" + esc(launcherData.text) + "</p>" +
-        '<div class="zgs-launcher-pills">' +
-          chips
-            .map(function (chip, index) {
-              return '<span class="zgs-chip' + (index === 0 ? " is-active" : "") + '">' + esc(chip) + "</span>";
-            })
-            .join("") +
-        "</div>" +
       "</header>" +
-      '<div class="zgs-launcher-workbench">' +
-        '<section class="zgs-launcher-stream" aria-label="Główne moduły robocze">' +
-          modules
-            .map(function (module) {
-              var target = viewForNavKey(module.key);
-              return (
-                '<article class="zgs-launch-row">' +
-                  '<div class="zgs-launch-row-main">' +
-                    '<p class="zgs-module-badge">' + esc(module.category) + "</p>" +
-                    "<h3>" + esc(module.title) + "</h3>" +
-                    "<p>" + esc(module.text) + "</p>" +
-                    '<div class="zgs-launch-tags">' +
-                      (Array.isArray(module.tags) ? module.tags : [])
-                        .map(function (tag) {
-                          return "<span>" + esc(tag) + "</span>";
-                        })
-                        .join("") +
-                    "</div>" +
-                  "</div>" +
-                  '<div class="zgs-launch-row-action">' +
-                    '<button class="zgs-module-btn" type="button" data-open-module="' + esc(target) + '">' + esc(module.cta) + "</button>" +
-                  "</div>" +
-                "</article>"
-              );
-            })
-            .join("") +
+      '<div class="zgs-start-layout">' +
+        '<section class="zgs-start-main" aria-label="Priorytety i kontynuacja">' +
+          '<article class="zgs-surface zgs-start-priority">' +
+            "<h3>Priorytety dnia</h3>" +
+            '<div class="zgs-start-priority-grid">' +
+              priorityBlocks
+                .map(function (block) {
+                  var target = viewForNavKey(block.key);
+                  var records = (Array.isArray(block.items) ? block.items : []).slice(0, 2);
+                  var ctaAttr = target === "launcher"
+                    ? ' data-open-view="launcher"'
+                    : ' data-open-module="' + esc(target) + '"';
+
+                  return (
+                    '<article class="zgs-start-priority-card">' +
+                      '<div class="zgs-start-priority-head">' +
+                        '<p class="zgs-start-priority-title">' + esc(block.title) + "</p>" +
+                        '<span class="zgs-start-count">' + esc(block.count) + "</span>" +
+                      "</div>" +
+                      '<ul class="zgs-list zgs-start-priority-list">' +
+                        records.map(function (record) { return "<li>" + esc(record) + "</li>"; }).join("") +
+                      "</ul>" +
+                      '<button class="zgs-action-btn is-primary zgs-start-priority-cta" type="button"' + ctaAttr + ">" + esc(block.cta) + "</button>" +
+                    "</article>"
+                  );
+                })
+                .join("") +
+            "</div>" +
+          "</article>" +
+          '<article class="zgs-surface zgs-start-resume">' +
+            "<h3>Kontynuuj pracę</h3>" +
+            '<ul class="zgs-start-resume-list">' +
+              continueItems
+                .map(function (item) {
+                  return "<li><strong>" + esc(item.label) + "</strong><span>" + esc(item.value) + "</span></li>";
+                })
+                .join("") +
+            "</ul>" +
+          "</article>" +
         "</section>" +
-        '<aside class="zgs-launcher-side" aria-label="Kontekst dnia">' +
-          '<article class="zgs-surface zgs-launcher-panel">' +
-            "<h3>Priorytety dzisiaj</h3>" +
+        '<aside class="zgs-start-side" aria-label="Akcje i zdarzenia">' +
+          '<article class="zgs-surface zgs-start-actions">' +
+            "<h3>Szybkie akcje</h3>" +
+            '<div class="zgs-start-action-grid">' +
+              quickActions
+                .map(function (action) {
+                  var target = viewForNavKey(action.key);
+                  var actionAttr = target === "launcher"
+                    ? ' data-open-view="launcher"'
+                    : ' data-open-module="' + esc(target) + '"';
+                  return '<button class="zgs-action-btn zgs-start-action-btn" type="button"' + actionAttr + ">" + esc(action.label) + "</button>";
+                })
+                .join("") +
+            "</div>" +
+          "</article>" +
+          '<article class="zgs-surface zgs-start-inbox">' +
+            "<h3>Inbox dnia</h3>" +
             '<div class="zgs-inbox-list">' +
-              priorities
+              inboxEvents
                 .map(function (item, index) {
                   return '<div class="zgs-inbox-item' + (index === 0 ? " is-unread" : "") + '"><strong>' + esc(item.title) + "</strong><span>" + esc(item.text) + "</span></div>";
                 })
                 .join("") +
             "</div>" +
-          "</article>" +
-          '<article class="zgs-module-card is-secondary">' +
-            '<h3>' + esc(inboxCard.title) + "</h3>" +
-            "<p>" + esc(inboxCard.text) + "</p>" +
-            '<button class="zgs-module-btn" type="button" data-open-module="notifications">' + esc(inboxCard.cta) + "</button>" +
           "</article>" +
         "</aside>" +
       "</div>";

@@ -88,66 +88,60 @@
   },
 
   launcher: {
-    title: "Launcher wejścia do narzędzi",
-    text: "To nie jest dashboard kart - to szybki punkt wejścia do modułów roboczych i decyzji dnia.",
-    chips: [
-      "Priorytet: Oferty",
-      "Tryb: Dzień roboczy",
-      "Focus: Inbox i komunikacja"
-    ],
-    primaryModules: [
+    title: "Centrum pracy",
+    subtitle: "Dzisiaj",
+    text: "Zobacz sprawy wymagające decyzji, nowe wiadomości i zadania operacyjne.",
+    priorityBlocks: [
       {
         key: "offers",
-        category: "Moduł główny",
-        title: "Panel Ofertowy",
-        text: "Legacy moduł 1:1. W ETAPIE 2 osadzamy go bez zmiany wyglądu, logiki i flow.",
-        tags: ["Kalkulacje", "Pozycje", "PDF"],
-        cta: "Otwórz"
-      },
-      {
-        key: "company",
-        category: "Organizacja",
-        title: "Firma i Użytkownicy",
-        text: "Role, relacje A-B i kontrola dostępu zespołu handlowego.",
-        tags: ["Role", "Relacje", "Onboarding"],
-        cta: "Otwórz"
-      },
-      {
-        key: "library",
-        category: "Dane",
-        title: "Biblioteka Produktów",
-        text: "Kontrola sync, scalania i publikacji katalogu produktowego.",
-        tags: ["Import", "Walidacja", "Publikacja"],
-        cta: "Otwórz"
+        title: "Oferty do decyzji",
+        count: "2",
+        items: [
+          "Oferta #4821 - Delta Fence czeka na akceptację rabatu.",
+          "Oferta #4818 - Nova Garden wymaga potwierdzenia terminu."
+        ],
+        cta: "Przejdź do ofert"
       },
       {
         key: "chat",
-        category: "Komunikacja",
-        title: "Komunikator",
-        text: "Wątki ofertowe i szybkie decyzje zespołu handlowego.",
-        tags: ["Wątki", "Decyzje", "Statusy"],
-        cta: "Otwórz"
-      }
-    ],
-    priorities: [
-      {
-        title: "2 oferty wymagają decyzji",
-        text: "Delta Fence i Nova Garden czekają na finał."
+        title: "Nowe rozmowy / wiadomości",
+        count: "4",
+        items: [
+          "Wątek Oferta #4821 - 3 nowe wiadomości od opiekuna klienta.",
+          "Wiadomość od produkcji - korekta terminu realizacji."
+        ],
+        cta: "Otwórz Komunikator"
       },
       {
-        title: "Nowy wniosek o dołączenie",
-        text: "Jan Wrona - handlowiec regionalny."
-      },
-      {
-        title: "Sync biblioteki zakończony",
-        text: "6 zmian oczekuje na publikację."
+        key: "inbox",
+        title: "Alerty / synchronizacja / błędy",
+        count: "3",
+        items: [
+          "Sync biblioteki: 1 konflikt SKU wymaga ręcznej decyzji.",
+          "Alert systemowy: 2 rekordy oczekują na ponowną walidację."
+        ],
+        cta: "Przejdź do Powiadomień"
       }
     ],
-    inboxCard: {
-      title: "Powiadomienia",
-      text: "Czytelne centrum alertów i wydarzeń.",
-      cta: "Otwórz"
-    }
+    continueItems: [
+      { label: "Ostatnia oferta", value: "#4821 - Delta Fence" },
+      { label: "Ostatnia rozmowa", value: "Wątek: Oferta #4821" },
+      { label: "Ostatnia firma / klient", value: "Nova Garden Sp. z o.o." },
+      { label: "Ostatnia akcja biblioteki", value: "Sync cennika zakończony 10 min temu" }
+    ],
+    quickActions: [
+      { key: "offers", label: "Otwórz Panel Ofertowy" },
+      { key: "chat", label: "Otwórz Komunikator" },
+      { key: "inbox", label: "Otwórz Powiadomienia" },
+      { key: "company", label: "Dodaj użytkownika" },
+      { key: "library", label: "Wymuś sync biblioteki" }
+    ],
+    inboxEvents: [
+      { title: "Klient zaakceptował warunki", text: "Oferta #4809 przechodzi do finalnego PDF." },
+      { title: "Nowy wniosek o dołączenie", text: "Jan Wrona czeka na zatwierdzenie roli handlowca." },
+      { title: "Sync biblioteki zakończony", text: "6 zmian gotowych do publikacji po review." },
+      { title: "Oferta gotowa do PDF", text: "Oferta #4821 oznaczona jako gotowa do wysyłki." }
+    ]
   },
 
   offerPanel: {
