@@ -530,36 +530,52 @@ textarea {
 .zgs-start-priority-controls {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .zgs-start-priority-nav-btn {
-  border: 1px solid #d3deea;
-  border-radius: 9px;
-  background: #f5f9fd;
-  color: #3c526d;
-  width: 30px;
-  height: 30px;
-  font-size: 16px;
+  border: 1px solid #d1dceb;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #50647e;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
   line-height: 1;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .zgs-start-priority-nav-btn:hover:not(:disabled) {
-  background: #edf4fb;
-  border-color: #bdccdd;
+  background: #f7faff;
+  border-color: #c4d3e5;
+  color: #3f556f;
+}
+
+.zgs-start-priority-nav-btn:focus-visible {
+  outline: 0;
+  border-color: #a4b8cf;
+  box-shadow: 0 0 0 2px rgba(164, 184, 207, 0.22);
 }
 
 .zgs-start-priority-nav-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.52;
+  color: #8a9cb0;
+  border-color: #d6e0eb;
+  background: #fbfdff;
   cursor: default;
 }
 
 .zgs-start-priority-slider {
   overflow: hidden;
   min-height: 0;
+  border-top: 1px solid #e3eaf3;
+  padding-top: 8px;
 }
 
 .zgs-start-priority-track {
@@ -665,25 +681,33 @@ textarea {
 
 .zgs-start-priority-dots {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  margin-right: 1px;
 }
 
 .zgs-start-priority-dot {
-  border: 0;
+  border: 1px solid #d1dceb;
   border-radius: 999px;
-  width: 7px;
-  height: 7px;
-  background: #ccd8e5;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
   padding: 0;
   cursor: pointer;
-  transition: width 0.2s ease, background 0.2s ease;
+  transition: width 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  opacity: 1;
+}
+
+.zgs-start-priority-dot:hover {
+  background: #eef4fb;
+  border-color: #c4d3e5;
 }
 
 .zgs-start-priority-dot.is-active {
-  width: 18px;
-  background: #3a536f;
+  width: 15px;
+  border-color: #18263a;
+  background: #18263a;
+  opacity: 1;
 }
 
 .zgs-start-resume-list {
@@ -910,6 +934,10 @@ textarea {
 }
 
 @media (min-width: 981px) {
+  .zgs-start-layout {
+    padding-bottom: 28px;
+  }
+
   .zgs-start-main,
   .zgs-start-side {
     grid-template-rows: auto minmax(0, 1fr);

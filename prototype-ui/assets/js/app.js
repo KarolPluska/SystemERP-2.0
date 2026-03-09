@@ -363,6 +363,13 @@
             '<div class="zgs-start-priority-top">' +
               "<h3>Priorytety dnia</h3>" +
               '<div class="zgs-start-priority-controls" aria-label="Nawigacja priorytetów">' +
+                '<div class="zgs-start-priority-dots" role="tablist" aria-label="Paginacja priorytetów">' +
+                  prioritySlides
+                    .map(function (_slide, index) {
+                      return '<button class="zgs-start-priority-dot" type="button" data-priority-dot="' + index + '" aria-label="Slajd ' + (index + 1) + '"></button>';
+                    })
+                    .join("") +
+                "</div>" +
                 '<button class="zgs-start-priority-nav-btn" type="button" data-priority-nav="prev" aria-label="Poprzedni slajd">‹</button>' +
                 '<button class="zgs-start-priority-nav-btn" type="button" data-priority-nav="next" aria-label="Następny slajd">›</button>' +
               "</div>" +
@@ -413,13 +420,6 @@
                   })
                   .join("") +
               "</div>" +
-            "</div>" +
-            '<div class="zgs-start-priority-dots" role="tablist" aria-label="Paginacja priorytetów">' +
-              prioritySlides
-                .map(function (_slide, index) {
-                  return '<button class="zgs-start-priority-dot" type="button" data-priority-dot="' + index + '" aria-label="Slajd ' + (index + 1) + '"></button>';
-                })
-                .join("") +
             "</div>" +
           "</article>" +
           '<article class="zgs-surface zgs-start-resume">' +
