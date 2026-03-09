@@ -121,6 +121,36 @@
           { text: "Alert systemowy: 2 rekordy po walidacji.", status: "nowe", time: "wczoraj" }
         ],
         cta: "Przejdź do Powiadomień"
+      },
+      {
+        key: "offers",
+        title: "Oferty wymagające akceptu",
+        count: "3",
+        items: [
+          { text: "Oferta #4830 - potwierdź marżę dla klienta.", status: "pilne", time: "2 min temu" },
+          { text: "Oferta #4827 - decyzja o terminie wysyłki.", status: "oczekuje", time: "dziś" }
+        ],
+        cta: "Otwórz oferty do decyzji"
+      },
+      {
+        key: "chat",
+        title: "Nowe wiadomości handlowe",
+        count: "5",
+        items: [
+          { text: "Klient Nova Garden dosłał korektę specyfikacji.", status: "nowe", time: "dziś" },
+          { text: "Dział produkcji czeka na potwierdzenie zakresu.", status: "oczekuje", time: "dziś" }
+        ],
+        cta: "Przejdź do rozmów"
+      },
+      {
+        key: "inbox",
+        title: "Alerty systemowe i sync",
+        count: "2",
+        items: [
+          { text: "Walidacja cennika: 1 pozycja wymaga korekty.", status: "oczekuje", time: "dziś" },
+          { text: "Import zakończony z ostrzeżeniem metadanych.", status: "nowe", time: "wczoraj" }
+        ],
+        cta: "Zobacz alerty"
       }
     ],
     continueItems: [

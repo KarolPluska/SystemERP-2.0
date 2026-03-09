@@ -502,6 +502,7 @@ textarea {
   grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.95fr);
   gap: 12px;
   padding-bottom: 18px;
+  align-items: stretch;
 }
 
 .zgs-start-main,
@@ -509,6 +510,68 @@ textarea {
   display: grid;
   gap: 12px;
   align-content: start;
+  min-height: 0;
+}
+
+.zgs-start-priority {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 9px;
+  min-height: 0;
+}
+
+.zgs-start-priority-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.zgs-start-priority-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zgs-start-priority-nav-btn {
+  border: 1px solid #d3deea;
+  border-radius: 9px;
+  background: #f5f9fd;
+  color: #3c526d;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.zgs-start-priority-nav-btn:hover:not(:disabled) {
+  background: #edf4fb;
+  border-color: #bdccdd;
+}
+
+.zgs-start-priority-nav-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.zgs-start-priority-slider {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.zgs-start-priority-track {
+  display: flex;
+  min-width: 0;
+  transition: transform 0.28s ease;
+  will-change: transform;
+}
+
+.zgs-start-priority-slide {
+  flex: 0 0 100%;
+  min-width: 0;
 }
 
 .zgs-start-priority-grid {
@@ -521,12 +584,12 @@ textarea {
   border: 1px solid #dbe4f0;
   border-radius: 12px;
   background: linear-gradient(178deg, #ffffff, #fbfdff);
-  padding: 9px 10px;
+  padding: 10px 11px 11px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 7px;
+  gap: 8px;
   align-content: start;
-  min-height: 200px;
+  min-height: 216px;
 }
 
 .zgs-start-priority-head {
@@ -559,11 +622,10 @@ textarea {
 }
 
 .zgs-start-priority-list {
-  gap: 5px;
-  max-height: 122px;
+  gap: 6px;
   min-height: 0;
-  overflow: auto;
-  padding-right: 2px;
+  overflow: visible;
+  padding-bottom: 6px;
 }
 
 .zgs-start-priority-list li {
@@ -573,7 +635,7 @@ textarea {
   color: #4f627a;
   line-height: 1.32;
   border-bottom: 1px dashed #dce5f0;
-  padding-bottom: 6px;
+  padding-bottom: 7px;
 }
 
 .zgs-start-priority-list li:last-child {
@@ -601,11 +663,33 @@ textarea {
   padding: 8px 10px;
 }
 
+.zgs-start-priority-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.zgs-start-priority-dot {
+  border: 0;
+  border-radius: 999px;
+  width: 7px;
+  height: 7px;
+  background: #ccd8e5;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.zgs-start-priority-dot.is-active {
+  width: 18px;
+  background: #3a536f;
+}
+
 .zgs-start-resume-list {
   list-style: none;
   display: grid;
   gap: 7px;
-  max-height: 230px;
   min-height: 0;
   overflow: auto;
   padding-right: 2px;
@@ -665,7 +749,7 @@ textarea {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 
 .zgs-status {
@@ -753,7 +837,6 @@ textarea {
   display: grid;
   gap: 6px;
   padding-left: 0;
-  max-height: 246px;
   min-height: 0;
   overflow: auto;
   padding-right: 2px;
@@ -822,8 +905,29 @@ textarea {
 
 .zgs-start-resume,
 .zgs-start-inbox {
-  max-height: 290px;
   grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+}
+
+@media (min-width: 981px) {
+  .zgs-start-main,
+  .zgs-start-side {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .zgs-start-resume,
+  .zgs-start-inbox {
+    height: 100%;
+    min-height: 300px;
+    max-height: none;
+  }
+
+  .zgs-start-resume-list,
+  .zgs-start-timeline {
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
 }
 
 .zgs-launcher-stream {

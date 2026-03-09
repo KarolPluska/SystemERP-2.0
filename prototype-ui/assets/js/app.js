@@ -126,6 +126,82 @@
     return '<span class="zgs-time">' + esc(time) + "</span>";
   }
 
+  function chunkItems(list, size) {
+    var source = Array.isArray(list) ? list : [];
+    var step = Math.max(1, size || 1);
+    var chunks = [];
+    for (var i = 0; i < source.length; i += step) {
+      chunks.push(source.slice(i, i + step));
+    }
+    return chunks;
+  }
+
+  function initPrioritySlider(scope) {
+    var host = scope || document;
+    var section = host.querySelector(".zgs-start-priority");
+    if (!section) {
+      return;
+    }
+
+    var slider = section.querySelector("[data-priority-slider]");
+    if (!slider) {
+      return;
+    }
+
+    var track = slider.querySelector("[data-priority-track]");
+    var slides = Array.prototype.slice.call(slider.querySelectorAll("[data-priority-slide]"));
+    var prev = section.querySelector('[data-priority-nav="prev"]');
+    var next = section.querySelector('[data-priority-nav="next"]');
+    var dots = Array.prototype.slice.call(section.querySelectorAll("[data-priority-dot]"));
+    if (!track || !slides.length) {
+      return;
+    }
+
+    var current = 0;
+    var max = slides.length - 1;
+
+    function update() {
+      track.style.transform = "translateX(-" + (current * 100) + "%)";
+      if (prev) {
+        prev.disabled = current <= 0;
+      }
+      if (next) {
+        next.disabled = current >= max;
+      }
+      dots.forEach(function (dot, index) {
+        var active = index === current;
+        dot.classList.toggle("is-active", active);
+        dot.setAttribute("aria-current", active ? "true" : "false");
+      });
+    }
+
+    if (prev) {
+      prev.addEventListener("click", function () {
+        current = Math.max(0, current - 1);
+        update();
+      });
+    }
+
+    if (next) {
+      next.addEventListener("click", function () {
+        current = Math.min(max, current + 1);
+        update();
+      });
+    }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener("click", function () {
+        var index = parseInt(dot.getAttribute("data-priority-dot"), 10);
+        if (!isNaN(index)) {
+          current = Math.min(max, Math.max(0, index));
+          update();
+        }
+      });
+    });
+
+    update();
+  }
+
   function renderAuthForm(tab) {
     var fields = Array.isArray(tab.fields) ? tab.fields : [];
     var fieldHtml = fields
@@ -264,6 +340,7 @@
     }
 
     var priorityBlocks = Array.isArray(launcherData.priorityBlocks) ? launcherData.priorityBlocks : [];
+    var prioritySlides = chunkItems(priorityBlocks, 3);
     var continueItems = Array.isArray(launcherData.continueItems) ? launcherData.continueItems : [];
     var quickActions = Array.isArray(launcherData.quickActions) ? launcherData.quickActions : [];
     var inboxEvents = Array.isArray(launcherData.inboxEvents) ? launcherData.inboxEvents : [];
@@ -283,41 +360,64 @@
       '<div class="zgs-start-layout">' +
         '<section class="zgs-start-main" aria-label="Priorytety i kontynuacja">' +
           '<article class="zgs-surface zgs-start-priority">' +
-            "<h3>Priorytety dnia</h3>" +
-            '<div class="zgs-start-priority-grid">' +
-              priorityBlocks
-                .map(function (block) {
-                  var target = viewForNavKey(block.key);
-                  var records = (Array.isArray(block.items) ? block.items : []).slice(0, 2);
-                  var ctaAttr = target === "launcher"
-                    ? ' data-open-view="launcher"'
-                    : ' data-open-module="' + esc(target) + '"';
+            '<div class="zgs-start-priority-top">' +
+              "<h3>Priorytety dnia</h3>" +
+              '<div class="zgs-start-priority-controls" aria-label="Nawigacja priorytetów">' +
+                '<button class="zgs-start-priority-nav-btn" type="button" data-priority-nav="prev" aria-label="Poprzedni slajd">‹</button>' +
+                '<button class="zgs-start-priority-nav-btn" type="button" data-priority-nav="next" aria-label="Następny slajd">›</button>' +
+              "</div>" +
+            "</div>" +
+            '<div class="zgs-start-priority-slider" data-priority-slider>' +
+              '<div class="zgs-start-priority-track" data-priority-track>' +
+                prioritySlides
+                  .map(function (slide, slideIndex) {
+                    return (
+                      '<section class="zgs-start-priority-slide" data-priority-slide="' + slideIndex + '">' +
+                        '<div class="zgs-start-priority-grid">' +
+                          slide.map(function (block) {
+                            var target = viewForNavKey(block.key);
+                            var records = (Array.isArray(block.items) ? block.items : []).slice(0, 2);
+                            var ctaAttr = target === "launcher"
+                              ? ' data-open-view="launcher"'
+                              : ' data-open-module="' + esc(target) + '"';
 
-                  return (
-                    '<article class="zgs-start-priority-card">' +
-                      '<div class="zgs-start-priority-head">' +
-                        '<p class="zgs-start-priority-title">' + esc(block.title) + "</p>" +
-                        '<span class="zgs-start-count">' + esc(block.count) + "</span>" +
-                      "</div>" +
-                      '<ul class="zgs-list zgs-start-priority-list">' +
-                        records.map(function (record) {
-                          var recordText = typeof record === "string" ? record : record.text;
-                          var recordStatus = typeof record === "string" ? "" : record.status;
-                          var recordTime = typeof record === "string" ? "" : record.time;
-                          return (
-                            "<li>" +
-                              '<span class="zgs-start-item-text">' + esc(recordText) + "</span>" +
-                              '<span class="zgs-start-item-meta">' +
-                                renderStatusBadge(recordStatus) +
-                                renderTimeBadge(recordTime) +
-                              "</span>" +
-                            "</li>"
-                          );
-                        }).join("") +
-                      "</ul>" +
-                      '<button class="zgs-action-btn zgs-start-priority-cta" type="button"' + ctaAttr + ">" + esc(block.cta) + "</button>" +
-                    "</article>"
-                  );
+                            return (
+                              '<article class="zgs-start-priority-card">' +
+                                '<div class="zgs-start-priority-head">' +
+                                  '<p class="zgs-start-priority-title">' + esc(block.title) + "</p>" +
+                                  '<span class="zgs-start-count">' + esc(block.count) + "</span>" +
+                                "</div>" +
+                                '<ul class="zgs-list zgs-start-priority-list">' +
+                                  records.map(function (record) {
+                                    var recordText = typeof record === "string" ? record : record.text;
+                                    var recordStatus = typeof record === "string" ? "" : record.status;
+                                    var recordTime = typeof record === "string" ? "" : record.time;
+                                    return (
+                                      "<li>" +
+                                        '<span class="zgs-start-item-text">' + esc(recordText) + "</span>" +
+                                        '<span class="zgs-start-item-meta">' +
+                                          renderStatusBadge(recordStatus) +
+                                          renderTimeBadge(recordTime) +
+                                        "</span>" +
+                                      "</li>"
+                                    );
+                                  }).join("") +
+                                "</ul>" +
+                                '<button class="zgs-action-btn zgs-start-priority-cta" type="button"' + ctaAttr + ">" + esc(block.cta) + "</button>" +
+                              "</article>"
+                            );
+                          }).join("") +
+                        "</div>" +
+                      "</section>"
+                    );
+                  })
+                  .join("") +
+              "</div>" +
+            "</div>" +
+            '<div class="zgs-start-priority-dots" role="tablist" aria-label="Paginacja priorytetów">' +
+              prioritySlides
+                .map(function (_slide, index) {
+                  return '<button class="zgs-start-priority-dot" type="button" data-priority-dot="' + index + '" aria-label="Slajd ' + (index + 1) + '"></button>';
                 })
                 .join("") +
             "</div>" +
@@ -402,6 +502,8 @@
           "</article>" +
         "</aside>" +
       "</div>";
+
+    initPrioritySlider(view);
   }
 
   function renderOfferPanel() {
