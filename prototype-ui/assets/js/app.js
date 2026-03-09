@@ -83,6 +83,8 @@
         return "current-password";
       case "company_name":
         return "organization";
+      case "company_address":
+        return "street-address";
       case "contact_name":
         return "name";
       case "phone":
@@ -139,7 +141,6 @@
   function renderAuth() {
     var heroTitle = authData.heroTitle || "";
     var heroText = authData.heroText || "";
-    var cards = Array.isArray(authData.infoCards) ? authData.infoCards : [];
     var tabs = Array.isArray(authData.tabs) ? authData.tabs : [];
 
     var authHead = document.querySelector(".zgs-auth-head");
@@ -151,20 +152,6 @@
         "</div>" +
         "<h1>" + esc(heroTitle) + "</h1>" +
         '<p class="zgs-auth-subline">' + esc(heroText) + "</p>";
-    }
-
-    var authPoints = document.querySelector(".zgs-auth-points");
-    if (authPoints) {
-      authPoints.innerHTML = cards
-        .map(function (card) {
-          return (
-            '<article class="zgs-auth-point">' +
-              "<h3>" + esc(card.title) + "</h3>" +
-              "<p>" + esc(card.text) + "</p>" +
-            "</article>"
-          );
-        })
-        .join("");
     }
 
     tabs.forEach(function (tab) {

@@ -64,6 +64,7 @@
         fields: [
           { key: "company_name", label: "Nazwa firmy", placeholder: "np. Zegger Partner Sp. z o.o." },
           { key: "nip", label: "NIP", placeholder: "000-000-00-00" },
+          { key: "company_address", label: "Adres firmy", placeholder: "np. ul. Przemysłowa 12, Warszawa" },
           { key: "contact_name", label: "Osoba kontaktowa", placeholder: "Imię i nazwisko" },
           { key: "email", label: "E-mail", placeholder: "biuro@firma.pl" },
           { key: "phone", label: "Telefon", placeholder: "+48 000 000 000" },

@@ -28,21 +28,6 @@
           <p class="zgs-auth-subline">Po zalogowaniu uruchamiasz kompaktowy shell i launcher narz�dzi pracy.</p>
         </header>
 
-        <div class="zgs-auth-points" aria-label="Co otrzymujesz po zalogowaniu">
-          <article class="zgs-auth-point">
-            <h3>Panel Ofertowy 1:1</h3>
-            <p>Legacy modu� pozostaje bez przepisywania i bez zmiany flow.</p>
-          </article>
-          <article class="zgs-auth-point">
-            <h3>Launcher roboczy</h3>
-            <p>Szybkie wej�cie do narz�dzi bez dashboardowego balastu.</p>
-          </article>
-          <article class="zgs-auth-point">
-            <h3>Desktop + mobile</h3>
-            <p>Wsp�lny rytm pracy, osobno dopracowany dla telefonu.</p>
-          </article>
-        </div>
-
         <div class="zgs-auth-tabs" role="tablist" aria-label="Tryb autoryzacji">
           <button id="zgs-tab-login" class="zgs-tab is-active" role="tab" aria-selected="true" aria-controls="zgs-panel-login" type="button" data-auth-tab="login">Logowanie</button>
           <button id="zgs-tab-company" class="zgs-tab" role="tab" aria-selected="false" aria-controls="zgs-panel-company" type="button" data-auth-tab="company-register">Nowa firma</button>
@@ -79,6 +64,10 @@
             <label class="zgs-field" for="zgs-company-nip">
               <span>NIP</span>
               <input id="zgs-company-nip" name="nip" type="text" inputmode="numeric" placeholder="000-000-00-00">
+            </label>
+            <label class="zgs-field" for="zgs-company-address">
+              <span>Adres firmy</span>
+              <input id="zgs-company-address" name="company_address" type="text" autocomplete="street-address" placeholder="np. ul. Przemysłowa 12, Warszawa">
             </label>
             <label class="zgs-field" for="zgs-company-contact">
               <span>Osoba kontaktowa</span>
