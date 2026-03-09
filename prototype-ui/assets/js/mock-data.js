@@ -196,9 +196,9 @@
 
   companyUsers: {
     stats: [
-      { value: "14", label: "Aktywni użytkownicy" },
-      { value: "3", label: "Wnioski oczekujące" },
-      { value: "2", label: "Relacje B2B do review" }
+      { value: "14", label: "Aktywni użytkownicy", hint: "2 logowania w ostatnich 15 min", status: "nowe" },
+      { value: "3", label: "Wnioski oczekujące", hint: "1 decyzja wymagana do 16:00", status: "oczekuje" },
+      { value: "2", label: "Relacje B2B do review", hint: "1 blokuje zaproszenie handlowca", status: "pilne" }
     ],
     companyCard: {
       title: "Dane firmy",
@@ -212,34 +212,107 @@
     },
     relationsCard: {
       title: "Role i relacje",
-      rows: [
-        "Model: Producent -> Partner -> Handlowiec",
-        "Rola aktualna: Administrator firmy",
-        "Powiązane firmy: Delta Fence, Nova Garden"
+      workflow: [
+        {
+          label: "Aktywne relacje",
+          value: "3 powiązania B2B",
+          detail: "Model: Producent -> Partner -> Handlowiec",
+          status: "aktywne"
+        },
+        {
+          label: "Zaproszenia wysłane",
+          value: "2 oczekujące",
+          detail: "Delta Fence, Nova Garden",
+          status: "oczekuje"
+        },
+        {
+          label: "Wnioski do decyzji",
+          value: "1 pilny przypadek",
+          detail: "Brak przypisanej roli dla nowego handlowca",
+          status: "pilne"
+        }
       ],
-      actions: ["Dodaj relację A->B", "Zaproś użytkownika"]
+      actions: ["Zarządzaj relacjami", "Wyślij zaproszenie"]
     },
     teamTable: {
       title: "Zespół i dostępy",
       columns: ["Imię i nazwisko", "Rola", "Status", "Zakres", "Ostatnia aktywność", "Akcje"],
       rows: [
-        ["Anna Kowalska", "Sales Admin", "Aktywny", "Pełny panel ofert", "Dzisiaj 09:14", "Edytuj / Zawieś"],
-        ["Michał Lis", "Handlowiec", "Aktywny", "Oferty i komunikator", "Dzisiaj 08:41", "Edytuj / Uprawnienia"],
-        ["Karolina Nowak", "Handlowiec", "Oczekuje", "Weryfikacja konta", "Wczoraj 15:20", "Zatwierdź / Odrzuć"]
+        {
+          name: "Anna Kowalska",
+          role: "Sales Admin",
+          status: "Aktywny",
+          scope: "Pełny panel ofert",
+          lastActivity: "Dzisiaj 09:14",
+          actions: [
+            { label: "Edytuj", tone: "neutral" },
+            { label: "Uprawnienia", tone: "neutral" },
+            { label: "Zawieś", tone: "danger" }
+          ]
+        },
+        {
+          name: "Michał Lis",
+          role: "Handlowiec",
+          status: "Aktywny",
+          scope: "Oferty i komunikator",
+          lastActivity: "Dzisiaj 08:41",
+          actions: [
+            { label: "Edytuj", tone: "neutral" },
+            { label: "Uprawnienia", tone: "neutral" },
+            { label: "Reset hasła", tone: "neutral" }
+          ]
+        },
+        {
+          name: "Karolina Nowak",
+          role: "Handlowiec",
+          status: "Oczekuje",
+          scope: "Weryfikacja konta",
+          lastActivity: "Wczoraj 15:20",
+          actions: [
+            { label: "Zatwierdź", tone: "primary" },
+            { label: "Odrzuć", tone: "danger" }
+          ]
+        }
       ]
     },
     actionQueue: {
       title: "Kolejka akcji",
       items: [
-        "Zaproś nowego handlowca - przygotuj rolę i ograniczenia katalogu.",
-        "Potwierdź relację B2B - Delta Fence czeka na dostęp do biblioteki."
+        {
+          title: "Zaproszenie handlowca - region Północ",
+          text: "Przygotuj rolę i ograniczenia katalogu przed wysyłką zaproszenia.",
+          status: "oczekuje",
+          time: "dziś 14:30",
+          cta: "Otwórz zadanie"
+        },
+        {
+          title: "Potwierdzenie relacji B2B - Delta Fence",
+          text: "Firma czeka na aktywację dostępu do biblioteki produktowej.",
+          status: "pilne",
+          time: "dziś",
+          cta: "Przejdź do relacji"
+        }
       ]
     },
     joinRequests: {
       title: "Wnioski o dołączenie",
       items: [
-        "Jan Wrona - prośba o dołączenie jako handlowiec regionalny.",
-        "Magda Zielińska - prośba o rolę operatora katalogu."
+        {
+          title: "Jan Wrona",
+          meta: "Rola: Handlowiec regionalny",
+          text: "Prośba o dołączenie do oddziału Warszawa.",
+          status: "nowe",
+          time: "2 min temu",
+          cta: "Zweryfikuj wniosek"
+        },
+        {
+          title: "Magda Zielińska",
+          meta: "Rola: Operator katalogu",
+          text: "Wniosek wymaga przypisania zakresu katalogowego.",
+          status: "oczekuje",
+          time: "dziś",
+          cta: "Nadaj zakres"
+        }
       ]
     }
   },

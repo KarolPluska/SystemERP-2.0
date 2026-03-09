@@ -126,6 +126,43 @@
     return '<span class="zgs-time">' + esc(time) + "</span>";
   }
 
+  function companyToneClass(value) {
+    var normalized = String(value || "").toLowerCase();
+    if (normalized.indexOf("pil") !== -1 || normalized.indexOf("danger") !== -1) {
+      return "is-urgent";
+    }
+    if (normalized.indexOf("now") !== -1 || normalized.indexOf("new") !== -1) {
+      return "is-new";
+    }
+    if (normalized.indexOf("oczek") !== -1 || normalized.indexOf("pending") !== -1) {
+      return "is-pending";
+    }
+    if (normalized.indexOf("akty") !== -1 || normalized.indexOf("active") !== -1) {
+      return "is-active";
+    }
+    if (normalized.indexOf("primary") !== -1 || normalized.indexOf("zatwier") !== -1 || normalized.indexOf("approve") !== -1) {
+      return "is-primary";
+    }
+    return "is-neutral";
+  }
+
+  function renderCompanyPill(label, tone) {
+    if (!label) {
+      return "";
+    }
+    return '<span class="zgs-company-pill ' + companyToneClass(tone || label) + '">' + esc(label) + "</span>";
+  }
+
+  function renderCompanyActionButton(action) {
+    var label = typeof action === "string" ? action : action && action.label;
+    if (!label) {
+      return "";
+    }
+
+    var tone = typeof action === "string" ? "neutral" : (action.tone || "neutral");
+    return '<button class="zgs-table-action-btn ' + companyToneClass(tone) + '" type="button">' + esc(label) + "</button>";
+  }
+
   function chunkItems(list, size) {
     var source = Array.isArray(list) ? list : [];
     var step = Math.max(1, size || 1);
@@ -540,6 +577,7 @@
     }
 
     var stats = Array.isArray(companyData.stats) ? companyData.stats : [];
+    var relationItems = (companyData.relationsCard && companyData.relationsCard.workflow) || [];
     var teamColumns = (companyData.teamTable && companyData.teamTable.columns) || [];
     var teamRows = (companyData.teamTable && companyData.teamTable.rows) || [];
     var queueItems = (companyData.actionQueue && companyData.actionQueue.items) || [];
@@ -550,9 +588,18 @@
         '<button class="zgs-back-btn" type="button" data-open-view="launcher">Wróć do launchera</button>' +
         '<div><p class="zgs-kicker">Organizacja</p><h2>' + esc(navLabel("company", "Firma i Użytkownicy")) + '</h2></div>' +
       "</header>" +
-      '<div class="zgs-kpi-strip">' +
+      '<div class="zgs-kpi-strip zgs-company-kpi-strip">' +
         stats.map(function (stat) {
-          return '<article class="zgs-kpi-card"><strong>' + esc(stat.value) + "</strong><span>" + esc(stat.label) + "</span></article>";
+          var statusLabel = stat.statusLabel || stat.status;
+          var hint = stat.hint
+            ? (
+              '<p class="zgs-kpi-hint">' +
+                renderCompanyPill(statusLabel, stat.statusTone || stat.status) +
+                "<span>" + esc(stat.hint) + "</span>" +
+              "</p>"
+            )
+            : "";
+          return '<article class="zgs-kpi-card"><strong>' + esc(stat.value) + "</strong><span>" + esc(stat.label) + "</span>" + hint + "</article>";
         }).join("") +
       "</div>" +
       '<div class="zgs-company-grid">' +
@@ -565,28 +612,101 @@
             ((companyData.companyCard && companyData.companyCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
           "</div>" +
         "</article>" +
-        '<article class="zgs-surface">' +
+        '<article class="zgs-surface zgs-company-relations-card">' +
           "<h3>" + esc(companyData.relationsCard && companyData.relationsCard.title) + "</h3>" +
-          '<ul class="zgs-list">' +
-            ((companyData.relationsCard && companyData.relationsCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
-          "</ul>" +
+          (relationItems.length
+            ? (
+              '<ul class="zgs-company-relations-list">' +
+                relationItems.map(function (item) {
+                  return (
+                    '<li class="zgs-company-relations-item">' +
+                      '<div class="zgs-company-relations-head">' +
+                        "<strong>" + esc(item.label) + "</strong>" +
+                        renderCompanyPill(item.statusLabel || item.status, item.statusTone || item.status) +
+                      "</div>" +
+                      '<p class="zgs-company-relations-value">' + esc(item.value) + "</p>" +
+                      (item.detail ? '<p class="zgs-company-relations-detail">' + esc(item.detail) + "</p>" : "") +
+                    "</li>"
+                  );
+                }).join("") +
+              "</ul>"
+            )
+            : (
+              '<ul class="zgs-list">' +
+                ((companyData.relationsCard && companyData.relationsCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
+              "</ul>"
+            )) +
           '<div class="zgs-action-list">' +
             ((companyData.relationsCard && companyData.relationsCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
           "</div>" +
         "</article>" +
-        '<article class="zgs-surface zgs-span-2">' +
+        '<article class="zgs-surface zgs-span-2 zgs-company-team-card">' +
           "<h3>" + esc(companyData.teamTable && companyData.teamTable.title) + "</h3>" +
           '<div class="zgs-table-wrap"><table class="zgs-table" aria-label="Lista użytkowników"><thead><tr>' +
             teamColumns.map(function (col) { return "<th>" + esc(col) + "</th>"; }).join("") +
           "</tr></thead><tbody>" +
-            teamRows.map(function (row) { return "<tr>" + row.map(function (cell) { return "<td>" + esc(cell) + "</td>"; }).join("") + "</tr>"; }).join("") +
+            teamRows.map(function (row) {
+              if (Array.isArray(row)) {
+                return "<tr>" + row.map(function (cell) { return "<td>" + esc(cell) + "</td>"; }).join("") + "</tr>";
+              }
+
+              var actions = Array.isArray(row.actions) ? row.actions : [];
+              return (
+                "<tr>" +
+                  "<td>" + esc(row.name) + "</td>" +
+                  "<td>" + esc(row.role) + "</td>" +
+                  "<td>" + renderCompanyPill(row.status, row.statusTone || row.status) + "</td>" +
+                  "<td>" + esc(row.scope) + "</td>" +
+                  '<td><span class="zgs-company-last-activity">' + esc(row.lastActivity) + "</span></td>" +
+                  '<td><div class="zgs-table-actions">' + actions.map(renderCompanyActionButton).join("") + "</div></td>" +
+                "</tr>"
+              );
+            }).join("") +
           "</tbody></table></div>" +
         "</article>" +
-        '<article class="zgs-surface"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><ul class="zgs-list">' +
-          queueItems.map(function (item) { return "<li>" + esc(item) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-work-card"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><ul class="zgs-company-worklist">' +
+          queueItems.map(function (item) {
+            if (typeof item === "string") {
+              return '<li class="zgs-company-workitem"><p>' + esc(item) + "</p></li>";
+            }
+
+            return (
+              '<li class="zgs-company-workitem">' +
+                '<div class="zgs-company-workhead">' +
+                  "<strong>" + esc(item.title) + "</strong>" +
+                  '<span class="zgs-company-workmeta">' +
+                    renderCompanyPill(item.statusLabel || item.status, item.statusTone || item.status) +
+                    renderTimeBadge(item.time) +
+                  "</span>" +
+                "</div>" +
+                (item.meta ? '<p class="zgs-company-worksub">' + esc(item.meta) + "</p>" : "") +
+                (item.text ? "<p>" + esc(item.text) + "</p>" : "") +
+                (item.cta ? '<button class="zgs-action-btn zgs-company-workcta" type="button">' + esc(item.cta) + "</button>" : "") +
+              "</li>"
+            );
+          }).join("") +
         "</ul></article>" +
-        '<article class="zgs-surface"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><ul class="zgs-list">' +
-          joinItems.map(function (item) { return "<li>" + esc(item) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-work-card"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><ul class="zgs-company-worklist">' +
+          joinItems.map(function (item) {
+            if (typeof item === "string") {
+              return '<li class="zgs-company-workitem"><p>' + esc(item) + "</p></li>";
+            }
+
+            return (
+              '<li class="zgs-company-workitem">' +
+                '<div class="zgs-company-workhead">' +
+                  "<strong>" + esc(item.title) + "</strong>" +
+                  '<span class="zgs-company-workmeta">' +
+                    renderCompanyPill(item.statusLabel || item.status, item.statusTone || item.status) +
+                    renderTimeBadge(item.time) +
+                  "</span>" +
+                "</div>" +
+                (item.meta ? '<p class="zgs-company-worksub">' + esc(item.meta) + "</p>" : "") +
+                (item.text ? "<p>" + esc(item.text) + "</p>" : "") +
+                (item.cta ? '<button class="zgs-action-btn zgs-company-workcta" type="button">' + esc(item.cta) + "</button>" : "") +
+              "</li>"
+            );
+          }).join("") +
         "</ul></article>" +
       "</div>";
   }
