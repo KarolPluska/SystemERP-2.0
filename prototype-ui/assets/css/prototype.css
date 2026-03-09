@@ -89,20 +89,20 @@ textarea {
 
 .zgs-auth-card {
   position: relative;
-  width: min(620px, 100%);
-  padding: clamp(20px, 4vw, 34px);
+  width: min(600px, 100%);
+  padding: clamp(16px, 3.4vw, 24px);
   border: 1px solid rgba(217, 225, 235, 0.9);
   border-radius: var(--zgs-radius-xl);
-  background: linear-gradient(158deg, rgba(255, 255, 255, 0.93), rgba(251, 252, 254, 0.88));
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(252, 253, 255, 0.9));
   backdrop-filter: blur(11px);
   box-shadow: var(--zgs-shadow-lg);
   display: grid;
-  gap: var(--zgs-space-24);
+  gap: 12px;
 }
 
 .zgs-auth-head {
   display: grid;
-  gap: var(--zgs-space-12);
+  gap: 8px;
 }
 
 .zgs-brand-lockup {
@@ -130,66 +130,74 @@ textarea {
 
 .zgs-auth-head h1 {
   font-family: "Manrope", "Segoe UI", Arial, sans-serif;
-  font-size: clamp(24px, 4.8vw, 34px);
-  line-height: 1.08;
+  font-size: clamp(23px, 4.2vw, 30px);
+  line-height: 1.06;
   letter-spacing: -0.02em;
 }
 
 .zgs-auth-subline {
-  color: var(--zgs-text-soft);
-  font-size: clamp(14px, 2.8vw, 15px);
-  line-height: 1.45;
+  max-width: 40ch;
+  color: #69798f;
+  font-size: clamp(13px, 2.4vw, 14px);
+  line-height: 1.35;
 }
 
 .zgs-auth-points {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
 }
 
 .zgs-auth-point {
-  border: 1px solid #d8e2ee;
-  border-radius: 12px;
-  background: #f8fbff;
-  padding: 12px;
+  border: 1px solid rgba(212, 223, 236, 0.86);
+  border-radius: 10px;
+  background: rgba(247, 250, 255, 0.68);
+  padding: 8px 9px;
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .zgs-auth-point h3 {
   font-family: "Manrope", "Segoe UI", Arial, sans-serif;
-  font-size: 15px;
-  line-height: 1.15;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #3f4f66;
 }
 
 .zgs-auth-point p {
-  color: #607086;
-  font-size: 13px;
-  line-height: 1.35;
+  color: #77879c;
+  font-size: 11px;
+  line-height: 1.3;
 }
 
 .zgs-auth-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--zgs-space-8);
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #d7e0eb;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7faff, #f4f8fd);
 }
 
 .zgs-tab {
-  border: 1px solid var(--zgs-border);
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--zgs-text-soft);
-  padding: 12px 14px;
-  border-radius: var(--zgs-radius-sm);
+  border: 1px solid #d6deea;
+  background: rgba(255, 255, 255, 0.88);
+  color: #68788e;
+  padding: 9px 10px;
+  border-radius: 9px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.25;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .zgs-tab.is-active {
-  background: #1a2533;
+  background: #172433;
   color: #ffffff;
-  border-color: #1a2533;
-  box-shadow: var(--zgs-shadow-sm);
+  border-color: #172433;
+  box-shadow: 0 6px 18px rgba(23, 36, 51, 0.24);
 }
 
 .zgs-auth-panel {
@@ -202,29 +210,28 @@ textarea {
 
 .zgs-form {
   display: grid;
-  gap: var(--zgs-space-16);
+  gap: 12px;
 }
 
 .zgs-field {
   display: grid;
-  gap: var(--zgs-space-8);
+  gap: 6px;
 }
 
 .zgs-field span {
-  font-size: 12px;
-  color: var(--zgs-text-soft);
+  font-size: 11px;
+  color: #6c7c91;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 .zgs-field input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--zgs-border);
-  background: #f8fafc;
+  background: #f9fbfe;
   border-radius: var(--zgs-radius-sm);
-  padding: 13px 14px;
+  padding: 11px 12px;
   color: var(--zgs-text);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -239,7 +246,7 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--zgs-space-16);
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -248,7 +255,7 @@ textarea {
   align-items: center;
   gap: var(--zgs-space-8);
   color: var(--zgs-text-soft);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .zgs-check input {
@@ -256,7 +263,7 @@ textarea {
 }
 
 .zgs-link {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--zgs-primary-soft);
   text-decoration: none;
   border-bottom: 1px solid rgba(39, 53, 72, 0.28);
@@ -278,12 +285,12 @@ textarea {
 
 .zgs-btn-primary {
   color: #ffffff;
-  background: linear-gradient(145deg, #1f2f43, #111a26);
-  box-shadow: 0 12px 30px rgba(16, 27, 40, 0.3);
+  background: linear-gradient(148deg, #223449, #121b28);
+  box-shadow: 0 10px 24px rgba(16, 27, 40, 0.26);
 }
 
 .zgs-btn-primary:hover {
-  background: linear-gradient(145deg, #25384f, #151f2d);
+  background: linear-gradient(148deg, #273b52, #172130);
 }
 
 .zgs-auth-footnote {
@@ -1091,33 +1098,51 @@ textarea {
 @media (max-width: 780px) {
   .zgs-auth-scene {
     align-items: start;
-    padding: 16px;
-    padding-top: max(16px, env(safe-area-inset-top));
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding: 14px;
+    padding-top: max(14px, env(safe-area-inset-top));
+    padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 14px));
   }
 
   .zgs-auth-card {
     width: 100%;
-    border-radius: 20px;
-    gap: var(--zgs-space-16);
-    padding: 18px;
+    border-radius: 18px;
+    gap: 10px;
+    padding: 14px;
   }
 
   .zgs-auth-head h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .zgs-auth-tabs {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .zgs-auth-points {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .zgs-auth-point {
+    flex: 1 0 145px;
+    min-width: 145px;
+    scroll-snap-align: start;
+  }
+
+  .zgs-tab {
+    font-size: 11px;
+    padding: 8px 6px;
   }
 
   .zgs-form-row {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .zgs-link {
-    align-self: flex-start;
+    align-items: center;
+    flex-direction: row;
   }
 }
 
@@ -1291,4 +1316,3 @@ textarea {
     transition: none;
   }
 }
-

@@ -28,19 +28,19 @@
 
   auth: {
     heroTitle: "Wejście do systemu",
-    heroText: "Po zalogowaniu uruchamiasz kompaktowy shell i launcher narzędzi pracy.",
+    heroText: "Zaloguj się, utwórz konto firmy albo dołącz kodem zespołu.",
     infoCards: [
       {
         title: "Panel Ofertowy 1:1",
-        text: "Legacy moduł pozostaje bez przepisywania i bez zmiany flow."
+        text: "Sprawdzony workflow ofert pozostaje bez zmian."
       },
       {
-        title: "Launcher roboczy",
-        text: "Szybkie wejście do narzędzi bez dashboardowego balastu."
+        title: "Szybki start pracy",
+        text: "Po wejściu od razu otwierasz potrzebne moduły."
       },
       {
-        title: "Desktop + mobile",
-        text: "Wspólny rytm pracy, osobno dopracowany dla telefonu."
+        title: "Desktop i mobile",
+        text: "Ten sam rytm pracy, dopracowany pod urządzenie."
       }
     ],
     tabs: [
