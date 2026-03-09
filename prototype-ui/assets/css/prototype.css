@@ -453,6 +453,10 @@ textarea {
   display: block;
 }
 
+.zgs-view[data-view="launcher"] {
+  padding-bottom: 10px;
+}
+
 .zgs-kicker {
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -497,12 +501,13 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.95fr);
   gap: 12px;
+  padding-bottom: 18px;
 }
 
 .zgs-start-main,
 .zgs-start-side {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   align-content: start;
 }
 
@@ -518,8 +523,10 @@ textarea {
   background: linear-gradient(178deg, #ffffff, #fbfdff);
   padding: 9px 10px;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 7px;
   align-content: start;
+  min-height: 200px;
 }
 
 .zgs-start-priority-head {
@@ -553,6 +560,10 @@ textarea {
 
 .zgs-start-priority-list {
   gap: 5px;
+  max-height: 122px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .zgs-start-priority-list li {
@@ -572,6 +583,10 @@ textarea {
 
 .zgs-start-item-text {
   color: #405673;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .zgs-start-priority-cta {
@@ -590,6 +605,10 @@ textarea {
   list-style: none;
   display: grid;
   gap: 7px;
+  max-height: 230px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .zgs-start-recent-item {
@@ -734,6 +753,10 @@ textarea {
   display: grid;
   gap: 6px;
   padding-left: 0;
+  max-height: 246px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .zgs-start-timeline::before {
@@ -795,6 +818,12 @@ textarea {
   color: #5d7088;
   font-size: 13px;
   line-height: 1.3;
+}
+
+.zgs-start-resume,
+.zgs-start-inbox {
+  max-height: 290px;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .zgs-launcher-stream {
