@@ -98,6 +98,34 @@
     }
   }
 
+  function statusToneClass(status) {
+    var value = String(status || "").toLowerCase();
+    if (value.indexOf("pil") !== -1) {
+      return "is-urgent";
+    }
+    if (value.indexOf("now") !== -1) {
+      return "is-new";
+    }
+    if (value.indexOf("oczek") !== -1) {
+      return "is-pending";
+    }
+    return "is-neutral";
+  }
+
+  function renderStatusBadge(status) {
+    if (!status) {
+      return "";
+    }
+    return '<span class="zgs-status ' + statusToneClass(status) + '">' + esc(status) + "</span>";
+  }
+
+  function renderTimeBadge(time) {
+    if (!time) {
+      return "";
+    }
+    return '<span class="zgs-time">' + esc(time) + "</span>";
+  }
+
   function renderAuthForm(tab) {
     var fields = Array.isArray(tab.fields) ? tab.fields : [];
     var fieldHtml = fields
@@ -239,6 +267,12 @@
     var continueItems = Array.isArray(launcherData.continueItems) ? launcherData.continueItems : [];
     var quickActions = Array.isArray(launcherData.quickActions) ? launcherData.quickActions : [];
     var inboxEvents = Array.isArray(launcherData.inboxEvents) ? launcherData.inboxEvents : [];
+    var primaryActions = quickActions.filter(function (action) {
+      return action.priority === "primary";
+    });
+    var secondaryActions = quickActions.filter(function (action) {
+      return action.priority !== "primary";
+    });
 
     view.innerHTML =
       '<header class="zgs-launcher-head zgs-start-head">' +
@@ -266,9 +300,22 @@
                         '<span class="zgs-start-count">' + esc(block.count) + "</span>" +
                       "</div>" +
                       '<ul class="zgs-list zgs-start-priority-list">' +
-                        records.map(function (record) { return "<li>" + esc(record) + "</li>"; }).join("") +
+                        records.map(function (record) {
+                          var recordText = typeof record === "string" ? record : record.text;
+                          var recordStatus = typeof record === "string" ? "" : record.status;
+                          var recordTime = typeof record === "string" ? "" : record.time;
+                          return (
+                            "<li>" +
+                              '<span class="zgs-start-item-text">' + esc(recordText) + "</span>" +
+                              '<span class="zgs-start-item-meta">' +
+                                renderStatusBadge(recordStatus) +
+                                renderTimeBadge(recordTime) +
+                              "</span>" +
+                            "</li>"
+                          );
+                        }).join("") +
                       "</ul>" +
-                      '<button class="zgs-action-btn is-primary zgs-start-priority-cta" type="button"' + ctaAttr + ">" + esc(block.cta) + "</button>" +
+                      '<button class="zgs-action-btn zgs-start-priority-cta" type="button"' + ctaAttr + ">" + esc(block.cta) + "</button>" +
                     "</article>"
                   );
                 })
@@ -280,7 +327,22 @@
             '<ul class="zgs-start-resume-list">' +
               continueItems
                 .map(function (item) {
-                  return "<li><strong>" + esc(item.label) + "</strong><span>" + esc(item.value) + "</span></li>";
+                  var target = viewForNavKey(item.key || "launcher");
+                  var itemAttr = target === "launcher"
+                    ? ' data-open-view="launcher"'
+                    : ' data-open-module="' + esc(target) + '"';
+                  return (
+                    "<li>" +
+                      '<button class="zgs-start-recent-item" type="button"' + itemAttr + ">" +
+                        '<span class="zgs-start-recent-main"><strong>' + esc(item.label) + "</strong><span>" + esc(item.value) + "</span></span>" +
+                        '<span class="zgs-start-recent-meta">' +
+                          renderStatusBadge(item.status) +
+                          renderTimeBadge(item.time) +
+                          '<span class="zgs-start-recent-arrow" aria-hidden="true">→</span>' +
+                        "</span>" +
+                      "</button>" +
+                    "</li>"
+                  );
                 })
                 .join("") +
             "</ul>" +
@@ -289,27 +351,54 @@
         '<aside class="zgs-start-side" aria-label="Akcje i zdarzenia">' +
           '<article class="zgs-surface zgs-start-actions">' +
             "<h3>Szybkie akcje</h3>" +
-            '<div class="zgs-start-action-grid">' +
-              quickActions
+            '<div class="zgs-start-action-primary">' +
+              primaryActions
                 .map(function (action) {
                   var target = viewForNavKey(action.key);
                   var actionAttr = target === "launcher"
                     ? ' data-open-view="launcher"'
                     : ' data-open-module="' + esc(target) + '"';
-                  return '<button class="zgs-action-btn zgs-start-action-btn" type="button"' + actionAttr + ">" + esc(action.label) + "</button>";
+                  return '<button class="zgs-action-btn zgs-start-action-btn is-primary-action" type="button"' + actionAttr + ">" + esc(action.label) + "</button>";
                 })
                 .join("") +
             "</div>" +
+            '<div class="zgs-start-action-secondary">' +
+              '<p class="zgs-start-action-label">Pomocnicze</p>' +
+            '<div class="zgs-start-action-grid">' +
+              secondaryActions
+                .map(function (action) {
+                  var target = viewForNavKey(action.key);
+                  var actionAttr = target === "launcher"
+                    ? ' data-open-view="launcher"'
+                    : ' data-open-module="' + esc(target) + '"';
+                  return '<button class="zgs-action-btn zgs-start-action-btn is-secondary-action" type="button"' + actionAttr + ">" + esc(action.label) + "</button>";
+                })
+                .join("") +
+            "</div></div>" +
           "</article>" +
           '<article class="zgs-surface zgs-start-inbox">' +
             "<h3>Inbox dnia</h3>" +
-            '<div class="zgs-inbox-list">' +
+            '<ol class="zgs-start-timeline">' +
               inboxEvents
                 .map(function (item, index) {
-                  return '<div class="zgs-inbox-item' + (index === 0 ? " is-unread" : "") + '"><strong>' + esc(item.title) + "</strong><span>" + esc(item.text) + "</span></div>";
+                  return (
+                    '<li class="zgs-start-timeline-item' + (index === 0 ? " is-unread" : "") + '">' +
+                      '<span class="zgs-start-timeline-dot" aria-hidden="true"></span>' +
+                      '<div class="zgs-start-timeline-content">' +
+                        '<div class="zgs-start-timeline-head">' +
+                          "<strong>" + esc(item.title) + "</strong>" +
+                          '<span class="zgs-start-item-meta">' +
+                            renderStatusBadge(item.status) +
+                            renderTimeBadge(item.time) +
+                          "</span>" +
+                        "</div>" +
+                        "<p>" + esc(item.text) + "</p>" +
+                      "</div>" +
+                    "</li>"
+                  );
                 })
                 .join("") +
-            "</div>" +
+            "</ol>" +
           "</article>" +
         "</aside>" +
       "</div>";

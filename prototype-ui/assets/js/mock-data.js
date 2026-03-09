@@ -97,8 +97,8 @@
         title: "Oferty do decyzji",
         count: "2",
         items: [
-          "Oferta #4821 - Delta Fence czeka na akceptację rabatu.",
-          "Oferta #4818 - Nova Garden wymaga potwierdzenia terminu."
+          { text: "Oferta #4821 - rabat 8% do potwierdzenia.", status: "pilne", time: "2 min temu" },
+          { text: "Oferta #4818 - termin dostawy do decyzji.", status: "oczekuje", time: "dziś" }
         ],
         cta: "Przejdź do ofert"
       },
@@ -107,8 +107,8 @@
         title: "Nowe rozmowy / wiadomości",
         count: "4",
         items: [
-          "Wątek Oferta #4821 - 3 nowe wiadomości od opiekuna klienta.",
-          "Wiadomość od produkcji - korekta terminu realizacji."
+          { text: "Wątek #4821 - 3 nowe wiadomości od opiekuna.", status: "nowe", time: "2 min temu" },
+          { text: "Produkcja: korekta terminu realizacji.", status: "oczekuje", time: "dziś" }
         ],
         cta: "Otwórz Komunikator"
       },
@@ -117,30 +117,30 @@
         title: "Alerty / synchronizacja / błędy",
         count: "3",
         items: [
-          "Sync biblioteki: 1 konflikt SKU wymaga ręcznej decyzji.",
-          "Alert systemowy: 2 rekordy oczekują na ponowną walidację."
+          { text: "Sync biblioteki: konflikt SKU do review.", status: "pilne", time: "dziś" },
+          { text: "Alert systemowy: 2 rekordy po walidacji.", status: "nowe", time: "wczoraj" }
         ],
         cta: "Przejdź do Powiadomień"
       }
     ],
     continueItems: [
-      { label: "Ostatnia oferta", value: "#4821 - Delta Fence" },
-      { label: "Ostatnia rozmowa", value: "Wątek: Oferta #4821" },
-      { label: "Ostatnia firma / klient", value: "Nova Garden Sp. z o.o." },
-      { label: "Ostatnia akcja biblioteki", value: "Sync cennika zakończony 10 min temu" }
+      { key: "offers", label: "Ostatnia oferta", value: "#4821 - Delta Fence", status: "pilne", time: "2 min temu" },
+      { key: "chat", label: "Ostatnia rozmowa", value: "Wątek: Oferta #4821", status: "nowe", time: "dziś" },
+      { key: "company", label: "Ostatnia firma / klient", value: "Nova Garden Sp. z o.o.", status: "oczekuje", time: "dziś" },
+      { key: "library", label: "Ostatnia akcja biblioteki", value: "Sync cennika zakończony", status: "nowe", time: "wczoraj" }
     ],
     quickActions: [
-      { key: "offers", label: "Otwórz Panel Ofertowy" },
-      { key: "chat", label: "Otwórz Komunikator" },
-      { key: "inbox", label: "Otwórz Powiadomienia" },
-      { key: "company", label: "Dodaj użytkownika" },
-      { key: "library", label: "Wymuś sync biblioteki" }
+      { key: "offers", label: "Otwórz Panel Ofertowy", priority: "primary" },
+      { key: "chat", label: "Otwórz Komunikator", priority: "primary" },
+      { key: "inbox", label: "Otwórz Powiadomienia", priority: "secondary" },
+      { key: "company", label: "Dodaj użytkownika", priority: "secondary" },
+      { key: "library", label: "Wymuś sync biblioteki", priority: "secondary" }
     ],
     inboxEvents: [
-      { title: "Klient zaakceptował warunki", text: "Oferta #4809 przechodzi do finalnego PDF." },
-      { title: "Nowy wniosek o dołączenie", text: "Jan Wrona czeka na zatwierdzenie roli handlowca." },
-      { title: "Sync biblioteki zakończony", text: "6 zmian gotowych do publikacji po review." },
-      { title: "Oferta gotowa do PDF", text: "Oferta #4821 oznaczona jako gotowa do wysyłki." }
+      { title: "Klient zaakceptował warunki", text: "Oferta #4809 przechodzi do finalnego PDF.", status: "nowe", time: "2 min temu" },
+      { title: "Nowy wniosek o dołączenie", text: "Jan Wrona czeka na zatwierdzenie roli handlowca.", status: "oczekuje", time: "dziś" },
+      { title: "Sync biblioteki zakończony", text: "6 zmian gotowych do publikacji po review.", status: "nowe", time: "dziś" },
+      { title: "Oferta gotowa do PDF", text: "Oferta #4821 oznaczona jako gotowa do wysyłki.", status: "pilne", time: "wczoraj" }
     ]
   },
 
