@@ -1378,8 +1378,133 @@
       return;
     }
 
+    function threadStatusClass(status) {
+      var value = String(status || "").toLowerCase();
+      if (value.indexOf("pil") !== -1) {
+        return "is-urgent";
+      }
+      if (value.indexOf("now") !== -1 || value.indexOf("new") !== -1) {
+        return "is-new";
+      }
+      if (value.indexOf("oczek") !== -1) {
+        return "is-pending";
+      }
+      return "is-review";
+    }
+
+    function messageTypeClass(entry) {
+      var type = String((entry && entry.type) || "").toLowerCase();
+      var author = String((entry && entry.author) || "").toLowerCase();
+      if (type.indexOf("system") !== -1 || author.indexOf("system") !== -1) {
+        return "is-system";
+      }
+      if (type.indexOf("decision") !== -1 || type.indexOf("decy") !== -1) {
+        return "is-decision";
+      }
+      return "is-user";
+    }
+
+    function decisionTypeClass(type) {
+      var value = String(type || "").toLowerCase();
+      if (value.indexOf("termin") !== -1) {
+        return "is-term";
+      }
+      if (value.indexOf("system") !== -1) {
+        return "is-system";
+      }
+      return "is-decision";
+    }
+
     var activeThread = messengerData.activeThread || {};
     var contextPanel = messengerData.contextPanel || {};
+    var offerStatus = activeThread.offerStatus || "Do akceptacji";
+    var orderStatusInitial = activeThread.orderStatus || "Nieprzekazane";
+    var orderStatusAfterProduction = activeThread.orderStatusAfterProduction || "Przekazane do produkcji";
+    var threadItems = (Array.isArray(messengerData.threadList) ? messengerData.threadList : []).map(function (thread, index) {
+      if (typeof thread === "string") {
+        return {
+          title: thread,
+          text: "",
+          topic: "Wątek",
+          time: "",
+          status: "Nowe",
+          unread: 0,
+          active: index === 0
+        };
+      }
+      return {
+        title: thread.title || "Rozmowa",
+        text: thread.text || "",
+        topic: thread.topic || "Wątek",
+        time: thread.time || "",
+        status: thread.status || "Nowe",
+        unread: Number(thread.unread || 0),
+        active: !!thread.active
+      };
+    });
+
+    var messageItems = (Array.isArray(activeThread.messages) ? activeThread.messages : []).map(function (msg) {
+      if (typeof msg === "string") {
+        var parts = msg.split(":");
+        var author = parts.shift() || "Użytkownik";
+        return {
+          author: author,
+          text: parts.join(":").trim(),
+          time: "",
+          type: String(author).toLowerCase() === "system" ? "system" : "user"
+        };
+      }
+      return {
+        author: msg.author || "Użytkownik",
+        text: msg.text || "",
+        time: msg.time || "",
+        type: msg.type || "user"
+      };
+    });
+
+    var decisionItems = (Array.isArray(activeThread.decisions) ? activeThread.decisions : []).map(function (item) {
+      if (typeof item === "string") {
+        return {
+          time: "",
+          text: item,
+          type: "Decyzja"
+        };
+      }
+      return {
+        time: item.time || "",
+        text: item.text || "",
+        type: item.type || "Decyzja"
+      };
+    });
+
+    var contextRows = (Array.isArray(contextPanel.rows) ? contextPanel.rows : []).map(function (row) {
+      if (typeof row === "string") {
+        var pair = row.split(":");
+        return {
+          label: (pair.shift() || "").trim(),
+          value: pair.join(":").trim()
+        };
+      }
+      return {
+        label: row.label || "",
+        value: row.value || ""
+      };
+    });
+
+    var contextMeta = Array.isArray(contextPanel.caseMeta) ? contextPanel.caseMeta : [];
+    var contextActions = Array.isArray(contextPanel.quickActions) ? contextPanel.quickActions : [];
+    var contextTasks = (Array.isArray(contextPanel.tasks) ? contextPanel.tasks : []).map(function (task) {
+      if (typeof task === "string") {
+        return { title: "Task", text: task, status: "" };
+      }
+      return {
+        title: task.title || "Task",
+        text: task.text || "",
+        status: task.status || ""
+      };
+    });
+    var contextTaskPreview = contextTasks.slice(0, 2);
+    var hiddenContextTaskCount = Math.max(0, contextTasks.length - contextTaskPreview.length);
 
     view.innerHTML =
       '<header class="zgs-module-head">' +
@@ -1387,37 +1512,210 @@
         '<div><p class="zgs-kicker">Komunikacja</p><h2>' + esc(messengerData.title) + "</h2></div>" +
       "</header>" +
       '<div class="zgs-chat-grid">' +
-        '<article class="zgs-surface zgs-chat-pane-list"><h3>Rozmowy</h3><ul class="zgs-chat-list">' +
-          (Array.isArray(messengerData.threadList) ? messengerData.threadList : []).map(function (thread) {
-            return '<li class="' + (thread.active ? "is-active" : "") + '"><strong>' + esc(thread.title) + "</strong><span>" + esc(thread.text) + "</span></li>";
+        '<article class="zgs-surface zgs-chat-pane-list"><div class="zgs-chat-list-head"><h3>Rozmowy</h3><span class="zgs-chat-list-count">' + esc(String(threadItems.length)) + ' aktywne</span></div><ul class="zgs-chat-list">' +
+          threadItems.map(function (thread) {
+            var unreadBadge = thread.unread > 0
+              ? '<span class="zgs-chat-meta-badge is-unread">' + esc(String(thread.unread)) + " nowe</span>"
+              : "";
+            return '<li class="' + (thread.active ? "is-active" : "") + '">' +
+              '<div class="zgs-chat-item-row"><strong>' + esc(thread.title) + '</strong><span class="zgs-chat-item-time">' + esc(thread.time) + "</span></div>" +
+              '<p class="zgs-chat-item-text">' + esc(thread.text) + "</p>" +
+              '<div class="zgs-chat-item-row is-meta"><span class="zgs-chat-item-topic">' + esc(thread.topic) + '</span><div class="zgs-chat-item-badges">' +
+                '<span class="zgs-chat-meta-badge ' + esc(threadStatusClass(thread.status)) + '">' + esc(thread.status) + "</span>" +
+                unreadBadge +
+              "</div></div>" +
+            "</li>";
           }).join("") +
         "</ul></article>" +
         '<article class="zgs-surface zgs-chat-pane-thread">' +
-          '<div class="zgs-chat-header"><h3>' + esc(activeThread.title) + '</h3><span class="zgs-chip">' + esc(activeThread.badge) + "</span></div>" +
+          '<div class="zgs-chat-header"><h3>' + esc(activeThread.title) + '</h3><div class="zgs-chat-header-meta"><span class="zgs-chip">' + esc(activeThread.badge) + "</span>" + (activeThread.stage ? '<span class="zgs-chat-stage">' + esc(activeThread.stage) + "</span>" : "") + "</div></div>" +
           '<div class="zgs-chat-thread">' +
-            (Array.isArray(activeThread.messages) ? activeThread.messages : []).map(function (msg) {
-              var systemClass = msg.indexOf("System:") === 0 ? " is-system" : "";
-              var parts = msg.split(":");
-              var author = parts.shift();
-              var text = parts.join(":").trim();
-              return '<p class="zgs-bubble' + systemClass + '"><strong>' + esc(author) + ":</strong> " + esc(text) + "</p>";
+            '<ul class="zgs-chat-thread-list">' +
+            messageItems.map(function (msg) {
+              return '<li class="zgs-thread-entry ' + esc(messageTypeClass(msg)) + '">' +
+                '<div class="zgs-thread-entry-head"><strong>' + esc(msg.author) + "</strong><span>" + esc(msg.time) + "</span></div>" +
+                '<p class="zgs-thread-entry-text">' + esc(msg.text) + "</p>" +
+              "</li>";
             }).join("") +
+            "</ul>" +
           "</div>" +
-          '<div class="zgs-chat-compose"><span>' + esc(activeThread.composerPlaceholder) + '</span><div class="zgs-action-list">' +
+          '<div class="zgs-chat-compose">' +
+            '<div class="zgs-chat-compose-tools">' +
+              '<label class="zgs-chat-compose-select"><span>Typ</span><select>' +
+                (Array.isArray(activeThread.composerTypeOptions) ? activeThread.composerTypeOptions : ["Wiadomość"]).map(function (option) {
+                  return "<option>" + esc(option) + "</option>";
+                }).join("") +
+              "</select></label>" +
+              '<div class="zgs-chat-quick-tools">' +
+                (Array.isArray(activeThread.composerQuickActions) ? activeThread.composerQuickActions : []).map(function (action) {
+                  return '<button class="zgs-chat-tool-btn" type="button">' + esc(action) + "</button>";
+                }).join("") +
+              "</div>" +
+            "</div>" +
+            '<div class="zgs-chat-compose-main"><textarea class="zgs-chat-compose-input" rows="4" placeholder="Napisz wiadomość do wątku..."></textarea><div class="zgs-chat-compose-actions">' +
             (Array.isArray(activeThread.composerActions) ? activeThread.composerActions : []).map(function (a, index) {
               return '<button class="zgs-action-btn' + (index === 1 ? " is-primary" : "") + '" type="button">' + esc(a) + "</button>";
             }).join("") +
-          "</div></div>" +
-          '<div class="zgs-chat-followup"><h4>' + esc(activeThread.decisionsTitle) + '</h4><ul class="zgs-list">' +
-            (Array.isArray(activeThread.decisions) ? activeThread.decisions : []).map(function (decision) { return "<li>" + esc(decision) + "</li>"; }).join("") +
+          "</div></div></div>" +
+          '<div class="zgs-chat-followup"><h4>' + esc(activeThread.decisionsTitle) + '</h4><ul class="zgs-chat-decision-list">' +
+            decisionItems.map(function (decision) {
+              return '<li><span class="zgs-chat-decision-time">' + esc(decision.time) + '</span><p>' + esc(decision.text) + '</p><span class="zgs-chat-decision-tag ' + esc(decisionTypeClass(decision.type)) + '">' + esc(decision.type) + "</span></li>";
+            }).join("") +
           "</ul></div>" +
         "</article>" +
-        '<article class="zgs-surface zgs-chat-pane-context"><h3>' + esc(contextPanel.title) + '</h3><ul class="zgs-list">' +
-          (Array.isArray(contextPanel.rows) ? contextPanel.rows : []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
-        '</ul><div class="zgs-inbox-list">' +
-          (Array.isArray(contextPanel.tasks) ? contextPanel.tasks : []).map(function (task) { return '<div class="zgs-inbox-item"><strong>Task</strong><span>' + esc(task) + "</span></div>"; }).join("") +
-        "</div></article>" +
+        '<article class="zgs-surface zgs-chat-pane-context"><h3>' + esc(contextPanel.title) + '</h3><ul class="zgs-chat-context-list">' +
+          contextRows.map(function (row) { return '<li><span>' + esc(row.label) + "</span><strong>" + esc(row.value) + "</strong></li>"; }).join("") +
+        "</ul>" +
+        '<div class="zgs-chat-context-block zgs-chat-status-block"><h4>Statusy operacyjne</h4><ul class="zgs-chat-status-list">' +
+          '<li><span>Status oferty</span><strong class="zgs-chat-status-value is-offer" data-chat-offer-status>' + esc(offerStatus) + "</strong></li>" +
+          '<li><span>Status zamówienia</span><strong class="zgs-chat-status-value is-order" data-chat-order-status>' + esc(orderStatusInitial) + "</strong></li>" +
+        "</ul></div>" +
+        (contextMeta.length
+          ? '<div class="zgs-chat-context-block"><h4>Status sprawy</h4><ul class="zgs-chat-context-meta">' +
+              contextMeta.map(function (item) { return '<li><span>' + esc(item.label) + '</span><strong>' + esc(item.value) + "</strong></li>"; }).join("") +
+            "</ul></div>"
+          : "") +
+        (contextPanel.linkedObject
+          ? '<div class="zgs-chat-context-block"><h4>' + esc(contextPanel.linkedObject.label || "Powiązany obiekt") + '</h4><div class="zgs-chat-linked"><strong>' + esc(contextPanel.linkedObject.value || "") + '</strong><button class="zgs-chat-tool-btn" type="button">' + esc(contextPanel.linkedObject.action || "Otwórz") + "</button></div></div>"
+          : "") +
+        (contextActions.length
+          ? '<div class="zgs-chat-context-block"><h4>Szybkie działania</h4><div class="zgs-action-list zgs-chat-context-actions">' +
+              contextActions.map(function (action, index) {
+                var label = typeof action === "string" ? action : (action && action.label) || "";
+                var isProductionAction = String(label).toLowerCase().indexOf("produkc") !== -1;
+                var productionAttr = isProductionAction ? ' data-messenger-send-production="1"' : "";
+                var isPrimary = isProductionAction || index === 0;
+                return '<button class="zgs-action-btn' + (isPrimary ? " is-primary" : "") + '" type="button"' + productionAttr + ">" + esc(label) + "</button>";
+              }).join("") +
+            "</div></div>"
+          : "") +
+        '<div class="zgs-inbox-list zgs-chat-context-tasks">' +
+          contextTaskPreview.map(function (task) { return '<div class="zgs-inbox-item"><strong>' + esc(task.title) + '</strong><span>' + esc(task.text) + '</span>' + (task.status ? '<span class="zgs-chat-task-status">' + esc(task.status) + "</span>" : "") + "</div>"; }).join("") +
+        "</div>" +
+        (hiddenContextTaskCount > 0 ? '<p class="zgs-chat-task-more">+' + esc(String(hiddenContextTaskCount)) + " kolejne zadania w podglądzie sprawy</p>" : "") +
+        "</article>" +
       "</div>";
+
+    var productionButton = view.querySelector("[data-messenger-send-production]");
+    var orderStatusNode = view.querySelector("[data-chat-order-status]");
+    var messageList = view.querySelector(".zgs-chat-thread-list");
+    var decisionsList = view.querySelector(".zgs-chat-decision-list");
+    var threadBody = view.querySelector(".zgs-chat-thread");
+    var decisionsBody = view.querySelector(".zgs-chat-followup");
+    var productionApplied = false;
+
+    function initLocalScrollIndicator(container) {
+      if (!container) {
+        return;
+      }
+      var indicator = document.createElement("div");
+      indicator.className = "zgs-chat-scroll-indicator";
+      indicator.setAttribute("aria-hidden", "true");
+      indicator.innerHTML = '<span class="zgs-chat-scroll-indicator-thumb"></span>';
+      container.appendChild(indicator);
+
+      var thumb = indicator.querySelector(".zgs-chat-scroll-indicator-thumb");
+      if (!thumb) {
+        return;
+      }
+
+      function updateState() {
+        var scrollHeight = container.scrollHeight;
+        var clientHeight = container.clientHeight;
+        var hasOverflow = scrollHeight > clientHeight + 3;
+        indicator.classList.toggle("is-visible", hasOverflow);
+
+        if (!hasOverflow) {
+          thumb.style.transform = "translateY(0px)";
+          thumb.style.height = "0px";
+          return;
+        }
+
+        var trackHeight = Math.max(0, indicator.clientHeight);
+        var thumbHeight = Math.max(22, Math.round((clientHeight / scrollHeight) * trackHeight));
+        var maxScroll = Math.max(1, scrollHeight - clientHeight);
+        var maxThumbTravel = Math.max(0, trackHeight - thumbHeight);
+        var ratio = Math.min(1, container.scrollTop / maxScroll);
+        thumb.style.height = thumbHeight + "px";
+        thumb.style.transform = "translateY(" + Math.round(maxThumbTravel * ratio) + "px)";
+      }
+
+      container.addEventListener("scroll", updateState, { passive: true });
+      window.addEventListener("resize", updateState);
+      if (window.ResizeObserver) {
+        var observer = new ResizeObserver(updateState);
+        observer.observe(container);
+      }
+      updateState();
+    }
+
+    function applyProductionEffect() {
+      if (productionApplied) {
+        return;
+      }
+      productionApplied = true;
+
+      if (orderStatusNode) {
+        orderStatusNode.textContent = orderStatusAfterProduction;
+        orderStatusNode.classList.add("is-updated");
+      }
+
+      if (messageList) {
+        var systemMessage = document.createElement("li");
+        systemMessage.className = "zgs-thread-entry is-system is-production-event";
+        systemMessage.innerHTML =
+          '<div class="zgs-thread-entry-head"><strong>System</strong><span>' + esc(activeThread.productionDecisionTime || "09:18") + '</span></div>' +
+          '<p class="zgs-thread-entry-text">' + esc(activeThread.productionSystemMessage || "Wątek został przekazany do produkcji.") + "</p>";
+        messageList.insertBefore(systemMessage, messageList.firstChild);
+      }
+
+      if (decisionsList) {
+        var decisionEntry = document.createElement("li");
+        decisionEntry.innerHTML =
+          '<span class="zgs-chat-decision-time">' + esc(activeThread.productionDecisionTime || "09:18") + '</span>' +
+          '<p>' + esc(activeThread.productionDecision || "Przekazano zamówienie do produkcji.") + '</p>' +
+          '<span class="zgs-chat-decision-tag is-decision">Produkcja</span>';
+        decisionsList.insertBefore(decisionEntry, decisionsList.firstChild);
+      }
+
+      if (productionButton) {
+        productionButton.textContent = "Przekazano do produkcji";
+        productionButton.disabled = true;
+      }
+
+      if (threadBody) {
+        threadBody.scrollTop = 0;
+      }
+
+      refreshShellScrollIndicator();
+    }
+
+    if (productionButton) {
+      productionButton.addEventListener("click", applyProductionEffect);
+    }
+
+    var messengerParams = new URLSearchParams(window.location.search);
+    if (messengerParams.get("chatAction") === "production") {
+      applyProductionEffect();
+    }
+
+    initLocalScrollIndicator(threadBody);
+    initLocalScrollIndicator(decisionsBody);
+
+    var shellContent = document.querySelector(".zgs-shell-content");
+    var messengerFocus = messengerParams.get("messengerFocus");
+    if (shellContent && messengerFocus) {
+      requestAnimationFrame(function () {
+        if (messengerFocus === "middle") {
+          shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * 0.5));
+        } else if (messengerFocus === "bottom") {
+          shellContent.scrollTop = shellContent.scrollHeight;
+        } else {
+          shellContent.scrollTop = 0;
+        }
+        refreshShellScrollIndicator();
+      });
+    }
   }
 
   function renderNotifications() {

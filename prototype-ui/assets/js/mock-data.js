@@ -508,40 +508,127 @@
   messenger: {
     title: "Komunikator zespołowy",
     threadList: [
-      { title: "Oferta #4821", text: "Nowy komentarz od opiekuna klienta.", active: true },
-      { title: "Zespół handlowy", text: "Update cennika na poniedziałek." },
-      { title: "Produkcja", text: "Termin dostawy przesunięty o 1 dzień." },
-      { title: "Serwis terenowy", text: "Pytanie o konfigurację słupków." }
+      {
+        title: "Oferta #4821",
+        text: "Nowy komentarz od opiekuna klienta.",
+        topic: "Delta Fence",
+        time: "2 min temu",
+        status: "Pilne",
+        unread: 2,
+        active: true
+      },
+      {
+        title: "Zespół handlowy",
+        text: "Update cennika na poniedziałek.",
+        topic: "Kanał zespołowy",
+        time: "Dzisiaj 09:14",
+        status: "Nowe",
+        unread: 1
+      },
+      {
+        title: "Produkcja",
+        text: "Termin dostawy przesunięty o 1 dzień.",
+        topic: "Operacyjne",
+        time: "Wczoraj 16:21",
+        status: "Oczekuje"
+      },
+      {
+        title: "Serwis terenowy",
+        text: "Pytanie o konfigurację słupków.",
+        topic: "Techniczne",
+        time: "Wczoraj 13:42",
+        status: "Do review"
+      }
     ],
     activeThread: {
       title: "Oferta #4821 - Delta Fence",
       badge: "Status: Wysyłka PDF",
+      stage: "Etap: finalny przegląd warunków",
+      offerStatus: "Do akceptacji",
+      orderStatus: "Nieprzekazane",
+      orderStatusAfterProduction: "Przekazane do produkcji",
+      productionSystemMessage: "Wątek #4821 został przekazany do produkcji.",
+      productionDecision: "Przekazano zamówienie do produkcji.",
+      productionDecisionTime: "09:18",
       messages: [
-        "Anna: Proszę potwierdzić rabat dla klienta Delta Fence.",
-        "Michał: Potwierdzone - 8%, oferta gotowa do wysyłki.",
-        "System: PDF oferty #4821 został wygenerowany.",
-        "Anna: Wysyłam klientowi i oznaczam task jako zamknięty."
+        {
+          author: "Anna",
+          text: "Proszę potwierdzić rabat dla klienta Delta Fence.",
+          time: "09:08",
+          type: "user"
+        },
+        {
+          author: "Michał",
+          text: "Potwierdzone - 8%, oferta gotowa do wysyłki.",
+          time: "09:10",
+          type: "decision"
+        },
+        {
+          author: "System",
+          text: "PDF oferty #4821 został wygenerowany.",
+          time: "09:11",
+          type: "system"
+        },
+        {
+          author: "Anna",
+          text: "Wysyłam klientowi i oznaczam task jako zamknięty.",
+          time: "09:14",
+          type: "user"
+        }
       ],
       composerPlaceholder: "Pole szybkiej odpowiedzi",
-      composerActions: ["Dodaj załącznik", "Wyślij"],
+      composerTypeOptions: ["Wiadomość", "Notatka wewnętrzna", "Decyzja"],
+      composerQuickActions: ["Priorytet", "@Wzmianka"],
+      composerActions: ["Dodaj załącznik", "Wyślij wiadomość"],
       decisionsTitle: "Ostatnie decyzje",
       decisions: [
-        "Rabat 8% zaakceptowany przez Sales Admin.",
-        "PDF wygenerowany i przekazany do klienta.",
-        "Termin follow-up: dzisiaj 16:30."
+        {
+          time: "09:10",
+          text: "Rabat 8% zaakceptowany przez Sales Admin.",
+          type: "Decyzja"
+        },
+        {
+          time: "09:11",
+          text: "PDF wygenerowany i przekazany do klienta.",
+          type: "System"
+        },
+        {
+          time: "Dzisiaj 16:30",
+          text: "Termin follow-up dla opiekuna klienta.",
+          type: "Termin"
+        }
       ]
     },
     contextPanel: {
       title: "Kontekst sprawy",
       rows: [
-        "Klient: Delta Fence",
-        "Opiekun: Anna Kowalska",
-        "Wartość oferty: 42 180 PLN",
-        "Termin decyzji: dzisiaj 16:30"
+        { label: "Klient", value: "Delta Fence" },
+        { label: "Opiekun", value: "Anna Kowalska" },
+        { label: "Wartość oferty", value: "42 180 PLN" }
       ],
+      caseMeta: [
+        { label: "Status", value: "Oczekuje na potwierdzenie" },
+        { label: "Etap", value: "Wysyłka PDF" },
+        { label: "Deadline", value: "Dzisiaj 16:30" },
+        { label: "Przypisanie", value: "Anna Kowalska" }
+      ],
+      quickActions: ["Wyślij do produkcji", "Otwórz ofertę", "Przypisz", "Ustaw follow-up"],
+      linkedObject: {
+        label: "Powiązany obiekt",
+        value: "Oferta #4821",
+        action: "Przejdź do oferty"
+      },
       tasks: [
-        "Potwierdź warunki płatności.",
-        "Przekaż status do produkcji."
+        {
+          title: "Task",
+          text: "Potwierdź warunki płatności.",
+          status: "Dziś"
+        },
+        {
+          title: "Task",
+          text: "Przekaż status do produkcji.",
+          status: "Po decyzji"
+        }
       ]
     }
   },
