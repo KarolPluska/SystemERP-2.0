@@ -205,17 +205,57 @@
       rows: [
         "Nazwa: Zegger Partner Sp. z o.o.",
         "NIP: 000-000-00-00",
-        "Adres: ul. Przemysłowa 12, Warszawa",
-        "Status umowy: Aktywna"
+        "Status umowy: Aktywna",
+        "Kod dołączenia: ZEGGER-B2B-21A7"
       ],
-      actions: ["Edytuj dane firmy", "Regeneruj kod dołączenia"]
+      adminDetails: [
+        { label: "Osoba kontaktowa główna", value: "Anna Kowalska" },
+        { label: "Telefon", value: "+48 601 224 889" },
+        { label: "E-mail", value: "anna.kowalska@zegger-partner.pl" },
+        { label: "Adres główny", value: "Siedziba - Warszawa" }
+      ],
+      locations: [
+        {
+          type: "Siedziba",
+          address: "ul. Przemysłowa 12, 02-220 Warszawa",
+          note: "Biuro zarządu i administracja",
+          isPrimary: true,
+          actions: ["Edytuj", "Ustaw jako główny", "Archiwizuj"]
+        },
+        {
+          type: "Oddział handlowy",
+          address: "ul. Handlowa 7, 61-888 Poznań",
+          note: "Obsługa klientów regionu zachodniego",
+          isPrimary: false,
+          actions: ["Edytuj", "Ustaw jako główny", "Archiwizuj"]
+        },
+        {
+          type: "Magazyn",
+          address: "ul. Składowa 4, 05-800 Pruszków",
+          note: "Wydania i kompletacja zamówień",
+          isPrimary: false,
+          actions: ["Edytuj", "Ustaw jako główny", "Archiwizuj"]
+        },
+        {
+          type: "Produkcja",
+          address: "ul. Fabryczna 31, 44-100 Gliwice",
+          note: "Linia powłok i cięcie profili",
+          isPrimary: false,
+          actions: ["Edytuj", "Ustaw jako główny", "Archiwizuj"]
+        }
+      ],
+      actions: ["Edytuj dane firmy", "Dodaj adres", "Regeneruj kod dołączenia"]
     },
     relationsCard: {
       title: "Role i relacje",
-      rows: [
-        "Model: Producent -> Partner -> Handlowiec",
-        "Rola aktualna: Administrator firmy",
-        "Powiązane firmy: Delta Fence, Nova Garden"
+      relationModel: "Producent -> Partner -> Handlowiec",
+      currentRole: "Administrator firmy",
+      relationStatus: "Aktywna współpraca B2B (2 relacje oczekujące)",
+      linkedCompanies: ["Delta Fence", "Nova Garden", "BramaTech"],
+      relationRecords: [
+        { company: "Delta Fence", type: "Partner handlowy", owner: "Anna Kowalska", status: "Aktywna", action: "Zobacz" },
+        { company: "Nova Garden", type: "Relacja dystrybucyjna", owner: "Michał Lis", status: "Oczekuje review", action: "Zobacz" },
+        { company: "BramaTech", type: "Powiązanie serwisowe", owner: "Karolina Nowak", status: "Weryfikacja", action: "Zobacz" }
       ],
       actions: ["Dodaj relację A->B", "Zaproś użytkownika"]
     },
@@ -223,23 +263,106 @@
       title: "Zespół i dostępy",
       columns: ["Imię i nazwisko", "Rola", "Status", "Zakres", "Ostatnia aktywność", "Akcje"],
       rows: [
-        ["Anna Kowalska", "Sales Admin", "Aktywny", "Pełny panel ofert", "Dzisiaj 09:14", "Edytuj / Zawieś"],
-        ["Michał Lis", "Handlowiec", "Aktywny", "Oferty i komunikator", "Dzisiaj 08:41", "Edytuj / Uprawnienia"],
-        ["Karolina Nowak", "Handlowiec", "Oczekuje", "Weryfikacja konta", "Wczoraj 15:20", "Zatwierdź / Odrzuć"]
+        {
+          name: "Anna Kowalska",
+          role: "Sales Admin",
+          status: "Aktywny",
+          scope: "Pełny panel ofert",
+          lastActivity: "Dzisiaj 09:14",
+          actions: ["Edytuj", "Uprawnienia", "Zawieś"]
+        },
+        {
+          name: "Michał Lis",
+          role: "Handlowiec",
+          status: "Aktywny",
+          scope: "Oferty i komunikator",
+          lastActivity: "Dzisiaj 08:41",
+          actions: ["Edytuj", "Uprawnienia", "Zawieś"]
+        },
+        {
+          name: "Karolina Nowak",
+          role: "Handlowiec",
+          status: "Oczekuje",
+          scope: "Weryfikacja konta",
+          lastActivity: "Wczoraj 15:20",
+          actions: ["Akceptuj", "Odrzuć"]
+        },
+        {
+          name: "Jan Wrona",
+          role: "Handlowiec regionalny",
+          status: "Nowy",
+          scope: "Leady i oferty region północ",
+          lastActivity: "Dzisiaj 10:22",
+          actions: ["Akceptuj", "Odrzuć"]
+        },
+        {
+          name: "Magda Zielińska",
+          role: "Operator katalogu",
+          status: "Weryfikacja",
+          scope: "Biblioteka produktów",
+          lastActivity: "Dzisiaj 08:03",
+          actions: ["Edytuj", "Uprawnienia"]
+        },
+        {
+          name: "Piotr Lewandowski",
+          role: "Analityk sprzedaży",
+          status: "Zawieszony",
+          scope: "Raporty i podgląd ofert",
+          lastActivity: "Wczoraj 12:47",
+          actions: ["Edytuj", "Uprawnienia"]
+        }
       ]
     },
     actionQueue: {
       title: "Kolejka akcji",
       items: [
-        "Zaproś nowego handlowca - przygotuj rolę i ograniczenia katalogu.",
-        "Potwierdź relację B2B - Delta Fence czeka na dostęp do biblioteki."
+        {
+          title: "Zaproś nowego handlowca",
+          text: "Przygotuj rolę regionalną i zakres katalogu dla Jan Wrona.",
+          status: "Pilne",
+          badge: "Pilne",
+          action: "Otwórz"
+        },
+        {
+          title: "Potwierdź relację B2B",
+          text: "Delta Fence czeka na dostęp do biblioteki i panelu ofert.",
+          status: "Oczekuje",
+          badge: "Dziś",
+          action: "Przejdź"
+        },
+        {
+          title: "Zweryfikuj uprawnienia operatora",
+          text: "Magda Zielińska wymaga akceptu dostępu do importu CSV/XLSX.",
+          status: "Nowe",
+          badge: "Review",
+          action: "Sprawdź"
+        }
       ]
     },
     joinRequests: {
       title: "Wnioski o dołączenie",
       items: [
-        "Jan Wrona - prośba o dołączenie jako handlowiec regionalny.",
-        "Magda Zielińska - prośba o rolę operatora katalogu."
+        {
+          subject: "Jan Wrona",
+          text: "Wniosek o dołączenie jako handlowiec regionalny (woj. pomorskie).",
+          type: "Użytkownik",
+          status: "Oczekuje",
+          actions: ["Zobacz", "Akceptuj", "Odrzuć"]
+        },
+        {
+          subject: "Magda Zielińska",
+          text: "Wniosek o rolę operatora katalogu i dostęp do synchronizacji.",
+          type: "Użytkownik",
+          status: "Nowe",
+          actions: ["Zobacz", "Akceptuj", "Odrzuć"]
+        },
+        {
+          subject: "BramaTech Sp. z o.o.",
+          text: "Wniosek o powiązanie firmowe i dostęp do relacji A->B.",
+          type: "Firma",
+          status: "Weryfikacja",
+          actions: ["Zobacz", "Akceptuj", "Odrzuć"]
+        }
       ]
     }
   },

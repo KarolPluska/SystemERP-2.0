@@ -540,10 +540,130 @@
     }
 
     var stats = Array.isArray(companyData.stats) ? companyData.stats : [];
+    var companyCard = companyData.companyCard || {};
+    var relationsCard = companyData.relationsCard || {};
     var teamColumns = (companyData.teamTable && companyData.teamTable.columns) || [];
     var teamRows = (companyData.teamTable && companyData.teamTable.rows) || [];
     var queueItems = (companyData.actionQueue && companyData.actionQueue.items) || [];
     var joinItems = (companyData.joinRequests && companyData.joinRequests.items) || [];
+    var companyRows = Array.isArray(companyCard.rows) ? companyCard.rows : [];
+    var companyAdminDetails = Array.isArray(companyCard.adminDetails) ? companyCard.adminDetails : [];
+    var companyLocations = Array.isArray(companyCard.locations) ? companyCard.locations : [];
+    var relationRows = Array.isArray(relationsCard.rows) ? relationsCard.rows : [];
+    var relatedCompanies = Array.isArray(relationsCard.linkedCompanies) ? relationsCard.linkedCompanies : [];
+    var relationRecords = Array.isArray(relationsCard.relationRecords) ? relationsCard.relationRecords : [];
+
+    function companyStatusToneClass(status) {
+      var value = String(status || "").toLowerCase();
+      if (value.indexOf("pil") !== -1) {
+        return "is-urgent";
+      }
+      if (value.indexOf("now") !== -1) {
+        return "is-new";
+      }
+      if (value.indexOf("oczek") !== -1 || value.indexOf("weryf") !== -1) {
+        return "is-pending";
+      }
+      if (value.indexOf("akt") !== -1) {
+        return "is-active";
+      }
+      if (value.indexOf("zawiesz") !== -1) {
+        return "is-muted";
+      }
+      return "is-neutral";
+    }
+
+    function renderCompanyBadge(status) {
+      if (!status) {
+        return "";
+      }
+      return '<span class="zgs-company-badge ' + companyStatusToneClass(status) + '">' + esc(status) + "</span>";
+    }
+
+    function companyStatusFilterKey(status) {
+      var value = String(status || "").toLowerCase();
+      if (value.indexOf("zawiesz") !== -1) {
+        return "suspended";
+      }
+      if (value.indexOf("oczek") !== -1 || value.indexOf("weryf") !== -1 || value.indexOf("now") !== -1) {
+        return "pending";
+      }
+      if (value.indexOf("akt") !== -1) {
+        return "active";
+      }
+      return "other";
+    }
+
+    function requiresDecision(status) {
+      return companyStatusFilterKey(status) === "pending";
+    }
+
+    function renderInlineActions(actions) {
+      var list = Array.isArray(actions) ? actions : [];
+      return (
+        '<div class="zgs-company-inline-actions">' +
+          list.map(function (action) {
+            return '<button class="zgs-company-inline-action" type="button">' + esc(action) + "</button>";
+          }).join("") +
+        "</div>"
+      );
+    }
+
+    function renderTeamActions(actions) {
+      var list = Array.isArray(actions) ? actions : [];
+      return (
+        '<div class="zgs-company-table-actions">' +
+          list.map(function (action) {
+            return '<button class="zgs-company-table-action" type="button">' + esc(action) + "</button>";
+          }).join("") +
+        "</div>"
+      );
+    }
+
+    function renderDecisionActions(actions) {
+      var list = Array.isArray(actions) ? actions : [];
+      return (
+        '<div class="zgs-company-decision-actions">' +
+          list.map(function (action) {
+            var value = String(action || "").toLowerCase();
+            var actionClass = "is-view";
+            if (value.indexOf("akcept") !== -1) {
+              actionClass = "is-accept";
+            } else if (value.indexOf("odrzu") !== -1) {
+              actionClass = "is-reject";
+            }
+            return '<button class="zgs-company-decision-action ' + actionClass + '" type="button">' + esc(action) + "</button>";
+          }).join("") +
+        "</div>"
+      );
+    }
+
+    function parseTeamRow(row) {
+      var parsed = Array.isArray(row)
+        ? {
+            name: row[0],
+            role: row[1],
+            status: row[2],
+            scope: row[3],
+            lastActivity: row[4],
+            actions: row[5] ? String(row[5]).split("/").map(function (part) { return part.trim(); }) : []
+          }
+        : (row || {});
+
+      parsed.statusKey = companyStatusFilterKey(parsed.status);
+      parsed.keywords = String((parsed.name || "") + " " + (parsed.role || "") + " " + (parsed.scope || "")).toLowerCase();
+      return parsed;
+    }
+
+    var normalizedTeamRows = teamRows.map(parseTeamRow);
+    var waitingUsersCount = normalizedTeamRows.filter(function (row) { return row.statusKey === "pending"; }).length;
+    var waitingJoinCount = joinItems.filter(function (item) {
+      return requiresDecision(item && item.status);
+    }).length;
+    var waitingRelationCount = relationRecords.filter(function (record) {
+      return requiresDecision(record && record.status);
+    }).length;
+    var actionTotal = waitingUsersCount + waitingJoinCount + waitingRelationCount + queueItems.length;
 
     view.innerHTML =
       '<header class="zgs-module-head">' +
@@ -556,39 +676,232 @@
         }).join("") +
       "</div>" +
       '<div class="zgs-company-grid">' +
-        '<article class="zgs-surface">' +
-          "<h3>" + esc(companyData.companyCard && companyData.companyCard.title) + "</h3>" +
-          '<ul class="zgs-list">' +
-            ((companyData.companyCard && companyData.companyCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-card">' +
+          "<h3>" + esc(companyCard.title) + "</h3>" +
+          '<ul class="zgs-list zgs-company-summary-list">' +
+            companyRows.map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
           "</ul>" +
+          (companyAdminDetails.length
+            ? '<ul class="zgs-company-admin-list">' +
+                companyAdminDetails.map(function (detail) {
+                  return "<li><span>" + esc(detail.label) + "</span><strong>" + esc(detail.value) + "</strong></li>";
+                }).join("") +
+              "</ul>"
+            : "") +
+          '<section class="zgs-company-locations">' +
+            '<p class="zgs-company-subtitle">Adresy / lokalizacje <span class="zgs-company-subcount">- ' + esc(String(companyLocations.length)) + "</span></p>" +
+            '<ul class="zgs-company-location-list">' +
+              companyLocations.map(function (location) {
+                var locationActions = Array.isArray(location.actions) ? location.actions : [];
+                return (
+                  '<li class="zgs-company-location-item">' +
+                    '<div class="zgs-company-location-head">' +
+                      '<span class="zgs-company-location-meta">' +
+                        '<span class="zgs-company-location-type">' + esc(location.type) + "</span>" +
+                        (location.isPrimary ? '<span class="zgs-company-location-primary">Główny</span>' : "") +
+                      "</span>" +
+                      '<span class="zgs-company-location-note">' + esc(location.note) + "</span>" +
+                    "</div>" +
+                    '<p class="zgs-company-location-address">' + esc(location.address) + "</p>" +
+                    (locationActions.length
+                      ? '<div class="zgs-company-location-actions">' +
+                          locationActions.map(function (action) {
+                            var isPrimaryAction = action === "Ustaw jako główny" && location.isPrimary;
+                            return '<button class="zgs-company-location-action" type="button"' + (isPrimaryAction ? ' disabled aria-disabled="true"' : "") + ">" + esc(action) + "</button>";
+                          }).join("") +
+                        "</div>"
+                      : "") +
+                  "</li>"
+                );
+              }).join("") +
+            "</ul>" +
+          "</section>" +
           '<div class="zgs-action-list">' +
-            ((companyData.companyCard && companyData.companyCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
+            (Array.isArray(companyCard.actions) ? companyCard.actions : []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
           "</div>" +
         "</article>" +
-        '<article class="zgs-surface">' +
-          "<h3>" + esc(companyData.relationsCard && companyData.relationsCard.title) + "</h3>" +
-          '<ul class="zgs-list">' +
-            ((companyData.relationsCard && companyData.relationsCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-relations">' +
+          "<h3>" + esc(relationsCard.title) + "</h3>" +
+          '<ul class="zgs-list zgs-company-relation-list">' +
+            (relationsCard.relationModel ? '<li><span>Model relacji</span><strong>' + esc(relationsCard.relationModel) + "</strong></li>" : "") +
+            (relationsCard.currentRole ? '<li><span>Rola aktualna</span><strong>' + esc(relationsCard.currentRole) + "</strong></li>" : "") +
+            (relationsCard.relationStatus ? '<li><span>Status relacji</span><strong>' + esc(relationsCard.relationStatus) + "</strong></li>" : "") +
+            relationRows.map(function (row) {
+              return "<li><strong>" + esc(row) + "</strong></li>";
+            }).join("") +
+            (relatedCompanies.length
+              ? '<li><span>Powiązane firmy</span><div class="zgs-company-chip-list">' +
+                relatedCompanies.map(function (company) {
+                  return '<span class="zgs-company-chip">' + esc(company) + "</span>";
+                }).join("") +
+                "</div></li>"
+              : "") +
           "</ul>" +
+          (relationRecords.length
+            ? '<ul class="zgs-company-relation-records">' +
+                relationRecords.map(function (record) {
+                  return (
+                    '<li class="zgs-company-relation-record">' +
+                      '<div class="zgs-company-relation-main">' +
+                        '<strong>' + esc(record.company) + "</strong>" +
+                        '<span>' + esc(record.type) + "</span>" +
+                        (record.owner ? '<span class="zgs-company-relation-context">Opiekun: ' + esc(record.owner) + "</span>" : "") +
+                      "</div>" +
+                      '<div class="zgs-company-relation-side">' +
+                        (record.status ? '<span class="zgs-company-relation-status">' + esc(record.status) + "</span>" : "") +
+                        '<button class="zgs-company-relation-action" type="button">' + esc(record.action || "Zobacz") + "</button>" +
+                      "</div>" +
+                    "</li>"
+                  );
+                }).join("") +
+              "</ul>"
+            : "") +
           '<div class="zgs-action-list">' +
-            ((companyData.relationsCard && companyData.relationsCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
+            (Array.isArray(relationsCard.actions) ? relationsCard.actions : []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
           "</div>" +
         "</article>" +
-        '<article class="zgs-surface zgs-span-2">' +
-          "<h3>" + esc(companyData.teamTable && companyData.teamTable.title) + "</h3>" +
-          '<div class="zgs-table-wrap"><table class="zgs-table" aria-label="Lista użytkowników"><thead><tr>' +
+        '<article class="zgs-surface zgs-span-2 zgs-company-team">' +
+          '<div class="zgs-company-team-head">' +
+            "<h3>" + esc(companyData.teamTable && companyData.teamTable.title) + "</h3>" +
+            '<div class="zgs-company-team-tools">' +
+              '<label class="zgs-company-search-wrap" for="zgs-company-user-search">' +
+                '<span class="zgs-company-search-label">Szukaj użytkowników</span>' +
+                '<input id="zgs-company-user-search" class="zgs-company-search-input" type="search" placeholder="Imię, nazwisko, rola lub zakres" data-company-user-search>' +
+              "</label>" +
+              '<div class="zgs-company-filter-bar" aria-label="Filtr statusu">' +
+                '<button class="zgs-company-filter-btn is-active" type="button" data-company-status-filter="all" aria-pressed="true">Wszyscy</button>' +
+                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="active" aria-pressed="false">Aktywni</button>' +
+                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="pending" aria-pressed="false">Oczekujący</button>' +
+                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="suspended" aria-pressed="false">Zawieszeni</button>' +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+          '<div class="zgs-company-action-hint">' +
+            '<p class="zgs-company-action-hint-title">Wymaga działania administratora: ' + esc(String(actionTotal)) + "</p>" +
+            '<div class="zgs-company-action-hint-metrics">' +
+              '<span>Użytkownicy do decyzji: ' + esc(String(waitingUsersCount)) + "</span>" +
+              '<span>Wnioski o dołączenie: ' + esc(String(waitingJoinCount)) + "</span>" +
+              '<span>Relacje do review: ' + esc(String(waitingRelationCount)) + "</span>" +
+            "</div>" +
+          "</div>" +
+          '<div class="zgs-table-wrap zgs-company-table-wrap"><table class="zgs-table" aria-label="Lista użytkowników"><thead><tr>' +
             teamColumns.map(function (col) { return "<th>" + esc(col) + "</th>"; }).join("") +
           "</tr></thead><tbody>" +
-            teamRows.map(function (row) { return "<tr>" + row.map(function (cell) { return "<td>" + esc(cell) + "</td>"; }).join("") + "</tr>"; }).join("") +
+            normalizedTeamRows.map(function (parsed) {
+              return (
+                '<tr data-company-user-row="1" data-company-status="' + esc(parsed.statusKey) + '" data-company-keywords="' + esc(parsed.keywords) + '">' +
+                  "<td>" + esc(parsed.name) + "</td>" +
+                  "<td>" + esc(parsed.role) + "</td>" +
+                  "<td>" + renderCompanyBadge(parsed.status) + "</td>" +
+                  "<td>" + esc(parsed.scope) + "</td>" +
+                  "<td>" + esc(parsed.lastActivity) + "</td>" +
+                  "<td>" + renderTeamActions(parsed.actions) + "</td>" +
+                "</tr>"
+              );
+            }).join("") +
+            '<tr class="zgs-company-empty-row" data-company-empty-row hidden><td colspan="' + esc(String(teamColumns.length || 6)) + '">Brak użytkowników dla wybranego filtra.</td></tr>' +
           "</tbody></table></div>" +
         "</article>" +
-        '<article class="zgs-surface"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><ul class="zgs-list">' +
-          queueItems.map(function (item) { return "<li>" + esc(item) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-queue"><div class="zgs-company-section-head"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(queueItems.length)) + ' otwarte</span></div><ul class="zgs-company-task-list">' +
+          queueItems.map(function (item) {
+            var task = typeof item === "string"
+              ? { title: item, text: "", status: "" }
+              : item;
+            return (
+              '<li class="zgs-company-task-item">' +
+                '<div class="zgs-company-task-main">' +
+                  '<strong>' + esc(task.title) + "</strong>" +
+                  (task.text ? "<p>" + esc(task.text) + "</p>" : "") +
+                "</div>" +
+                '<div class="zgs-company-task-meta">' +
+                  renderCompanyBadge(task.badge || task.status) +
+                  (task.action ? '<button class="zgs-company-inline-action zgs-company-task-action" type="button">' + esc(task.action) + "</button>" : "") +
+                "</div>" +
+              "</li>"
+            );
+          }).join("") +
         "</ul></article>" +
-        '<article class="zgs-surface"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><ul class="zgs-list">' +
-          joinItems.map(function (item) { return "<li>" + esc(item) + "</li>"; }).join("") +
+        '<article class="zgs-surface zgs-company-join"><div class="zgs-company-section-head"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(joinItems.length)) + ' decyzje</span></div><ul class="zgs-company-join-list">' +
+          joinItems.map(function (item) {
+            var request = typeof item === "string"
+              ? { subject: item, text: "", status: "", actions: [] }
+              : item;
+            return (
+              '<li class="zgs-company-join-item">' +
+                '<div class="zgs-company-join-main">' +
+                  '<strong>' + esc(request.subject) + "</strong>" +
+                  (request.text ? "<p>" + esc(request.text) + "</p>" : "") +
+                  (request.type ? '<span class="zgs-company-request-type">' + esc(request.type) + "</span>" : "") +
+                "</div>" +
+                '<div class="zgs-company-join-meta">' +
+                  renderCompanyBadge(request.status) +
+                  renderDecisionActions(request.actions) +
+                "</div>" +
+              "</li>"
+            );
+          }).join("") +
         "</ul></article>" +
       "</div>";
+
+    initCompanyUsersTools(view);
+  }
+
+  function initCompanyUsersTools(scope) {
+    var host = scope || document;
+    var teamSection = host.querySelector(".zgs-company-team");
+    if (!teamSection) {
+      return;
+    }
+
+    var searchInput = teamSection.querySelector("[data-company-user-search]");
+    var filterButtons = Array.prototype.slice.call(teamSection.querySelectorAll("[data-company-status-filter]"));
+    var rows = Array.prototype.slice.call(teamSection.querySelectorAll("[data-company-user-row]"));
+    var emptyRow = teamSection.querySelector("[data-company-empty-row]");
+    if (!rows.length) {
+      return;
+    }
+
+    var activeFilter = "all";
+
+    function applyFilters() {
+      var query = String((searchInput && searchInput.value) || "").trim().toLowerCase();
+      var visible = 0;
+
+      rows.forEach(function (row) {
+        var status = row.getAttribute("data-company-status") || "other";
+        var keywords = String(row.getAttribute("data-company-keywords") || "").toLowerCase();
+        var statusMatch = activeFilter === "all" || status === activeFilter;
+        var queryMatch = !query || keywords.indexOf(query) !== -1;
+        var show = statusMatch && queryMatch;
+
+        row.style.display = show ? "" : "none";
+        if (show) {
+          visible += 1;
+        }
+      });
+
+      if (emptyRow) {
+        emptyRow.hidden = visible !== 0;
+      }
+    }
+
+    filterButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        activeFilter = button.getAttribute("data-company-status-filter") || "all";
+        filterButtons.forEach(function (item) {
+          var active = item === button;
+          item.classList.toggle("is-active", active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        applyFilters();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener("input", applyFilters);
+    }
+
+    applyFilters();
   }
 
   function renderLibrary() {
