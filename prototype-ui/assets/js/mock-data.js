@@ -261,13 +261,14 @@
     },
     teamTable: {
       title: "Zespół i dostępy",
-      columns: ["Imię i nazwisko", "Rola", "Status", "Zakres", "Ostatnia aktywność", "Akcje"],
+      columns: ["Imię i nazwisko", "Rola", "Status", "Zakres dostępu", "Przypisana lokalizacja", "Ostatnia aktywność", "Akcje"],
       rows: [
         {
           name: "Anna Kowalska",
           role: "Sales Admin",
           status: "Aktywny",
           scope: "Pełny panel ofert",
+          location: "Siedziba - Warszawa",
           lastActivity: "Dzisiaj 09:14",
           actions: ["Edytuj", "Uprawnienia", "Zawieś"]
         },
@@ -276,6 +277,7 @@
           role: "Handlowiec",
           status: "Aktywny",
           scope: "Oferty i komunikator",
+          location: "Oddział handlowy - Poznań",
           lastActivity: "Dzisiaj 08:41",
           actions: ["Edytuj", "Uprawnienia", "Zawieś"]
         },
@@ -284,6 +286,7 @@
           role: "Handlowiec",
           status: "Oczekuje",
           scope: "Weryfikacja konta",
+          location: "Oddział handlowy - Poznań",
           lastActivity: "Wczoraj 15:20",
           actions: ["Akceptuj", "Odrzuć"]
         },
@@ -292,6 +295,7 @@
           role: "Handlowiec regionalny",
           status: "Nowy",
           scope: "Leady i oferty region północ",
+          location: "Magazyn - Pruszków",
           lastActivity: "Dzisiaj 10:22",
           actions: ["Akceptuj", "Odrzuć"]
         },
@@ -300,6 +304,7 @@
           role: "Operator katalogu",
           status: "Weryfikacja",
           scope: "Biblioteka produktów",
+          location: "Produkcja - Gliwice",
           lastActivity: "Dzisiaj 08:03",
           actions: ["Edytuj", "Uprawnienia"]
         },
@@ -308,6 +313,7 @@
           role: "Analityk sprzedaży",
           status: "Zawieszony",
           scope: "Raporty i podgląd ofert",
+          location: "Siedziba - Warszawa",
           lastActivity: "Wczoraj 12:47",
           actions: ["Edytuj", "Uprawnienia"]
         }
@@ -350,16 +356,16 @@
           actions: ["Zobacz", "Akceptuj", "Odrzuć"]
         },
         {
-          subject: "Magda Zielińska",
-          text: "Wniosek o rolę operatora katalogu i dostęp do synchronizacji.",
-          type: "Użytkownik",
+          subject: "BramaTech Sp. z o.o.",
+          text: "Wniosek o utworzenie profilu firmy i dostęp administracyjny do oddziału handlowego.",
+          type: "Firma",
           status: "Nowe",
           actions: ["Zobacz", "Akceptuj", "Odrzuć"]
         },
         {
-          subject: "BramaTech Sp. z o.o.",
-          text: "Wniosek o powiązanie firmowe i dostęp do relacji A->B.",
-          type: "Firma",
+          subject: "Delta Fence -> Zegger Partner",
+          text: "Wniosek o aktywację relacji B2B dla wspólnej obsługi oferty i biblioteki.",
+          type: "Relacja B2B",
           status: "Weryfikacja",
           actions: ["Zobacz", "Akceptuj", "Odrzuć"]
         }
@@ -375,34 +381,126 @@
     ],
     sourceCard: {
       title: "Źródło Google Sheets",
-      rows: [
-        "Arkusz: Cennik_2026_Master",
-        "Ostatni sync: 10 min temu",
-        "Status: Połączono i aktualne"
-      ],
+      connectionStatus: "Połączono",
+      sheetName: "Cennik_2026_Master",
+      recordCount: "1,694 rekordy",
+      lastSync: "10 min temu",
+      deltaVsLocal: "12 zmian względem local",
       actions: ["Edytuj źródło", "Wymuś sync", "Historia sync"]
     },
     localCard: {
       title: "Katalog lokalny",
-      rows: [
-        "Pozycji lokalnych: 148",
-        "Zmiany oczekujące: 6",
-        "Status: Gotowe do scalania"
+      metrics: [
+        { label: "Aktywne rekordy", value: "148" },
+        { label: "Draft / do publikacji", value: "6" },
+        { label: "Archiwalne", value: "22" },
+        { label: "Konflikty", value: "2" }
       ],
       actions: ["Dodaj produkt", "Import CSV/XLSX"]
     },
     pipeline: {
       title: "Pipeline danych",
-      steps: ["Import", "Walidacja", "Scalanie", "Publikacja"],
-      text: "Zmiany przechodzą przez pipeline z kontrolą konfliktów SKU i cen."
+      steps: [
+        { key: "import", label: "Import", count: 12, active: false },
+        { key: "validation", label: "Walidacja", count: 8, active: true },
+        { key: "merge", label: "Scalanie", count: 4, active: false },
+        { key: "publish", label: "Publikacja", count: 6, active: false }
+      ],
+      summary: [
+        { label: "Do publikacji", value: "6" },
+        { label: "Konflikty SKU", value: "2" },
+        { label: "Braki danych", value: "5" },
+        { label: "Ostatni import", value: "10 min temu" }
+      ],
+      info: [
+        "6 rekordów oczekuje na publikację",
+        "2 konflikty SKU wymagają decyzji"
+      ],
+      action: "Przejdź do walidacji"
+    },
+    issues: {
+      title: "Problemy danych",
+      items: [
+        {
+          title: "Konflikt SKU",
+          text: "OGR-3D-2500 ma rozbieżną cenę między Google i Local.",
+          status: "Konflikt",
+          action: "Zobacz konflikt"
+        },
+        {
+          title: "Brakujące dane",
+          text: "5 rekordów bez kategorii w imporcie z 10:12.",
+          status: "Review",
+          action: "Uzupełnij dane"
+        },
+        {
+          title: "Oczekuje publikacji",
+          text: "6 rekordów po walidacji czeka na decyzję publikacji.",
+          status: "Do publikacji",
+          action: "Publikuj zmiany"
+        }
+      ]
     },
     workspace: {
       title: "Merged workspace danych",
-      columns: ["SKU", "Nazwa", "Kategoria", "Cena netto", "Źródło", "Status", "Akcje"],
+      bulkActionsLabel: "Akcje masowe:",
+      bulkActions: ["Publikuj zaznaczone", "Archiwizuj zaznaczone"],
       rows: [
-        ["OGR-3D-2500", "Panel 3D 2500", "Ogrodzenia", "129.00", "Google", "Aktywny", "Edytuj / Archiwizuj"],
-        ["SLP-60x40", "Słupek 60x40", "Akcesoria", "38.00", "Local", "Do publikacji", "Edytuj / Publikuj"],
-        ["RAL-7016", "Lakier RAL 7016", "Dodatki", "12.00", "Google", "Aktywny", "Podgląd / Konflikty"]
+        {
+          sku: "OGR-3D-2500",
+          name: "Panel 3D 2500",
+          category: "Ogrodzenia",
+          priceNet: "129.00",
+          source: "Google",
+          status: "Konflikt SKU",
+          alignment: "Różnica",
+          lastChange: "Dzisiaj 09:42",
+          actions: ["Edytuj", "Konflikty"]
+        },
+        {
+          sku: "SLP-60x40",
+          name: "Słupek 60x40",
+          category: "Akcesoria",
+          priceNet: "38.00",
+          source: "Local",
+          status: "Do publikacji",
+          alignment: "Local override",
+          lastChange: "Dzisiaj 08:15",
+          actions: ["Edytuj", "Publikuj"]
+        },
+        {
+          sku: "RAL-7016",
+          name: "Lakier RAL 7016",
+          category: "Dodatki",
+          priceNet: "12.00",
+          source: "Google",
+          status: "Aktywny",
+          alignment: "Zgodny",
+          lastChange: "Wczoraj 17:24",
+          actions: ["Podgląd", "Edytuj"]
+        },
+        {
+          sku: "BRM-SEG-220",
+          name: "Segment bramy 220",
+          category: "Bramy",
+          priceNet: "279.00",
+          source: "Local",
+          status: "Archiwalny",
+          alignment: "Local override",
+          lastChange: "Wczoraj 11:03",
+          actions: ["Podgląd", "Edytuj"]
+        },
+        {
+          sku: "AKC-MNT-12",
+          name: "Mocowanie M12",
+          category: "Akcesoria",
+          priceNet: "8.90",
+          source: "Google",
+          status: "Do publikacji",
+          alignment: "Zgodny",
+          lastChange: "2 godz. temu",
+          actions: ["Edytuj", "Publikuj"]
+        }
       ]
     }
   },

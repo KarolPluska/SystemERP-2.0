@@ -20,6 +20,7 @@
   var authScene = document.getElementById("zgs-auth-scene");
   var appScene = document.getElementById("zgs-app-scene");
   var breadcrumb = document.getElementById("zgs-shell-breadcrumb");
+  var refreshShellScrollIndicator = function () {};
 
   var moduleKeyToView = {
     start: "launcher",
@@ -558,6 +559,9 @@
       if (value.indexOf("pil") !== -1) {
         return "is-urgent";
       }
+      if (value.indexOf("review") !== -1 || value.indexOf("rev") !== -1 || value.indexOf("dzi") !== -1) {
+        return "is-pending";
+      }
       if (value.indexOf("now") !== -1) {
         return "is-new";
       }
@@ -638,6 +642,31 @@
       );
     }
 
+    function requestTypeClass(type) {
+      var value = String(type || "").toLowerCase();
+      if (value.indexOf("relac") !== -1 || value.indexOf("b2b") !== -1) {
+        return "is-b2b";
+      }
+      if (value.indexOf("firm") !== -1) {
+        return "is-company";
+      }
+      return "is-user";
+    }
+
+    function queuePriorityClass(task) {
+      var value = String((task && (task.badge || task.status)) || "").toLowerCase();
+      if (value.indexOf("pil") !== -1) {
+        return "is-urgent";
+      }
+      if (value.indexOf("review") !== -1 || value.indexOf("rev") !== -1) {
+        return "is-review";
+      }
+      if (value.indexOf("dzi") !== -1 || value.indexOf("today") !== -1) {
+        return "is-today";
+      }
+      return "";
+    }
+
     function parseTeamRow(row) {
       var parsed = Array.isArray(row)
         ? {
@@ -645,17 +674,26 @@
             role: row[1],
             status: row[2],
             scope: row[3],
-            lastActivity: row[4],
-            actions: row[5] ? String(row[5]).split("/").map(function (part) { return part.trim(); }) : []
+            location: row[4],
+            lastActivity: row[5],
+            actions: row[6] ? String(row[6]).split("/").map(function (part) { return part.trim(); }) : []
           }
         : (row || {});
 
       parsed.statusKey = companyStatusFilterKey(parsed.status);
-      parsed.keywords = String((parsed.name || "") + " " + (parsed.role || "") + " " + (parsed.scope || "")).toLowerCase();
+      parsed.locationKey = String(parsed.location || "").trim().toLowerCase();
+      parsed.keywords = String((parsed.name || "") + " " + (parsed.role || "") + " " + (parsed.scope || "") + " " + (parsed.location || "")).toLowerCase();
       return parsed;
     }
 
     var normalizedTeamRows = teamRows.map(parseTeamRow);
+    var teamLocations = [];
+    normalizedTeamRows.forEach(function (row) {
+      var location = String(row.location || "").trim();
+      if (location && teamLocations.indexOf(location) === -1) {
+        teamLocations.push(location);
+      }
+    });
     var waitingUsersCount = normalizedTeamRows.filter(function (row) { return row.statusKey === "pending"; }).length;
     var waitingJoinCount = joinItems.filter(function (item) {
       return requiresDecision(item && item.status);
@@ -664,6 +702,8 @@
       return requiresDecision(record && record.status);
     }).length;
     var actionTotal = waitingUsersCount + waitingJoinCount + waitingRelationCount + queueItems.length;
+    var locationPreviewCount = 2;
+    var hasHiddenLocations = companyLocations.length > locationPreviewCount;
 
     view.innerHTML =
       '<header class="zgs-module-head">' +
@@ -691,10 +731,11 @@
           '<section class="zgs-company-locations">' +
             '<p class="zgs-company-subtitle">Adresy / lokalizacje <span class="zgs-company-subcount">- ' + esc(String(companyLocations.length)) + "</span></p>" +
             '<ul class="zgs-company-location-list">' +
-              companyLocations.map(function (location) {
+              companyLocations.map(function (location, locationIndex) {
                 var locationActions = Array.isArray(location.actions) ? location.actions : [];
+                var collapsedLocation = hasHiddenLocations && locationIndex >= locationPreviewCount;
                 return (
-                  '<li class="zgs-company-location-item">' +
+                  '<li class="zgs-company-location-item' + (collapsedLocation ? " is-collapsed" : "") + '"' + (collapsedLocation ? " hidden" : "") + ' data-company-location-item="1">' +
                     '<div class="zgs-company-location-head">' +
                       '<span class="zgs-company-location-meta">' +
                         '<span class="zgs-company-location-type">' + esc(location.type) + "</span>" +
@@ -715,6 +756,9 @@
                 );
               }).join("") +
             "</ul>" +
+            (hasHiddenLocations
+              ? '<button class="zgs-company-location-more" type="button" data-company-location-toggle data-total-count="' + esc(String(companyLocations.length)) + '">Pokaż wszystkie (' + esc(String(companyLocations.length)) + ")</button>"
+              : "") +
           "</section>" +
           '<div class="zgs-action-list">' +
             (Array.isArray(companyCard.actions) ? companyCard.actions : []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
@@ -760,55 +804,69 @@
             (Array.isArray(relationsCard.actions) ? relationsCard.actions : []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
           "</div>" +
         "</article>" +
-        '<article class="zgs-surface zgs-span-2 zgs-company-team">' +
+        '<article id="zgs-company-team-block" class="zgs-surface zgs-span-2 zgs-company-team">' +
           '<div class="zgs-company-team-head">' +
             "<h3>" + esc(companyData.teamTable && companyData.teamTable.title) + "</h3>" +
-            '<div class="zgs-company-team-tools">' +
-              '<label class="zgs-company-search-wrap" for="zgs-company-user-search">' +
-                '<span class="zgs-company-search-label">Szukaj użytkowników</span>' +
-                '<input id="zgs-company-user-search" class="zgs-company-search-input" type="search" placeholder="Imię, nazwisko, rola lub zakres" data-company-user-search>' +
-              "</label>" +
-              '<div class="zgs-company-filter-bar" aria-label="Filtr statusu">' +
-                '<button class="zgs-company-filter-btn is-active" type="button" data-company-status-filter="all" aria-pressed="true">Wszyscy</button>' +
-                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="active" aria-pressed="false">Aktywni</button>' +
-                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="pending" aria-pressed="false">Oczekujący</button>' +
-                '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="suspended" aria-pressed="false">Zawieszeni</button>' +
-              "</div>" +
+          "</div>" +
+          '<div class="zgs-company-team-toolbar">' +
+            '<label class="zgs-company-search-wrap" for="zgs-company-user-search">' +
+              '<span class="zgs-company-search-label">Szukaj użytkowników</span>' +
+              '<input id="zgs-company-user-search" class="zgs-company-search-input" type="search" placeholder="Imię, nazwisko, rola, zakres lub lokalizacja" data-company-user-search>' +
+            "</label>" +
+            '<div class="zgs-company-filter-bar" aria-label="Filtr statusu">' +
+              '<button class="zgs-company-filter-btn is-active" type="button" data-company-status-filter="all" aria-pressed="true">Wszyscy</button>' +
+              '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="active" aria-pressed="false">Aktywni</button>' +
+              '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="pending" aria-pressed="false">Oczekujący</button>' +
+              '<button class="zgs-company-filter-btn" type="button" data-company-status-filter="suspended" aria-pressed="false">Zawieszeni</button>' +
             "</div>" +
+            '<label class="zgs-company-location-wrap" for="zgs-company-location-filter">' +
+              '<span class="zgs-company-search-label">Lokalizacja</span>' +
+              '<select id="zgs-company-location-filter" class="zgs-company-location-select" data-company-location-filter>' +
+                '<option value="all">Wszystkie lokalizacje</option>' +
+                teamLocations.map(function (location) {
+                  return '<option value="' + esc(String(location).toLowerCase()) + '">' + esc(location) + "</option>";
+                }).join("") +
+              "</select>" +
+            "</label>" +
+            '<button class="zgs-action-btn is-primary zgs-company-add-user-btn" type="button">Dodaj użytkownika</button>' +
           "</div>" +
           '<div class="zgs-company-action-hint">' +
-            '<p class="zgs-company-action-hint-title">Wymaga działania administratora: ' + esc(String(actionTotal)) + "</p>" +
-            '<div class="zgs-company-action-hint-metrics">' +
-              '<span>Użytkownicy do decyzji: ' + esc(String(waitingUsersCount)) + "</span>" +
-              '<span>Wnioski o dołączenie: ' + esc(String(waitingJoinCount)) + "</span>" +
-              '<span>Relacje do review: ' + esc(String(waitingRelationCount)) + "</span>" +
+            '<div class="zgs-company-action-hint-main">' +
+              '<p class="zgs-company-action-hint-title">Wymaga działania administratora: ' + esc(String(actionTotal)) + "</p>" +
+              '<div class="zgs-company-action-hint-metrics">' +
+                '<span>Użytkownicy do decyzji: ' + esc(String(waitingUsersCount)) + "</span>" +
+                '<span>Wnioski o dołączenie: ' + esc(String(waitingJoinCount)) + "</span>" +
+                '<span>Relacje do review: ' + esc(String(waitingRelationCount)) + "</span>" +
+              "</div>" +
             "</div>" +
+            '<button class="zgs-company-action-link" type="button" data-company-jump="decisions">Zobacz decyzje</button>' +
           "</div>" +
           '<div class="zgs-table-wrap zgs-company-table-wrap"><table class="zgs-table" aria-label="Lista użytkowników"><thead><tr>' +
             teamColumns.map(function (col) { return "<th>" + esc(col) + "</th>"; }).join("") +
           "</tr></thead><tbody>" +
             normalizedTeamRows.map(function (parsed) {
               return (
-                '<tr data-company-user-row="1" data-company-status="' + esc(parsed.statusKey) + '" data-company-keywords="' + esc(parsed.keywords) + '">' +
+                '<tr data-company-user-row="1" data-company-status="' + esc(parsed.statusKey) + '" data-company-location="' + esc(parsed.locationKey) + '" data-company-keywords="' + esc(parsed.keywords) + '">' +
                   "<td>" + esc(parsed.name) + "</td>" +
                   "<td>" + esc(parsed.role) + "</td>" +
                   "<td>" + renderCompanyBadge(parsed.status) + "</td>" +
                   "<td>" + esc(parsed.scope) + "</td>" +
+                  "<td>" + esc(parsed.location) + "</td>" +
                   "<td>" + esc(parsed.lastActivity) + "</td>" +
                   "<td>" + renderTeamActions(parsed.actions) + "</td>" +
                 "</tr>"
               );
             }).join("") +
-            '<tr class="zgs-company-empty-row" data-company-empty-row hidden><td colspan="' + esc(String(teamColumns.length || 6)) + '">Brak użytkowników dla wybranego filtra.</td></tr>' +
+            '<tr class="zgs-company-empty-row" data-company-empty-row hidden><td colspan="' + esc(String(teamColumns.length || 7)) + '">Brak użytkowników dla wybranego filtra.</td></tr>' +
           "</tbody></table></div>" +
         "</article>" +
-        '<article class="zgs-surface zgs-company-queue"><div class="zgs-company-section-head"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(queueItems.length)) + ' otwarte</span></div><ul class="zgs-company-task-list">' +
+        '<article id="zgs-company-queue-block" class="zgs-surface zgs-company-queue"><div class="zgs-company-section-head"><h3>' + esc(companyData.actionQueue && companyData.actionQueue.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(queueItems.length)) + ' otwarte</span></div><ul class="zgs-company-task-list">' +
           queueItems.map(function (item) {
             var task = typeof item === "string"
               ? { title: item, text: "", status: "" }
               : item;
             return (
-              '<li class="zgs-company-task-item">' +
+              '<li class="zgs-company-task-item ' + queuePriorityClass(task) + '">' +
                 '<div class="zgs-company-task-main">' +
                   '<strong>' + esc(task.title) + "</strong>" +
                   (task.text ? "<p>" + esc(task.text) + "</p>" : "") +
@@ -821,7 +879,7 @@
             );
           }).join("") +
         "</ul></article>" +
-        '<article class="zgs-surface zgs-company-join"><div class="zgs-company-section-head"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(joinItems.length)) + ' decyzje</span></div><ul class="zgs-company-join-list">' +
+        '<article id="zgs-company-join-block" class="zgs-surface zgs-company-join"><div class="zgs-company-section-head"><h3>' + esc(companyData.joinRequests && companyData.joinRequests.title) + '</h3><span class="zgs-company-section-meta">' + esc(String(joinItems.length)) + ' decyzje</span></div><ul class="zgs-company-join-list">' +
           joinItems.map(function (item) {
             var request = typeof item === "string"
               ? { subject: item, text: "", status: "", actions: [] }
@@ -831,7 +889,7 @@
                 '<div class="zgs-company-join-main">' +
                   '<strong>' + esc(request.subject) + "</strong>" +
                   (request.text ? "<p>" + esc(request.text) + "</p>" : "") +
-                  (request.type ? '<span class="zgs-company-request-type">' + esc(request.type) + "</span>" : "") +
+                  (request.type ? '<span class="zgs-company-request-type ' + requestTypeClass(request.type) + '">' + esc(request.type) + "</span>" : "") +
                 "</div>" +
                 '<div class="zgs-company-join-meta">' +
                   renderCompanyBadge(request.status) +
@@ -844,24 +902,55 @@
       "</div>";
 
     initCompanyUsersTools(view);
+
+    var searchParams = new URLSearchParams(window.location.search);
+    var companyFocus = searchParams.get("companyFocus");
+    if (companyFocus === "operations" || companyFocus === "balanced" || companyFocus === "bottom" || companyFocus === "end") {
+      var shellContent = document.querySelector(".zgs-shell-content");
+      var teamBlock = document.getElementById("zgs-company-team-block");
+      if (shellContent && teamBlock) {
+        if (companyFocus === "end") {
+          requestAnimationFrame(function () {
+            shellContent.scrollTop = shellContent.scrollHeight;
+          });
+          return;
+        }
+        var focusOffset = 140;
+        if (companyFocus === "balanced") {
+          focusOffset = 280;
+        } else if (companyFocus === "bottom") {
+          focusOffset = -220;
+        }
+        requestAnimationFrame(function () {
+          shellContent.scrollTop = Math.max(0, teamBlock.offsetTop - focusOffset);
+        });
+      }
+    }
+
   }
 
   function initCompanyUsersTools(scope) {
     var host = scope || document;
     var teamSection = host.querySelector(".zgs-company-team");
+    var locationToggle = host.querySelector("[data-company-location-toggle]");
+    var collapsedLocations = Array.prototype.slice.call(host.querySelectorAll(".zgs-company-location-item.is-collapsed"));
     if (!teamSection) {
       return;
     }
 
     var searchInput = teamSection.querySelector("[data-company-user-search]");
     var filterButtons = Array.prototype.slice.call(teamSection.querySelectorAll("[data-company-status-filter]"));
+    var locationSelect = teamSection.querySelector("[data-company-location-filter]");
+    var decisionJump = teamSection.querySelector('[data-company-jump="decisions"]');
     var rows = Array.prototype.slice.call(teamSection.querySelectorAll("[data-company-user-row]"));
     var emptyRow = teamSection.querySelector("[data-company-empty-row]");
+    var joinBlock = host.querySelector("#zgs-company-join-block");
     if (!rows.length) {
       return;
     }
 
     var activeFilter = "all";
+    var activeLocation = "all";
 
     function applyFilters() {
       var query = String((searchInput && searchInput.value) || "").trim().toLowerCase();
@@ -869,10 +958,12 @@
 
       rows.forEach(function (row) {
         var status = row.getAttribute("data-company-status") || "other";
+        var location = row.getAttribute("data-company-location") || "";
         var keywords = String(row.getAttribute("data-company-keywords") || "").toLowerCase();
         var statusMatch = activeFilter === "all" || status === activeFilter;
+        var locationMatch = activeLocation === "all" || location === activeLocation;
         var queryMatch = !query || keywords.indexOf(query) !== -1;
-        var show = statusMatch && queryMatch;
+        var show = statusMatch && locationMatch && queryMatch;
 
         row.style.display = show ? "" : "none";
         if (show) {
@@ -901,6 +992,31 @@
       searchInput.addEventListener("input", applyFilters);
     }
 
+    if (locationSelect) {
+      locationSelect.addEventListener("change", function () {
+        activeLocation = locationSelect.value || "all";
+        applyFilters();
+      });
+    }
+
+    if (decisionJump && joinBlock) {
+      decisionJump.addEventListener("click", function () {
+        joinBlock.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
+    if (locationToggle && collapsedLocations.length) {
+      var expandedLocations = false;
+      var totalLocations = parseInt(locationToggle.getAttribute("data-total-count"), 10) || collapsedLocations.length;
+      locationToggle.addEventListener("click", function () {
+        expandedLocations = !expandedLocations;
+        collapsedLocations.forEach(function (item) {
+          item.hidden = !expandedLocations;
+        });
+        locationToggle.textContent = expandedLocations ? "Pokaż mniej" : "Pokaż wszystkie (" + totalLocations + ")";
+      });
+    }
+
     applyFilters();
   }
 
@@ -911,8 +1027,97 @@
     }
 
     var stats = Array.isArray(libraryData.stats) ? libraryData.stats : [];
+    var sourceCard = libraryData.sourceCard || {};
+    var localCard = libraryData.localCard || {};
     var pipeline = libraryData.pipeline || {};
+    var issues = libraryData.issues || {};
     var workspace = libraryData.workspace || {};
+
+    function libraryStatusKey(status) {
+      var value = String(status || "").toLowerCase();
+      if (value.indexOf("konfl") !== -1) {
+        return "conflict";
+      }
+      if (value.indexOf("publ") !== -1) {
+        return "publish";
+      }
+      if (value.indexOf("arch") !== -1) {
+        return "archived";
+      }
+      if (value.indexOf("akt") !== -1 || value.indexOf("połącz") !== -1) {
+        return "active";
+      }
+      if (value.indexOf("review") !== -1) {
+        return "review";
+      }
+      return "neutral";
+    }
+
+    function renderLibraryBadge(status) {
+      if (!status) {
+        return "";
+      }
+      return '<span class="zgs-library-badge is-' + esc(libraryStatusKey(status)) + '">' + esc(status) + "</span>";
+    }
+
+    function libraryAlignmentKey(value) {
+      var status = String(value || "").toLowerCase();
+      if (status.indexOf("over") !== -1) {
+        return "override";
+      }
+      if (status.indexOf("róż") !== -1 || status.indexOf("rozn") !== -1 || status.indexOf("diff") !== -1) {
+        return "diff";
+      }
+      return "aligned";
+    }
+
+    function renderLibraryAlignment(value) {
+      if (!value) {
+        return "";
+      }
+      return '<span class="zgs-library-alignment is-' + esc(libraryAlignmentKey(value)) + '">' + esc(value) + "</span>";
+    }
+
+    function renderLibraryActions(actions) {
+      var list = Array.isArray(actions) ? actions : [];
+      return (
+        '<div class="zgs-library-row-actions">' +
+          list.map(function (action, index) {
+            return '<button class="zgs-library-row-action' + (index === 1 ? " is-primary" : "") + '" type="button">' + esc(action) + "</button>";
+          }).join("") +
+        "</div>"
+      );
+    }
+
+    var normalizedRows = (Array.isArray(workspace.rows) ? workspace.rows : []).map(function (row) {
+      var parsed = Array.isArray(row)
+        ? {
+            sku: row[0],
+            name: row[1],
+            category: row[2],
+            priceNet: row[3],
+            source: row[4],
+            status: row[5],
+            alignment: row[6],
+            lastChange: row[7],
+            actions: row[8] ? String(row[8]).split("/").map(function (part) { return part.trim(); }) : []
+          }
+        : (row || {});
+
+      parsed.statusKey = libraryStatusKey(parsed.status);
+      parsed.sourceKey = String(parsed.source || "").toLowerCase();
+      parsed.categoryKey = String(parsed.category || "").toLowerCase();
+      parsed.keywords = String((parsed.sku || "") + " " + (parsed.name || "") + " " + (parsed.category || "")).toLowerCase();
+      return parsed;
+    });
+
+    var categories = [];
+    normalizedRows.forEach(function (row) {
+      var category = String(row.category || "").trim();
+      if (category && categories.indexOf(category) === -1) {
+        categories.push(category);
+      }
+    });
 
     view.innerHTML =
       '<header class="zgs-module-head">' +
@@ -925,27 +1130,246 @@
         }).join("") +
       "</div>" +
       '<div class="zgs-library-grid">' +
-        '<article class="zgs-surface"><h3>' + esc(libraryData.sourceCard && libraryData.sourceCard.title) + '</h3><ul class="zgs-list">' +
-          ((libraryData.sourceCard && libraryData.sourceCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
-        '</ul><div class="zgs-action-list">' +
-          ((libraryData.sourceCard && libraryData.sourceCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
-        "</div></article>" +
-        '<article class="zgs-surface"><h3>' + esc(libraryData.localCard && libraryData.localCard.title) + '</h3><ul class="zgs-list">' +
-          ((libraryData.localCard && libraryData.localCard.rows) || []).map(function (row) { return "<li>" + esc(row) + "</li>"; }).join("") +
-        '</ul><div class="zgs-action-list">' +
-          ((libraryData.localCard && libraryData.localCard.actions) || []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
-        "</div></article>" +
-        '<article class="zgs-surface zgs-span-2"><h3>' + esc(pipeline.title) + '</h3><div class="zgs-chip-list">' +
-          (Array.isArray(pipeline.steps) ? pipeline.steps : []).map(function (step, index) {
-            return '<span class="zgs-chip' + (index === 0 ? " is-active" : "") + '">' + esc(step) + "</span>";
-          }).join("") +
-        "</div><p>" + esc(pipeline.text) + "</p></article>" +
-        '<article class="zgs-surface zgs-span-2"><h3>' + esc(workspace.title) + '</h3><div class="zgs-table-wrap"><table class="zgs-table" aria-label="Scalona lista produktów"><thead><tr>' +
-          (Array.isArray(workspace.columns) ? workspace.columns : []).map(function (col) { return "<th>" + esc(col) + "</th>"; }).join("") +
-        "</tr></thead><tbody>" +
-          (Array.isArray(workspace.rows) ? workspace.rows : []).map(function (row) { return "<tr>" + row.map(function (cell) { return "<td>" + esc(cell) + "</td>"; }).join("") + "</tr>"; }).join("") +
-        "</tbody></table></div></article>" +
+        '<article class="zgs-surface zgs-library-source">' +
+          '<div class="zgs-library-card-head"><h3>' + esc(sourceCard.title) + '</h3>' + renderLibraryBadge(sourceCard.connectionStatus) + "</div>" +
+          '<ul class="zgs-library-meta-list">' +
+            '<li><span>Arkusz</span><strong>' + esc(sourceCard.sheetName) + "</strong></li>" +
+            '<li><span>Liczba rekordów</span><strong>' + esc(sourceCard.recordCount) + "</strong></li>" +
+            '<li><span>Ostatni sync</span><strong>' + esc(sourceCard.lastSync) + "</strong></li>" +
+            '<li><span>Zmiany vs local</span><strong>' + esc(sourceCard.deltaVsLocal) + "</strong></li>" +
+          "</ul>" +
+          '<div class="zgs-action-list">' +
+            (Array.isArray(sourceCard.actions) ? sourceCard.actions : []).map(function (action, index) {
+              return '<button class="zgs-action-btn' + (index === 1 ? " is-primary" : "") + '" type="button">' + esc(action) + "</button>";
+            }).join("") +
+          "</div>" +
+        "</article>" +
+        '<article class="zgs-surface zgs-library-local">' +
+          "<h3>" + esc(localCard.title) + "</h3>" +
+          '<div class="zgs-library-metrics-grid">' +
+            (Array.isArray(localCard.metrics) ? localCard.metrics : []).map(function (metric) {
+              return '<div class="zgs-library-metric"><span>' + esc(metric.label) + "</span><strong>" + esc(metric.value) + "</strong></div>";
+            }).join("") +
+          "</div>" +
+          '<div class="zgs-action-list">' +
+            (Array.isArray(localCard.actions) ? localCard.actions : []).map(function (a) { return '<button class="zgs-action-btn" type="button">' + esc(a) + "</button>"; }).join("") +
+          "</div>" +
+        "</article>" +
+        '<article class="zgs-surface zgs-library-pipeline">' +
+          '<div class="zgs-library-card-head"><h3>' + esc(pipeline.title) + '</h3></div>' +
+          '<div class="zgs-library-pipeline-steps">' +
+            (Array.isArray(pipeline.steps) ? pipeline.steps : []).map(function (step) {
+              return '<button class="zgs-library-stage' + (step.active ? " is-active" : "") + '" type="button" data-library-stage="' + esc(step.key) + '">' +
+                "<span>" + esc(step.label) + "</span><strong>" + esc(String(step.count)) + "</strong></button>";
+            }).join("") +
+          "</div>" +
+          '<p class="zgs-library-pipeline-label">Podsumowanie operacyjne</p>' +
+          '<div class="zgs-library-pipeline-summary">' +
+            (Array.isArray(pipeline.summary) ? pipeline.summary : []).map(function (item) {
+              return '<div class="zgs-library-pipeline-stat"><span>' + esc(item.label) + "</span><strong>" + esc(item.value) + "</strong></div>";
+            }).join("") +
+          "</div>" +
+          '<p class="zgs-library-pipeline-label">Wymaga decyzji</p>' +
+          '<ul class="zgs-library-pipeline-info">' +
+            (Array.isArray(pipeline.info) ? pipeline.info : []).map(function (line) {
+              return "<li>" + esc(line) + "</li>";
+            }).join("") +
+          "</ul>" +
+          '<button class="zgs-action-btn zgs-library-pipeline-cta" type="button" data-library-jump-issues="1">' + esc(pipeline.action || "Zobacz konflikty") + "</button>" +
+        "</article>" +
+        '<article id="zgs-library-issues-block" class="zgs-surface zgs-library-issues">' +
+          '<div class="zgs-library-card-head"><h3>' + esc(issues.title) + "</h3>" + renderLibraryBadge(String((issues.items || []).length) + " decyzje") + "</div>" +
+          '<ul class="zgs-library-issue-list">' +
+            (Array.isArray(issues.items) ? issues.items : []).map(function (item, itemIndex) {
+              return '<li class="zgs-library-issue-item' + (itemIndex === 0 ? " is-priority" : "") + '">' +
+                '<div class="zgs-library-issue-main"><strong>' + esc(item.title) + "</strong><p>" + esc(item.text) + "</p></div>" +
+                '<div class="zgs-library-issue-meta">' + renderLibraryBadge(item.status) + '<button class="zgs-library-row-action is-primary" type="button">' + esc(item.action) + "</button></div>" +
+              "</li>";
+            }).join("") +
+          "</ul>" +
+        "</article>" +
+        '<article id="zgs-library-workspace-block" class="zgs-surface zgs-span-2 zgs-library-workspace">' +
+          '<div class="zgs-library-workspace-head"><h3>' + esc(workspace.title) + "</h3></div>" +
+          '<div class="zgs-library-toolbar">' +
+            '<label class="zgs-library-search-wrap" for="zgs-library-search">' +
+              '<span>Szukaj SKU / nazwa / kategoria</span>' +
+              '<input id="zgs-library-search" class="zgs-library-search-input" type="search" placeholder="np. OGR-3D lub Ogrodzenia" data-library-search>' +
+            "</label>" +
+            '<label class="zgs-library-select-wrap zgs-library-status-wrap" for="zgs-library-status-filter">' +
+              '<span>Status</span>' +
+              '<select id="zgs-library-status-filter" class="zgs-library-select" data-library-status-filter><option value="all">Wszystkie</option><option value="active">Aktywne</option><option value="publish">Do publikacji</option><option value="conflict">Konflikty</option><option value="archived">Archiwalne</option></select>' +
+            "</label>" +
+            '<label class="zgs-library-select-wrap" for="zgs-library-source-filter"><span>Źródło</span><select id="zgs-library-source-filter" class="zgs-library-select" data-library-source-filter><option value="all">Wszystkie</option><option value="google">Google</option><option value="local">Local</option></select></label>' +
+            '<label class="zgs-library-select-wrap" for="zgs-library-category-filter"><span>Kategoria</span><select id="zgs-library-category-filter" class="zgs-library-select" data-library-category-filter><option value="all">Wszystkie</option>' +
+              categories.map(function (category) { return '<option value="' + esc(String(category).toLowerCase()) + '">' + esc(category) + "</option>"; }).join("") +
+            "</select></label>" +
+            '<div class="zgs-library-toolbar-actions">' +
+              '<button class="zgs-action-btn is-primary zgs-library-add-btn" type="button">Dodaj produkt</button>' +
+              '<button class="zgs-action-btn zgs-library-import-btn" type="button">Import CSV/XLSX</button>' +
+            "</div>" +
+          "</div>" +
+          '<div class="zgs-library-bulk-row is-separated"><span>' + esc(workspace.bulkActionsLabel || "Akcje masowe:") + "</span>" +
+            (Array.isArray(workspace.bulkActions) ? workspace.bulkActions : []).map(function (action) {
+              return '<button class="zgs-library-row-action" type="button">' + esc(action) + "</button>";
+            }).join("") +
+          "</div>" +
+          '<div class="zgs-table-wrap zgs-library-table-wrap"><table class="zgs-table zgs-library-table" aria-label="Scalona lista produktów"><thead><tr>' +
+            '<th class="zgs-library-col-check"><input type="checkbox" aria-label="Zaznacz wszystkie" disabled></th>' +
+            "<th>SKU</th><th>Nazwa</th><th>Kategoria</th><th>Cena netto</th><th>Źródło</th><th>Status</th><th>Ostatnia zmiana</th><th>Akcje</th>" +
+          "</tr></thead><tbody>" +
+            normalizedRows.map(function (row) {
+              return (
+                '<tr data-library-row="1" data-library-status="' + esc(row.statusKey) + '" data-library-source="' + esc(row.sourceKey) + '" data-library-category="' + esc(row.categoryKey) + '" data-library-keywords="' + esc(row.keywords) + '">' +
+                  '<td class="zgs-library-col-check"><input type="checkbox" aria-label="Zaznacz rekord" disabled></td>' +
+                  "<td>" + esc(row.sku) + "</td>" +
+                  "<td>" + esc(row.name) + "</td>" +
+                  "<td>" + esc(row.category) + "</td>" +
+                  "<td>" + esc(row.priceNet) + "</td>" +
+                  '<td><div class="zgs-library-source-cell"><span>' + esc(row.source) + "</span>" + renderLibraryAlignment(row.alignment) + "</div></td>" +
+                  "<td>" + renderLibraryBadge(row.status) + "</td>" +
+                  "<td>" + esc(row.lastChange) + "</td>" +
+                  "<td>" + renderLibraryActions(row.actions) + "</td>" +
+                "</tr>"
+              );
+            }).join("") +
+            '<tr class="zgs-library-empty-row" data-library-empty-row hidden><td colspan="10">Brak rekordów dla wybranych filtrów.</td></tr>' +
+          "</tbody></table></div>" +
+        "</article>" +
       "</div>";
+
+    initLibraryTools(view);
+
+    var searchParams = new URLSearchParams(window.location.search);
+    var libraryFocus = searchParams.get("libraryFocus");
+    var shellContent = document.querySelector(".zgs-shell-content");
+    var workspaceBlock = document.getElementById("zgs-library-workspace-block");
+    if (!shellContent) {
+      return;
+    }
+
+    if (libraryFocus === "workspace" && workspaceBlock) {
+      requestAnimationFrame(function () {
+        shellContent.scrollTop = Math.max(0, workspaceBlock.offsetTop - 150);
+      });
+      return;
+    }
+
+    if (libraryFocus === "middle") {
+      requestAnimationFrame(function () {
+        shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * 0.5));
+      });
+      return;
+    }
+
+    if (libraryFocus === "bottom") {
+      requestAnimationFrame(function () {
+        shellContent.scrollTop = shellContent.scrollHeight;
+      });
+    }
+  }
+
+  function initLibraryTools(scope) {
+    var host = scope || document;
+    var workspace = host.querySelector(".zgs-library-workspace");
+    if (!workspace) {
+      return;
+    }
+
+    var searchInput = workspace.querySelector("[data-library-search]");
+    var statusSelect = workspace.querySelector("[data-library-status-filter]");
+    var sourceSelect = workspace.querySelector("[data-library-source-filter]");
+    var categorySelect = workspace.querySelector("[data-library-category-filter]");
+    var rows = Array.prototype.slice.call(workspace.querySelectorAll("[data-library-row]"));
+    var emptyRow = workspace.querySelector("[data-library-empty-row]");
+    var stageButtons = Array.prototype.slice.call(host.querySelectorAll("[data-library-stage]"));
+    var jumpIssues = host.querySelector("[data-library-jump-issues]");
+    var issuesBlock = host.querySelector("#zgs-library-issues-block");
+    if (!rows.length) {
+      return;
+    }
+
+    var activeStatus = "all";
+
+    function setStatusFilter(nextStatus) {
+      activeStatus = nextStatus || "all";
+      if (statusSelect && statusSelect.value !== activeStatus) {
+        statusSelect.value = activeStatus;
+      }
+    }
+
+    function applyFilters() {
+      var query = String((searchInput && searchInput.value) || "").trim().toLowerCase();
+      var source = String((sourceSelect && sourceSelect.value) || "all");
+      var category = String((categorySelect && categorySelect.value) || "all");
+      var visible = 0;
+
+      rows.forEach(function (row) {
+        var status = row.getAttribute("data-library-status") || "neutral";
+        var rowSource = row.getAttribute("data-library-source") || "";
+        var rowCategory = row.getAttribute("data-library-category") || "";
+        var keywords = String(row.getAttribute("data-library-keywords") || "").toLowerCase();
+        var statusMatch = activeStatus === "all" || status === activeStatus;
+        var sourceMatch = source === "all" || rowSource === source;
+        var categoryMatch = category === "all" || rowCategory === category;
+        var queryMatch = !query || keywords.indexOf(query) !== -1;
+        var show = statusMatch && sourceMatch && categoryMatch && queryMatch;
+
+        row.style.display = show ? "" : "none";
+        if (show) {
+          visible += 1;
+        }
+      });
+
+      if (emptyRow) {
+        emptyRow.hidden = visible !== 0;
+      }
+    }
+
+    setStatusFilter("all");
+
+    stageButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        stageButtons.forEach(function (stage) {
+          stage.classList.toggle("is-active", stage === button);
+        });
+        var stageKey = button.getAttribute("data-library-stage");
+        if (stageKey === "validation") {
+          setStatusFilter("conflict");
+        } else if (stageKey === "publish") {
+          setStatusFilter("publish");
+        } else {
+          setStatusFilter("all");
+        }
+        applyFilters();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener("input", applyFilters);
+    }
+
+    if (statusSelect) {
+      statusSelect.addEventListener("change", function () {
+        setStatusFilter(statusSelect.value);
+        applyFilters();
+      });
+    }
+
+    if (sourceSelect) {
+      sourceSelect.addEventListener("change", applyFilters);
+    }
+
+    if (categorySelect) {
+      categorySelect.addEventListener("change", applyFilters);
+    }
+
+    if (jumpIssues && issuesBlock) {
+      jumpIssues.addEventListener("click", function () {
+        issuesBlock.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+
+    applyFilters();
   }
 
   function renderMessenger() {
@@ -1034,6 +1458,73 @@
       "</div>";
   }
 
+  function initShellScrollIndicator() {
+    var shellWindow = document.querySelector(".zgs-shell-window");
+    var shellContent = document.querySelector(".zgs-shell-content");
+    if (!shellWindow || !shellContent) {
+      return;
+    }
+
+    var indicator = document.createElement("div");
+    indicator.className = "zgs-scroll-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    indicator.innerHTML = '<span class="zgs-scroll-indicator-thumb"></span>';
+    shellWindow.appendChild(indicator);
+
+    var thumb = indicator.querySelector(".zgs-scroll-indicator-thumb");
+    if (!thumb) {
+      return;
+    }
+
+    function updateGeometry() {
+      var shellRect = shellWindow.getBoundingClientRect();
+      var contentRect = shellContent.getBoundingClientRect();
+      var top = Math.max(0, Math.round(contentRect.top - shellRect.top) + 8);
+      var height = Math.max(40, Math.round(contentRect.height) - 16);
+      indicator.style.top = top + "px";
+      indicator.style.height = height + "px";
+    }
+
+    function updateState() {
+      var scrollHeight = shellContent.scrollHeight;
+      var clientHeight = shellContent.clientHeight;
+      var hasOverflow = scrollHeight > clientHeight + 4;
+      indicator.classList.toggle("is-visible", hasOverflow);
+
+      if (!hasOverflow) {
+        thumb.style.transform = "translateY(0px)";
+        thumb.style.height = "0px";
+        return;
+      }
+
+      var trackHeight = Math.max(0, indicator.clientHeight);
+      var thumbHeight = Math.max(30, Math.round((clientHeight / scrollHeight) * trackHeight));
+      var maxScroll = Math.max(1, scrollHeight - clientHeight);
+      var maxThumbTravel = Math.max(0, trackHeight - thumbHeight);
+      var ratio = Math.min(1, shellContent.scrollTop / maxScroll);
+      thumb.style.height = thumbHeight + "px";
+      thumb.style.transform = "translateY(" + Math.round(maxThumbTravel * ratio) + "px)";
+    }
+
+    function updateAll() {
+      updateGeometry();
+      updateState();
+    }
+
+    refreshShellScrollIndicator = updateAll;
+
+    shellContent.addEventListener("scroll", updateState, { passive: true });
+    window.addEventListener("resize", updateAll);
+
+    if (window.ResizeObserver) {
+      var resizeObserver = new ResizeObserver(updateAll);
+      resizeObserver.observe(shellWindow);
+      resizeObserver.observe(shellContent);
+    }
+
+    updateAll();
+  }
+
   function hydrateFromData() {
     renderAuth();
     renderShellChrome();
@@ -1109,6 +1600,7 @@
 
   function setView(nextView) {
     var target = hasView(nextView) ? nextView : "launcher";
+    var shellContent = document.querySelector(".zgs-shell-content");
 
     views.forEach(function (view) {
       var active = view.getAttribute("data-view") === target;
@@ -1120,6 +1612,22 @@
 
     if (breadcrumb) {
       breadcrumb.textContent = viewLabels[target];
+    }
+
+    refreshShellScrollIndicator();
+
+    if (target === "launcher" && shellContent && params && params.get("startFocus")) {
+      var startFocus = params.get("startFocus");
+      requestAnimationFrame(function () {
+        if (startFocus === "middle") {
+          shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * 0.5));
+        } else if (startFocus === "bottom") {
+          shellContent.scrollTop = shellContent.scrollHeight;
+        } else {
+          shellContent.scrollTop = 0;
+        }
+        refreshShellScrollIndicator();
+      });
     }
   }
 
@@ -1158,6 +1666,7 @@
   }
 
   bindAppActions();
+  initShellScrollIndicator();
 
   var params = new URLSearchParams(window.location.search);
   var tabParam = params.get("auth");
