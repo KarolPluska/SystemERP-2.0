@@ -1564,9 +1564,6 @@
       }
       return acc;
     }, []);
-    var deadlineMeta = contextMeta.find(function (item) {
-      return String(item && item.label || "").toLowerCase().indexOf("deadline") !== -1;
-    });
     var stageMeta = contextMeta.find(function (item) {
       return String(item && item.label || "").toLowerCase().indexOf("etap") !== -1;
     });
@@ -1591,8 +1588,8 @@
                 }).join("") +
               '</select></label>' +
               '<label class="zgs-chat-list-select"><span>Sortuj</span><select data-thread-sort>' +
-                '<option value="latest">Ostatnia aktywność</option>' +
-                '<option value="unread">Nieprzeczytane</option>' +
+                '<option value="latest">Najnowsze</option>' +
+                '<option value="unread">Nieodczytane</option>' +
                 '<option value="priority">Priorytet</option>' +
               "</select></label>" +
             "</div>" +
@@ -1613,7 +1610,7 @@
           "</div>" +
           '<div class="zgs-chat-compose">' +
             '<div class="zgs-chat-compose-tools">' +
-              '<label class="zgs-chat-compose-select"><span>Typ</span><select>' +
+              '<label class="zgs-chat-compose-select"><span>Tryb</span><select>' +
                 (Array.isArray(activeThread.composerTypeOptions) ? activeThread.composerTypeOptions : ["Wiadomość"]).map(function (option) {
                   return "<option>" + esc(option) + "</option>";
                 }).join("") +
@@ -1651,15 +1648,11 @@
           '<div class="zgs-chat-context-priority">' +
             '<div class="zgs-chat-context-priority-row"><span>Status oferty</span><strong class="zgs-chat-status-value is-offer" data-chat-offer-status>' + esc(offerStatus) + "</strong></div>" +
             '<div class="zgs-chat-context-priority-row"><span>Status zamówienia</span><strong class="zgs-chat-status-value is-order" data-chat-order-status>' + esc(orderStatusInitial) + "</strong></div>" +
-            (deadlineMeta ? '<div class="zgs-chat-context-priority-row is-deadline"><span>Deadline</span><strong>' + esc(deadlineMeta.value || "") + "</strong></div>" : "") +
           "</div>" +
           '<ul class="zgs-chat-context-meta-inline">' +
             (stageMeta ? '<li><span>Etap</span><strong>' + esc(stageMeta.value || "") + "</strong></li>" : "") +
             (assignmentMeta ? '<li><span>Przypisanie</span><strong>' + esc(assignmentMeta.value || "") + "</strong></li>" : "") +
           "</ul>" +
-          (contextPanel.linkedObject
-            ? '<div class="zgs-chat-linked"><strong>' + esc(contextPanel.linkedObject.value || "") + '</strong><button class="zgs-chat-tool-btn" type="button">' + esc(contextPanel.linkedObject.action || "Otwórz") + "</button></div>"
-            : "") +
           (contextActions.length
             ? '<div class="zgs-action-list zgs-chat-context-actions">' +
                 contextActions.map(function (action) {
@@ -1670,6 +1663,9 @@
                   return '<button class="zgs-action-btn' + (isPrimary ? " is-primary" : "") + '" type="button"' + productionAttr + ">" + esc(label) + "</button>";
                 }).join("") +
               "</div>"
+            : "") +
+          (contextPanel.linkedObject
+            ? '<div class="zgs-chat-linked"><strong>' + esc(contextPanel.linkedObject.value || "") + '</strong><button class="zgs-chat-tool-btn" type="button">' + esc(contextPanel.linkedObject.action || "Otwórz") + "</button></div>"
             : "") +
           (statusHistoryPreview.length
             ? '<div class="zgs-chat-context-history"><h4>Historia zmian</h4><ul class="zgs-chat-status-history" data-chat-status-history>' +
@@ -1697,6 +1693,7 @@
     var decisionsList = view.querySelector(".zgs-chat-decision-list");
     var statusHistoryList = view.querySelector("[data-chat-status-history]");
     var threadBody = view.querySelector(".zgs-chat-thread");
+    var contextPane = view.querySelector(".zgs-chat-pane-context");
     var threadListContainer = view.querySelector("[data-thread-list]");
     var threadCountNode = view.querySelector("[data-thread-count]");
     var threadSearchInput = view.querySelector("[data-thread-search]");
@@ -1719,24 +1716,37 @@
 
       threadListContainer.innerHTML = list.map(function (thread) {
         var unreadBadge = thread.unread > 0
-          ? '<span class="zgs-chat-meta-badge is-unread">' + esc(String(thread.unread)) + "</span>"
+          ? '<span class="zgs-chat-top-unread">' + esc(String(thread.unread)) + "</span>"
           : "";
         var unreadMarker = thread.unread > 0 ? '<span class="zgs-chat-unread-mark" aria-hidden="true"></span>' : "";
+        var notifyIcon = '<span class="zgs-chat-notify-icon ' + (thread.muted ? "is-muted" : "is-on") + '" title="' + esc(thread.muted ? "Wyciszona" : "Powiadomienia aktywne") + '" aria-hidden="true"></span>';
         var statusLabel = thread.conversationStatus || "Aktywna";
-        return '<li class="' + (thread.active ? "is-active" : "") + '">' +
+        var itemClasses = [];
+        if (thread.active) {
+          itemClasses.push("is-active");
+        }
+        if (thread.muted) {
+          itemClasses.push("is-muted-thread");
+        }
+        if (String(statusLabel).toLowerCase() === "zamknięta") {
+          itemClasses.push("is-closed-thread");
+        }
+        return '<li class="' + itemClasses.join(" ") + '">' +
           unreadMarker +
-          '<div class="zgs-chat-item-row is-title">' +
-            '<strong>' + esc(thread.title) + '</strong>' +
-            '<span class="zgs-chat-notify-icon ' + (thread.muted ? "is-muted" : "is-on") + '" title="' + esc(thread.muted ? "Wyciszona" : "Powiadomienia aktywne") + '" aria-hidden="true"></span>' +
+          '<div class="zgs-chat-item-row is-top">' +
+            '<strong class="zgs-chat-item-title">' + esc(thread.title) + "</strong>" +
+            '<span class="zgs-chat-item-time">' + esc(thread.time) + "</span>" +
           "</div>" +
-          '<div class="zgs-chat-item-row is-meta"><div class="zgs-chat-item-badges">' +
-            '<span class="zgs-chat-channel-tag ' + esc(channelClass(thread.channel)) + '">' + esc(thread.channel) + "</span>" +
-            '<span class="zgs-chat-meta-badge ' + esc(conversationStatusClass(statusLabel)) + '">' + esc(statusLabel) + "</span>" +
-            '<span class="zgs-chat-meta-badge ' + esc(threadStatusClass(thread.status)) + '">' + esc(thread.status) + "</span>" +
-          "</div></div>" +
-          '<div class="zgs-chat-item-context"><span class="is-company">' + esc(thread.company || thread.topic) + '</span><span class="is-participant">' + esc(thread.participant || thread.topic) + "</span></div>" +
           '<p class="zgs-chat-item-text">' + esc(thread.text) + "</p>" +
-          '<div class="zgs-chat-item-row is-foot">' + unreadBadge + '<span class="zgs-chat-item-time">' + esc(thread.time) + "</span></div>" +
+          '<div class="zgs-chat-item-row is-bottom">' +
+            '<div class="zgs-chat-item-bottom-left">' +
+              '<span class="zgs-chat-item-company">' + esc(thread.company || thread.topic) + "</span>" +
+              '<span class="zgs-chat-item-sep" aria-hidden="true">•</span>' +
+              '<span class="zgs-chat-item-participant">' + esc(thread.participant || thread.topic) + "</span>" +
+            "</div>" +
+            '<div class="zgs-chat-item-bottom-right"><div class="zgs-chat-item-badges">' +
+            '<span class="zgs-chat-meta-badge ' + esc(threadStatusClass(thread.status)) + '">' + esc(thread.status) + "</span>" +
+          '</div><div class="zgs-chat-item-tools">' + unreadBadge + notifyIcon + "</div></div></div>" +
         "</li>";
       }).join("");
 
@@ -1914,18 +1924,27 @@
 
     applyThreadFilters();
     initLocalScrollIndicator(threadBody);
+    initLocalScrollIndicator(threadListContainer);
+    initLocalScrollIndicator(contextPane);
 
     var shellContent = document.querySelector(".zgs-shell-content");
     var messengerFocus = messengerParams.get("messengerFocus");
-    if (shellContent && messengerFocus) {
+    if (messengerFocus) {
       requestAnimationFrame(function () {
-        if (messengerFocus === "middle") {
-          shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * 0.5));
-        } else if (messengerFocus === "bottom") {
-          shellContent.scrollTop = shellContent.scrollHeight;
-        } else {
-          shellContent.scrollTop = 0;
+        var focusRatio = messengerFocus === "middle" ? 0.5 : (messengerFocus === "bottom" ? 1 : 0);
+        var focusTargets = [threadBody, threadListContainer, contextPane];
+
+        if (shellContent && shellContent.scrollHeight > shellContent.clientHeight + 2) {
+          shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * focusRatio));
         }
+
+        focusTargets.forEach(function (target) {
+          if (!target || target.scrollHeight <= target.clientHeight + 2) {
+            return;
+          }
+          target.scrollTop = Math.max(0, Math.round((target.scrollHeight - target.clientHeight) * focusRatio));
+        });
+
         refreshShellScrollIndicator();
       });
     }

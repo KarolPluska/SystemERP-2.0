@@ -560,6 +560,45 @@
         conversationStatus: "Zamknięta",
         unread: 0,
         muted: true
+      },
+      {
+        title: "Logistyka",
+        text: "Potwierdź okno dostawy dla zamówienia #A-188.",
+        topic: "Koordynacja transportu",
+        company: "Delta Fence",
+        participant: "Ewa Kulesza",
+        channel: "Operacyjny",
+        time: "Wczoraj 11:25",
+        status: "Oczekuje",
+        conversationStatus: "Aktywna",
+        unread: 3,
+        muted: false
+      },
+      {
+        title: "Księgowość",
+        text: "Klient prosi o korektę danych na fakturze pro-forma.",
+        topic: "Rozliczenia",
+        company: "BramaTech",
+        participant: "Paweł Gajda",
+        channel: "Techniczny",
+        time: "Wczoraj 09:56",
+        status: "Nowe",
+        conversationStatus: "Aktywna",
+        unread: 1,
+        muted: false
+      },
+      {
+        title: "Montaż",
+        text: "Termin instalacji przesunięty na przyszły tydzień.",
+        topic: "Harmonogram ekip",
+        company: "Nova Garden",
+        participant: "Magda Zielińska",
+        channel: "Operacyjny",
+        time: "Pon 17:18",
+        status: "Do review",
+        conversationStatus: "Zamknięta",
+        unread: 0,
+        muted: true
       }
     ],
     activeThread: {
@@ -616,7 +655,7 @@
         },
         {
           time: "Dzisiaj 16:30",
-          text: "Termin follow-up dla opiekuna klienta.",
+          text: "Termin przypomnienia dla opiekuna klienta.",
           type: "Termin"
         },
         {
@@ -637,10 +676,9 @@
       caseMeta: [
         { label: "Status", value: "Wysyłka PDF" },
         { label: "Etap", value: "Wysyłka PDF" },
-        { label: "Deadline", value: "Dzisiaj 16:30" },
         { label: "Przypisanie", value: "Anna Kowalska" }
       ],
-      quickActions: ["Wyślij do produkcji", "Otwórz ofertę", "Przypisz", "Ustaw follow-up"],
+      quickActions: ["Wyślij do produkcji", "Otwórz ofertę", "Przypisz", "Ustaw przypomnienie"],
       linkedObject: {
         label: "Powiązany obiekt",
         value: "Oferta #4821",
@@ -654,7 +692,7 @@
         },
         {
           time: "09:14",
-          text: "Deadline follow-up potwierdzony na dziś 16:30.",
+          text: "Termin przypomnienia potwierdzony na dziś 16:30.",
           type: "Termin"
         },
         {
