@@ -1594,7 +1594,7 @@
               "</select></label>" +
             "</div>" +
           "</div>" +
-          '<ul class="zgs-chat-list" data-thread-list></ul>' +
+          '<div class="zgs-chat-list-scroll" data-thread-scroll><ul class="zgs-chat-list" data-thread-list></ul></div>' +
         "</article>" +
         '<article class="zgs-surface zgs-chat-pane-thread">' +
           '<div class="zgs-chat-header"><h3>' + esc(activeThread.title) + '</h3><div class="zgs-chat-header-meta"><span class="zgs-chip">' + esc(activeThread.badge) + "</span>" + (activeThread.stage ? '<span class="zgs-chat-stage">' + esc(activeThread.stage) + "</span>" : "") + "</div></div>" +
@@ -1695,6 +1695,7 @@
     var threadBody = view.querySelector(".zgs-chat-thread");
     var contextPane = view.querySelector(".zgs-chat-pane-context");
     var threadListContainer = view.querySelector("[data-thread-list]");
+    var threadListScrollContainer = view.querySelector("[data-thread-scroll]");
     var threadCountNode = view.querySelector("[data-thread-count]");
     var threadSearchInput = view.querySelector("[data-thread-search]");
     var threadStatusFilter = view.querySelector("[data-thread-status-filter]");
@@ -1735,18 +1736,18 @@
           unreadMarker +
           '<div class="zgs-chat-item-row is-top">' +
             '<strong class="zgs-chat-item-title">' + esc(thread.title) + "</strong>" +
-            '<span class="zgs-chat-item-time">' + esc(thread.time) + "</span>" +
+            '<div class="zgs-chat-item-top-meta"><span class="zgs-chat-item-time">' + esc(thread.time) + "</span>" + notifyIcon + "</div>" +
           "</div>" +
           '<p class="zgs-chat-item-text">' + esc(thread.text) + "</p>" +
+          '<div class="zgs-chat-item-row is-meta">' +
+            '<span class="zgs-chat-item-company">' + esc(thread.company || thread.topic) + "</span>" +
+            '<span class="zgs-chat-item-participant">' + esc(thread.participant || thread.topic) + "</span>" +
+          "</div>" +
           '<div class="zgs-chat-item-row is-bottom">' +
-            '<div class="zgs-chat-item-bottom-left">' +
-              '<span class="zgs-chat-item-company">' + esc(thread.company || thread.topic) + "</span>" +
-              '<span class="zgs-chat-item-sep" aria-hidden="true">•</span>' +
-              '<span class="zgs-chat-item-participant">' + esc(thread.participant || thread.topic) + "</span>" +
-            "</div>" +
             '<div class="zgs-chat-item-bottom-right"><div class="zgs-chat-item-badges">' +
+            '<span class="zgs-chat-meta-badge ' + esc(conversationStatusClass(statusLabel)) + '">' + esc(statusLabel) + "</span>" +
             '<span class="zgs-chat-meta-badge ' + esc(threadStatusClass(thread.status)) + '">' + esc(thread.status) + "</span>" +
-          '</div><div class="zgs-chat-item-tools">' + unreadBadge + notifyIcon + "</div></div></div>" +
+          '</div><div class="zgs-chat-item-tools">' + unreadBadge + "</div></div></div>" +
         "</li>";
       }).join("");
 
@@ -1924,7 +1925,9 @@
 
     applyThreadFilters();
     initLocalScrollIndicator(threadBody);
-    initLocalScrollIndicator(threadListContainer);
+    if (threadListScrollContainer) {
+      initLocalScrollIndicator(threadListScrollContainer);
+    }
     initLocalScrollIndicator(contextPane);
 
     var shellContent = document.querySelector(".zgs-shell-content");
@@ -1932,7 +1935,7 @@
     if (messengerFocus) {
       requestAnimationFrame(function () {
         var focusRatio = messengerFocus === "middle" ? 0.5 : (messengerFocus === "bottom" ? 1 : 0);
-        var focusTargets = [threadBody, threadListContainer, contextPane];
+        var focusTargets = [threadBody, threadListScrollContainer, contextPane];
 
         if (shellContent && shellContent.scrollHeight > shellContent.clientHeight + 2) {
           shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * focusRatio));
