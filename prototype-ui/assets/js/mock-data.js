@@ -510,34 +510,56 @@
     threadList: [
       {
         title: "Oferta #4821",
-        text: "Nowy komentarz od opiekuna klienta.",
-        topic: "Delta Fence",
-        time: "2 min temu",
+        text: "Klient zaakceptował rabat, oczekuje na wysyłkę PDF.",
+        topic: "Wątek ofertowy",
+        company: "Delta Fence",
+        participant: "Anna Kowalska",
+        channel: "Ofertowy",
+        time: "Dzisiaj 09:18",
         status: "Pilne",
+        conversationStatus: "Aktywna",
         unread: 2,
+        muted: false,
         active: true
       },
       {
         title: "Zespół handlowy",
-        text: "Update cennika na poniedziałek.",
+        text: "Update cennika na poniedziałek i nowe reguły rabatowe.",
         topic: "Kanał zespołowy",
+        company: "Zegger ERP",
+        participant: "Michał Lis",
+        channel: "Operacyjny",
         time: "Dzisiaj 09:14",
         status: "Nowe",
-        unread: 1
+        conversationStatus: "Aktywna",
+        unread: 1,
+        muted: false
       },
       {
         title: "Produkcja",
-        text: "Termin dostawy przesunięty o 1 dzień.",
-        topic: "Operacyjne",
+        text: "Termin dostawy przesunięty o 1 dzień - potrzebna decyzja.",
+        topic: "Wątek produkcyjny",
+        company: "BramaTech",
+        participant: "Karolina Nowak",
+        channel: "Techniczny",
         time: "Wczoraj 16:21",
-        status: "Oczekuje"
+        status: "Oczekuje",
+        conversationStatus: "Oczekuje",
+        unread: 0,
+        muted: true
       },
       {
         title: "Serwis terenowy",
-        text: "Pytanie o konfigurację słupków.",
-        topic: "Techniczne",
+        text: "Pytanie o konfigurację słupków - zgłoszenie zamknięte.",
+        topic: "Wątek serwisowy",
+        company: "Garden Spot",
+        participant: "Jan Wrona",
+        channel: "Operacyjny",
         time: "Wczoraj 13:42",
-        status: "Do review"
+        status: "Do review",
+        conversationStatus: "Zamknięta",
+        unread: 0,
+        muted: true
       }
     ],
     activeThread: {
@@ -576,7 +598,7 @@
           type: "user"
         }
       ],
-      composerPlaceholder: "Pole szybkiej odpowiedzi",
+      composerPlaceholder: "Napisz wiadomość do wątku...",
       composerTypeOptions: ["Wiadomość", "Notatka wewnętrzna", "Decyzja"],
       composerQuickActions: ["Priorytet", "@Wzmianka"],
       composerActions: ["Dodaj załącznik", "Wyślij wiadomość"],
@@ -596,6 +618,11 @@
           time: "Dzisiaj 16:30",
           text: "Termin follow-up dla opiekuna klienta.",
           type: "Termin"
+        },
+        {
+          time: "Wczoraj 18:02",
+          text: "Wątek oznaczony jako wymagający potwierdzenia finansowego.",
+          type: "System"
         }
       ]
     },
@@ -603,11 +630,12 @@
       title: "Kontekst sprawy",
       rows: [
         { label: "Klient", value: "Delta Fence" },
+        { label: "Firma", value: "Delta Fence Sp. z o.o." },
         { label: "Opiekun", value: "Anna Kowalska" },
         { label: "Wartość oferty", value: "42 180 PLN" }
       ],
       caseMeta: [
-        { label: "Status", value: "Oczekuje na potwierdzenie" },
+        { label: "Status", value: "Wysyłka PDF" },
         { label: "Etap", value: "Wysyłka PDF" },
         { label: "Deadline", value: "Dzisiaj 16:30" },
         { label: "Przypisanie", value: "Anna Kowalska" }
@@ -618,6 +646,23 @@
         value: "Oferta #4821",
         action: "Przejdź do oferty"
       },
+      statusHistory: [
+        {
+          time: "09:11",
+          text: "Status oferty ustawiony na Wysłana.",
+          type: "Oferty"
+        },
+        {
+          time: "09:14",
+          text: "Deadline follow-up potwierdzony na dziś 16:30.",
+          type: "Termin"
+        },
+        {
+          time: "Wczoraj 17:45",
+          text: "Kanał rozmowy przełączony na operacyjny.",
+          type: "System"
+        }
+      ],
       tasks: [
         {
           title: "Task",
@@ -628,6 +673,11 @@
           title: "Task",
           text: "Przekaż status do produkcji.",
           status: "Po decyzji"
+        },
+        {
+          title: "Task",
+          text: "Zweryfikuj komplet załączników do zamówienia.",
+          status: "Review"
         }
       ]
     }
