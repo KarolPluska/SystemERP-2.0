@@ -60,6 +60,26 @@
     return fallback || "";
   }
 
+  function notificationTimelineItems() {
+    var timeline = Array.isArray(notificationsData.timeline) ? notificationsData.timeline : [];
+    return timeline.reduce(function (acc, group) {
+      var items = Array.isArray(group.items) ? group.items : [];
+      items.forEach(function (item) {
+        acc.push(item || {});
+      });
+      return acc;
+    }, []);
+  }
+
+  function notificationUnreadCount() {
+    if (typeof notificationsData.unreadCount === "number") {
+      return Math.max(0, notificationsData.unreadCount);
+    }
+    return notificationTimelineItems().reduce(function (sum, item) {
+      return sum + (item && item.unread ? 1 : 0);
+    }, 0);
+  }
+
   function inputTypeForField(fieldKey) {
     if (!fieldKey) {
       return "text";
@@ -293,13 +313,24 @@
     var utilityWrap = document.querySelector(".zgs-shell-right");
     if (utilityWrap) {
       var utility = Array.isArray(navData.utility) ? navData.utility : [];
+      var unreadCount = notificationUnreadCount();
       utilityWrap.innerHTML = utility
         .map(function (item) {
           var view = viewForNavKey(item.key);
           if (item.key === "account") {
             return '<button class="zgs-quick-btn" type="button" aria-disabled="true">' + esc(item.label) + "</button>";
           }
-          return '<button class="zgs-quick-btn" type="button" data-open-module="' + esc(view) + '">' + esc(item.label) + "</button>";
+          if (item.key === "inbox") {
+            var badgeValue = unreadCount > 99 ? "99+" : String(unreadCount);
+            var badge = unreadCount > 0
+              ? '<span class="zgs-quick-btn-badge" aria-label="' + esc(String(unreadCount)) + ' nieprzeczytanych">' + esc(badgeValue) + "</span>"
+              : "";
+            return '<button class="zgs-quick-btn zgs-quick-btn-inbox' + (unreadCount > 0 ? " has-badge" : "") + '" type="button" data-open-module="' + esc(view) + '" data-quick-target="' + esc(view) + '">' +
+              '<span class="zgs-quick-btn-label">' + esc(item.label) + "</span>" +
+              badge +
+            "</button>";
+          }
+          return '<button class="zgs-quick-btn" type="button" data-open-module="' + esc(view) + '" data-quick-target="' + esc(view) + '">' + esc(item.label) + "</button>";
         })
         .join("");
     }
@@ -1950,6 +1981,73 @@
       return;
     }
 
+    function notificationToneClass(tone) {
+      switch (String(tone || "").toLowerCase()) {
+        case "action":
+          return "is-action";
+        case "urgent":
+          return "is-urgent";
+        case "muted":
+          return "is-muted";
+        case "system":
+          return "is-system";
+        case "unread":
+          return "is-unread";
+        default:
+          return "is-read";
+      }
+    }
+
+    function notificationSourceClass(source) {
+      var value = String(source || "").toLowerCase();
+      if (value.indexOf("ofert") !== -1) {
+        return "is-offers";
+      }
+      if (value.indexOf("firm") !== -1) {
+        return "is-company";
+      }
+      if (value.indexOf("system") !== -1) {
+        return "is-system";
+      }
+      if (value.indexOf("komunikator") !== -1) {
+        return "is-chat";
+      }
+      return "is-default";
+    }
+
+    function notificationActionClass(type) {
+      switch (String(type || "").toLowerCase()) {
+        case "primary":
+          return "is-primary";
+        case "ghost":
+          return "is-ghost";
+        default:
+          return "is-secondary";
+      }
+    }
+
+    function orderedNotificationActions(actions) {
+      var list = Array.isArray(actions) ? actions : [];
+      var secondary = list.filter(function (action) {
+        return String(action && action.type || "").toLowerCase() !== "primary";
+      });
+      var primary = list.filter(function (action) {
+        return String(action && action.type || "").toLowerCase() === "primary";
+      });
+      return secondary.concat(primary);
+    }
+
+    var filters = notificationsData.filters || {};
+    var primaryFilters = Array.isArray(filters.primary) ? filters.primary : [];
+    var sourceFilters = Array.isArray(filters.sources) ? filters.sources : [];
+    var stats = Array.isArray(notificationsData.stats) ? notificationsData.stats : [];
+    var sortOptions = Array.isArray(notificationsData.sortOptions) ? notificationsData.sortOptions : [];
+    var quickActions = Array.isArray(notificationsData.quickActions) ? notificationsData.quickActions : [];
+    var bulkActions = Array.isArray(notificationsData.bulkActions) ? notificationsData.bulkActions : [];
+    var timeline = Array.isArray(notificationsData.timeline) ? notificationsData.timeline : [];
+    var totalItems = notificationTimelineItems().length;
+    var unreadCount = notificationUnreadCount();
+
     view.innerHTML =
       '<header class="zgs-module-head">' +
         '<button class="zgs-back-btn" type="button" data-open-view="launcher">Wróć do launchera</button>' +
@@ -1957,29 +2055,159 @@
       "</header>" +
       '<div class="zgs-notification-grid">' +
         '<article class="zgs-surface zgs-notification-filters">' +
-          '<h3>Filtry i statusy</h3>' +
-          '<div class="zgs-chip-list">' +
-            (Array.isArray(notificationsData.filters) ? notificationsData.filters : []).map(function (f, index) {
-              return '<span class="zgs-chip' + (index === 0 ? " is-active" : "") + '">' + esc(f) + "</span>";
-            }).join("") +
-          "</div>" +
-          '<div class="zgs-inbox-list">' +
-            (Array.isArray(notificationsData.summaries) ? notificationsData.summaries : []).map(function (item) {
-              return "<div class=\"zgs-inbox-item\"><strong>" + esc(item.title) + "</strong><span>" + esc(item.text) + "</span></div>";
-            }).join("") +
-          "</div>" +
-        "</article>" +
-        '<article class="zgs-surface zgs-notification-timeline"><h3>Timeline zdarzeń</h3>' +
-          (Array.isArray(notificationsData.timeline) ? notificationsData.timeline : []).map(function (group, groupIndex) {
-            return '<div class="zgs-notification-day"><h4>' + esc(group.group) + '</h4><div class="zgs-inbox-list">' +
-              (Array.isArray(group.items) ? group.items : []).map(function (item, itemIndex) {
-                var unreadClass = groupIndex === 0 && itemIndex === 0 ? " is-unread" : "";
-                return '<div class="zgs-inbox-item' + unreadClass + '"><strong>' + esc(item.title) + "</strong><span>" + esc(item.text) + "</span></div>";
+          '<h3>Filtry i sterowanie</h3>' +
+          '<div class="zgs-notification-filter-block">' +
+            '<p class="zgs-notification-label">Widok</p>' +
+            '<div class="zgs-notification-filter-row">' +
+              primaryFilters.map(function (item, index) {
+                return '<button class="zgs-chip-btn zgs-notification-filter-chip' + (index === 0 ? " is-active" : "") + '" type="button">' + esc(item) + "</button>";
               }).join("") +
-            "</div></div>";
-          }).join("") +
+            "</div>" +
+          "</div>" +
+          '<div class="zgs-notification-filter-block">' +
+            '<p class="zgs-notification-label">Źródło</p>' +
+            '<div class="zgs-notification-filter-row">' +
+              sourceFilters.map(function (item) {
+                return '<button class="zgs-chip-btn zgs-notification-filter-chip is-soft" type="button">' + esc(item) + "</button>";
+              }).join("") +
+            "</div>" +
+          "</div>" +
+          '<div class="zgs-notification-sort-row">' +
+            '<label for="zgs-notification-sort">Sortowanie</label>' +
+            '<select id="zgs-notification-sort" class="zgs-notification-sort-select">' +
+              sortOptions.map(function (item, index) {
+                return '<option value="' + esc(item.toLowerCase()) + '"' + (index === 0 ? " selected" : "") + ">" + esc(item) + "</option>";
+              }).join("") +
+            "</select>" +
+          "</div>" +
+          '<div class="zgs-notification-stats-grid">' +
+            stats.map(function (item) {
+              var toneClass = notificationToneClass(item.tone);
+              return '<div class="zgs-notification-stat ' + toneClass + '">' +
+                '<p>' + esc(item.label) + "</p>" +
+                '<strong>' + esc(item.value) + "</strong>" +
+              "</div>";
+            }).join("") +
+          "</div>" +
+          '<div class="zgs-notification-quick-actions">' +
+            '<p class="zgs-notification-label">Szybkie akcje</p>' +
+            '<div class="zgs-notification-quick-actions-row">' +
+              quickActions.map(function (item, index) {
+                return '<button class="zgs-action-btn zgs-notification-quick-btn' + (index === 0 ? " is-primary-action" : "") + '" type="button">' + esc(item) + "</button>";
+              }).join("") +
+            "</div>" +
+          "</div>" +
+          '<p class="zgs-notification-summary">Łącznie: <strong>' + esc(totalItems) + "</strong> pozycji, <strong>" + esc(unreadCount) + "</strong> nieprzeczytanych.</p>" +
+        "</article>" +
+        '<article class="zgs-surface zgs-notification-timeline">' +
+          '<div class="zgs-notification-timeline-head">' +
+            "<h3>Inbox zdarzeń</h3>" +
+            '<span class="zgs-notification-timeline-count">' + esc(totalItems) + " wpisów</span>" +
+          "</div>" +
+          '<div class="zgs-notification-bulk-actions">' +
+            bulkActions.map(function (item, index) {
+              return '<button class="zgs-action-btn zgs-notification-toolbar-btn' + (index === 0 ? " is-primary-action" : "") + '" type="button">' + esc(item) + "</button>";
+            }).join("") +
+          "</div>" +
+          '<div class="zgs-notification-feed-scroll" data-notification-scroll>' +
+            timeline.map(function (group) {
+              return '<section class="zgs-notification-day"><h4>' + esc(group.group) + "</h4><ul class=\"zgs-notification-feed\">" +
+                (Array.isArray(group.items) ? group.items : []).map(function (item) {
+                  var toneClass = notificationToneClass(item.tone);
+                  var sourceClass = notificationSourceClass(item.source);
+                  var unreadClass = item.unread ? " is-unread" : "";
+                  var mutedClass = item.muted ? " is-muted" : "";
+                  var pinnedClass = item.pinned ? " is-pinned" : "";
+                  var pinBadge = item.pinned ? '<span class="zgs-notification-pin">Przypięte</span>' : "";
+                  var orderedActions = orderedNotificationActions(item.actions);
+                  return '<li class="zgs-notification-card ' + toneClass + unreadClass + mutedClass + pinnedClass + '">' +
+                    '<div class="zgs-notification-card-top">' +
+                      '<div class="zgs-notification-card-meta">' +
+                        '<span class="zgs-notification-source ' + sourceClass + '">' + esc(item.source || "Powiadomienie") + "</span>" +
+                        pinBadge +
+                      "</div>" +
+                      '<time datetime="' + esc(item.time || "") + '">' + esc(item.time || "teraz") + "</time>" +
+                    "</div>" +
+                    '<h5>' + esc(item.title || "Nowe powiadomienie") + "</h5>" +
+                    '<p>' + esc(item.text || "") + "</p>" +
+                    '<div class="zgs-notification-card-bottom">' +
+                      '<span class="zgs-notification-status ' + toneClass + '">' + esc(item.status || "Info") + "</span>" +
+                      '<div class="zgs-notification-card-actions">' +
+                        orderedActions.map(function (action) {
+                          return '<button class="zgs-notification-action ' + notificationActionClass(action.type) + '" type="button">' + esc(action.label) + "</button>";
+                        }).join("") +
+                      "</div>" +
+                    "</div>" +
+                  "</li>";
+                }).join("") +
+              "</ul></section>";
+            }).join("") +
+          "</div>" +
         "</article>" +
       "</div>";
+
+    var notificationsParams = new URLSearchParams(window.location.search);
+    var notificationsFocus = notificationsParams.get("notificationsFocus");
+    var shellContent = document.querySelector(".zgs-shell-content");
+    var feedScroll = view.querySelector("[data-notification-scroll]");
+    var cards = Array.prototype.slice.call(view.querySelectorAll(".zgs-notification-card"));
+
+    function activateCard(card) {
+      cards.forEach(function (item) {
+        item.classList.remove("is-focused");
+      });
+      card.classList.add("is-focused");
+    }
+
+    cards.forEach(function (card) {
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("role", "button");
+      card.addEventListener("click", function (event) {
+        if (event.target && event.target.closest("button")) {
+          return;
+        }
+        activateCard(card);
+      });
+      card.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+        if (event.target && event.target.closest("button")) {
+          return;
+        }
+        event.preventDefault();
+        activateCard(card);
+      });
+    });
+
+    if (notificationsFocus && feedScroll) {
+      requestAnimationFrame(function () {
+        var sectionAnchors = Array.prototype.slice.call(feedScroll.querySelectorAll(".zgs-notification-day"));
+        var focusRatio = notificationsFocus === "middle" ? 0.5 : (notificationsFocus === "bottom" ? 1 : 0);
+        if (sectionAnchors.length > 0) {
+          var targetIndex = notificationsFocus === "middle"
+            ? Math.min(sectionAnchors.length - 1, Math.floor((sectionAnchors.length - 1) / 2))
+            : (notificationsFocus === "bottom" ? sectionAnchors.length - 1 : 0);
+          var targetAnchor = sectionAnchors[targetIndex];
+          var maxScroll = Math.max(0, feedScroll.scrollHeight - feedScroll.clientHeight);
+          feedScroll.scrollTop = Math.min(maxScroll, Math.max(0, targetAnchor.offsetTop - 2));
+        } else if (feedScroll.scrollHeight > feedScroll.clientHeight + 2) {
+          feedScroll.scrollTop = Math.max(0, Math.round((feedScroll.scrollHeight - feedScroll.clientHeight) * focusRatio));
+        }
+        if (shellContent && shellContent.scrollHeight > shellContent.clientHeight + 2) {
+          shellContent.scrollTop = Math.max(0, Math.round((shellContent.scrollHeight - shellContent.clientHeight) * focusRatio));
+        }
+        refreshShellScrollIndicator();
+      });
+    } else if (feedScroll) {
+      requestAnimationFrame(function () {
+        feedScroll.scrollTop = 0;
+        requestAnimationFrame(function () {
+          feedScroll.scrollTop = 0;
+          refreshShellScrollIndicator();
+        });
+      });
+    }
   }
 
   function hydrateFromData() {
@@ -2066,6 +2294,34 @@
     });
 
     setNavActive(target);
+    var quickButtons = Array.prototype.slice.call(document.querySelectorAll(".zgs-shell-right [data-quick-target]"));
+    quickButtons.forEach(function (button) {
+      var active = button.getAttribute("data-quick-target") === target;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-current", active ? "page" : "false");
+    });
+
+    if (target === "notifications") {
+      var hasFocusParam = params && params.get("notificationsFocus");
+      requestAnimationFrame(function () {
+        if (shellContent) {
+          shellContent.scrollTop = 0;
+        }
+        if (!hasFocusParam) {
+          var notificationsView = document.getElementById("zgs-view-notifications");
+          var notificationFeed = notificationsView ? notificationsView.querySelector("[data-notification-scroll]") : null;
+          if (notificationFeed) {
+            notificationFeed.scrollTop = 0;
+            requestAnimationFrame(function () {
+              notificationFeed.scrollTop = 0;
+              refreshShellScrollIndicator();
+            });
+            return;
+          }
+        }
+        refreshShellScrollIndicator();
+      });
+    }
 
     if (breadcrumb) {
       breadcrumb.textContent = viewLabels[target];

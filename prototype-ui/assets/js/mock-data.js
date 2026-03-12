@@ -10,8 +10,7 @@
       { key: "offers", label: "Panel Ofertowy" },
       { key: "company", label: "Firma i Użytkownicy" },
       { key: "library", label: "Biblioteka Produktów" },
-      { key: "chat", label: "Komunikator" },
-      { key: "inbox", label: "Powiadomienia" }
+      { key: "chat", label: "Komunikator" }
     ],
     utility: [
       { key: "chat", label: "Komunikator" },
@@ -723,36 +722,204 @@
 
   notifications: {
     title: "Centrum powiadomień",
-    filters: ["Wszystkie", "Nieprzeczytane", "Oferty", "Firma", "System"],
-    summaries: [
-      {
-        title: "14 powiadomień dzisiaj",
-        text: "5 wymaga akcji handlowca."
-      },
-      {
-        title: "3 alerty krytyczne",
-        text: "2 oferty + 1 błąd synchronizacji."
-      },
-      {
-        title: "Obieg alertów",
-        text: "Oferty krytyczne trafiają do Sales Admin i opiekuna klienta. Alert systemowy bez akcji zamyka się automatycznie po 24h. Wnioski firmowe eskalują się po 8h bez odpowiedzi."
-      }
+    unreadCount: 9,
+    filters: {
+      primary: ["Wszystkie", "Nieprzeczytane", "Wymaga akcji", "Pilne"],
+      sources: ["Oferty", "Firma", "System", "Komunikator"]
+    },
+    sortOptions: ["Najnowsze", "Najstarsze", "Priorytet", "Wymaga akcji"],
+    quickActions: [
+      "Oznacz wszystkie jako przeczytane",
+      "Pokaż tylko wymagające decyzji",
+      "Pokaż wyciszone"
+    ],
+    bulkActions: [
+      "Oznacz wszystkie jako przeczytane",
+      "Oznacz widoczne jako przeczytane",
+      "Przypnij wybrane",
+      "Wycisz wybrane"
+    ],
+    stats: [
+      { label: "Nowe", value: 9, tone: "new" },
+      { label: "Wymaga decyzji", value: 4, tone: "action" },
+      { label: "Pilne", value: 2, tone: "urgent" },
+      { label: "Systemowe", value: 6, tone: "system" },
+      { label: "Wyciszone", value: 3, tone: "muted" }
     ],
     timeline: [
       {
         group: "Dzisiaj",
         items: [
-          { title: "Oferta #4821", text: "Klient zaakceptował warunki handlowe." },
-          { title: "Biblioteka Produktów", text: "Sync arkusza zakończony powodzeniem." },
-          { title: "Komunikator", text: "Zespół handlowy oznaczył konwersację jako pilną." }
+          {
+            source: "Oferty",
+            title: "Oferta #4821 - decyzja rabatowa do potwierdzenia",
+            text: "Klient Delta Fence potwierdził warunki, brakuje akceptacji handlowca.",
+            time: "09:18",
+            status: "Wymaga akcji",
+            tone: "action",
+            unread: true,
+            pinned: true,
+            actions: [
+              { label: "Otwórz", type: "primary" },
+              { label: "Oznacz jako przeczytane", type: "secondary" },
+              { label: "Przypnij", type: "ghost" }
+            ]
+          },
+          {
+            source: "Komunikator",
+            title: "Zespół handlowy oznaczył konwersację jako pilną",
+            text: "Wątek „Oferta #4821” został podbity priorytetem do szybkiej reakcji.",
+            time: "08:52",
+            status: "Pilne",
+            tone: "urgent",
+            unread: true,
+            actions: [
+              { label: "Przejdź", type: "primary" },
+              { label: "Wycisz", type: "secondary" }
+            ]
+          },
+          {
+            source: "System",
+            title: "Okno serwisowe zaplanowane na sobotę 22:00",
+            text: "Zapowiedź prac utrzymaniowych - potwierdź, czy wstrzymać synchronizację.",
+            time: "08:31",
+            status: "Systemowe",
+            tone: "system",
+            unread: true,
+            actions: [
+              { label: "Otwórz", type: "secondary" },
+              { label: "Przypnij", type: "ghost" }
+            ]
+          },
+          {
+            source: "Firma",
+            title: "Nowy wniosek o dołączenie od Jan Wrona",
+            text: "Wniosek czeka na weryfikację uprawnień i przypisanie do zespołu.",
+            time: "07:58",
+            status: "Nieprzeczytane",
+            tone: "unread",
+            unread: true,
+            actions: [
+              { label: "Otwórz", type: "primary" },
+              { label: "Oznacz jako przeczytane", type: "secondary" }
+            ]
+          }
         ]
       },
       {
         group: "Wczoraj",
         items: [
-          { title: "Firma i Użytkownicy", text: "Nowy wniosek o dołączenie od Jan Wrona." },
-          { title: "System", text: "Zaplanowano okno serwisowe na sobotę 22:00." },
-          { title: "Panel Ofertowy", text: "3 oferty oznaczone jako gotowe do wysyłki." }
+          {
+            source: "Oferty",
+            title: "3 oferty oznaczone jako gotowe do wysyłki",
+            text: "Dokumenty PDF wygenerowane i przekazane do kolejki wysyłek.",
+            time: "18:06",
+            status: "Przeczytane",
+            tone: "read",
+            unread: false,
+            actions: [
+              { label: "Przejdź", type: "secondary" }
+            ]
+          },
+          {
+            source: "System",
+            title: "Synchronizacja biblioteki produktów zakończona",
+            text: "Import CSV przebiegł poprawnie, 2 rekordy oznaczone jako konflikt.",
+            time: "16:42",
+            status: "Przeczytane",
+            tone: "read",
+            unread: false,
+            pinned: true,
+            actions: [
+              { label: "Otwórz", type: "secondary" },
+              { label: "Przypnij", type: "ghost" }
+            ]
+          },
+          {
+            source: "Komunikator",
+            title: "Wątek \"Dostawa A-188\" został wyciszony",
+            text: "Automatyczne przypomnienia dla tego wątku są wstrzymane do odwołania.",
+            time: "14:24",
+            status: "Wyciszone",
+            tone: "muted",
+            unread: false,
+            muted: true,
+            actions: [
+              { label: "Przywróć", type: "secondary" },
+              { label: "Otwórz", type: "ghost" }
+            ]
+          },
+          {
+            source: "Firma",
+            title: "Aktualizacja danych firmy Delta Fence",
+            text: "Zmiana opiekuna zamówienia została zaakceptowana przez administratora.",
+            time: "10:11",
+            status: "Przeczytane",
+            tone: "read",
+            unread: false,
+            actions: [
+              { label: "Przejdź", type: "secondary" }
+            ]
+          }
+        ]
+      },
+      {
+        group: "W tym tygodniu",
+        items: [
+          {
+            source: "Oferty",
+            title: "Oferta #4799 wymaga uzupełnienia załączników",
+            text: "Brak podpisanej specyfikacji technicznej przed wysyłką do klienta.",
+            time: "Pon 11:28",
+            status: "Wymaga akcji",
+            tone: "action",
+            unread: false,
+            actions: [
+              { label: "Otwórz", type: "secondary" }
+            ]
+          },
+          {
+            source: "System",
+            title: "Automatyczne zamknięcie alertu monitoringu",
+            text: "Brak dalszych błędów po synchronizacji, alert został zamknięty.",
+            time: "Pon 07:40",
+            status: "Przeczytane",
+            tone: "read",
+            unread: false,
+            actions: [
+              { label: "Otwórz", type: "ghost" }
+            ]
+          }
+        ]
+      },
+      {
+        group: "Wcześniej",
+        items: [
+          {
+            source: "Firma",
+            title: "Archiwalny wniosek użytkownika zamknięty automatycznie",
+            text: "Brak reakcji opiekuna przez 7 dni - zgłoszenie przeniesiono do archiwum.",
+            time: "04 mar",
+            status: "Przeczytane",
+            tone: "read",
+            unread: false,
+            actions: [
+              { label: "Otwórz", type: "ghost" }
+            ]
+          },
+          {
+            source: "System",
+            title: "Monitoring API - incydent rozwiązany",
+            text: "Błąd połączenia wygasł, system przywrócił wszystkie kolejki synchronizacji.",
+            time: "27 lut",
+            status: "Przeczytane",
+            tone: "system",
+            unread: false,
+            actions: [
+              { label: "Otwórz", type: "ghost" },
+              { label: "Przypnij", type: "ghost" }
+            ]
+          }
         ]
       }
     ]
