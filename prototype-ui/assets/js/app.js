@@ -1844,51 +1844,6 @@
       renderThreadRows(filtered);
     }
 
-    function initLocalScrollIndicator(container) {
-      if (!container) {
-        return;
-      }
-      var indicator = document.createElement("div");
-      indicator.className = "zgs-chat-scroll-indicator";
-      indicator.setAttribute("aria-hidden", "true");
-      indicator.innerHTML = '<span class="zgs-chat-scroll-indicator-thumb"></span>';
-      container.appendChild(indicator);
-
-      var thumb = indicator.querySelector(".zgs-chat-scroll-indicator-thumb");
-      if (!thumb) {
-        return;
-      }
-
-      function updateState() {
-        var scrollHeight = container.scrollHeight;
-        var clientHeight = container.clientHeight;
-        var hasOverflow = scrollHeight > clientHeight + 3;
-        indicator.classList.toggle("is-visible", hasOverflow);
-
-        if (!hasOverflow) {
-          thumb.style.transform = "translateY(0px)";
-          thumb.style.height = "0px";
-          return;
-        }
-
-        var trackHeight = Math.max(0, indicator.clientHeight);
-        var thumbHeight = Math.max(22, Math.round((clientHeight / scrollHeight) * trackHeight));
-        var maxScroll = Math.max(1, scrollHeight - clientHeight);
-        var maxThumbTravel = Math.max(0, trackHeight - thumbHeight);
-        var ratio = Math.min(1, container.scrollTop / maxScroll);
-        thumb.style.height = thumbHeight + "px";
-        thumb.style.transform = "translateY(" + Math.round(maxThumbTravel * ratio) + "px)";
-      }
-
-      container.addEventListener("scroll", updateState, { passive: true });
-      window.addEventListener("resize", updateState);
-      if (window.ResizeObserver) {
-        var observer = new ResizeObserver(updateState);
-        observer.observe(container);
-      }
-      updateState();
-    }
-
     function applyProductionEffect() {
       if (productionApplied) {
         return;
