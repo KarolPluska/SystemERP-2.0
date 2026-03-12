@@ -447,28 +447,35 @@ textarea {
   padding: 16px;
 }
 
-.zgs-scroll-indicator {
-  position: absolute;
-  right: 7px;
-  width: 5px;
-  border-radius: 999px;
-  background: rgba(136, 151, 171, 0.16);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.18s ease;
-  z-index: 4;
+/* Globalny, wspólny styl natywnych scrollbarów dla całego ERP desktop */
+.zgs-shell-window,
+.zgs-shell-window :where(*) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 136, 160, 0.42) transparent;
 }
 
-.zgs-scroll-indicator.is-visible {
-  opacity: 1;
+.zgs-shell-window::-webkit-scrollbar,
+.zgs-shell-window :where(*)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.zgs-scroll-indicator-thumb {
-  display: block;
-  width: 100%;
+.zgs-shell-window::-webkit-scrollbar-track,
+.zgs-shell-window :where(*)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.zgs-shell-window::-webkit-scrollbar-thumb,
+.zgs-shell-window :where(*)::-webkit-scrollbar-thumb {
+  background: rgba(120, 136, 160, 0.42);
   border-radius: 999px;
-  background: rgba(67, 88, 113, 0.44);
-  box-shadow: inset 0 0 0 1px rgba(244, 248, 253, 0.55);
+  border: 0;
+  box-shadow: none;
+}
+
+.zgs-shell-window::-webkit-scrollbar-thumb:hover,
+.zgs-shell-window :where(*)::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 136, 160, 0.58);
 }
 
 .zgs-view {
@@ -1249,7 +1256,7 @@ textarea {
 }
 
 .zgs-chat-grid {
-  grid-template-columns: minmax(210px, 0.58fr) minmax(0, 1.82fr) minmax(236px, 0.82fr);
+  grid-template-columns: minmax(248px, 0.68fr) minmax(0, 1.72fr) minmax(236px, 0.82fr);
 }
 
 .zgs-span-2 {
@@ -2578,12 +2585,11 @@ textarea {
   flex-direction: column;
   gap: 6px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .zgs-chat-pane-context {
   grid-template-rows: auto auto auto auto auto auto minmax(0, auto) auto;
-  padding-right: 5px;
   overflow: auto;
   position: relative;
   gap: 8px;
@@ -2655,7 +2661,17 @@ textarea {
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  box-sizing: border-box;
   padding-right: 0;
+  scrollbar-gutter: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.zgs-chat-list-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 .zgs-chat-list-search input {
@@ -3578,60 +3594,6 @@ textarea {
 .zgs-thread-entry.is-production-event {
   border-color: #c7d8ea;
   background: #edf4fc;
-}
-
-.zgs-chat-list-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(120, 136, 160, 0.45) transparent;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar-thumb {
-  background: rgba(120, 136, 160, 0.45);
-  border-radius: 999px;
-  border: 0;
-  box-shadow: none;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 136, 160, 0.62);
-}
-
-.zgs-chat-thread,
-.zgs-chat-pane-context,
-.zgs-chat-status-history {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(67, 88, 113, 0.44) rgba(136, 151, 171, 0.16);
-}
-
-.zgs-chat-thread::-webkit-scrollbar,
-.zgs-chat-pane-context::-webkit-scrollbar,
-.zgs-chat-status-history::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.zgs-chat-thread::-webkit-scrollbar-track,
-.zgs-chat-pane-context::-webkit-scrollbar-track,
-.zgs-chat-status-history::-webkit-scrollbar-track {
-  background: rgba(136, 151, 171, 0.16);
-  border-radius: 999px;
-}
-
-.zgs-chat-thread::-webkit-scrollbar-thumb,
-.zgs-chat-pane-context::-webkit-scrollbar-thumb,
-.zgs-chat-status-history::-webkit-scrollbar-thumb {
-  background: rgba(67, 88, 113, 0.44);
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1px rgba(244, 248, 253, 0.55);
 }
 
 .zgs-chat-followup h4,

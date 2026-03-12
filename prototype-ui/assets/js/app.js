@@ -1982,73 +1982,6 @@
       "</div>";
   }
 
-  function initShellScrollIndicator() {
-    var shellWindow = document.querySelector(".zgs-shell-window");
-    var shellContent = document.querySelector(".zgs-shell-content");
-    if (!shellWindow || !shellContent) {
-      return;
-    }
-
-    var indicator = document.createElement("div");
-    indicator.className = "zgs-scroll-indicator";
-    indicator.setAttribute("aria-hidden", "true");
-    indicator.innerHTML = '<span class="zgs-scroll-indicator-thumb"></span>';
-    shellWindow.appendChild(indicator);
-
-    var thumb = indicator.querySelector(".zgs-scroll-indicator-thumb");
-    if (!thumb) {
-      return;
-    }
-
-    function updateGeometry() {
-      var shellRect = shellWindow.getBoundingClientRect();
-      var contentRect = shellContent.getBoundingClientRect();
-      var top = Math.max(0, Math.round(contentRect.top - shellRect.top) + 8);
-      var height = Math.max(40, Math.round(contentRect.height) - 16);
-      indicator.style.top = top + "px";
-      indicator.style.height = height + "px";
-    }
-
-    function updateState() {
-      var scrollHeight = shellContent.scrollHeight;
-      var clientHeight = shellContent.clientHeight;
-      var hasOverflow = scrollHeight > clientHeight + 4;
-      indicator.classList.toggle("is-visible", hasOverflow);
-
-      if (!hasOverflow) {
-        thumb.style.transform = "translateY(0px)";
-        thumb.style.height = "0px";
-        return;
-      }
-
-      var trackHeight = Math.max(0, indicator.clientHeight);
-      var thumbHeight = Math.max(30, Math.round((clientHeight / scrollHeight) * trackHeight));
-      var maxScroll = Math.max(1, scrollHeight - clientHeight);
-      var maxThumbTravel = Math.max(0, trackHeight - thumbHeight);
-      var ratio = Math.min(1, shellContent.scrollTop / maxScroll);
-      thumb.style.height = thumbHeight + "px";
-      thumb.style.transform = "translateY(" + Math.round(maxThumbTravel * ratio) + "px)";
-    }
-
-    function updateAll() {
-      updateGeometry();
-      updateState();
-    }
-
-    refreshShellScrollIndicator = updateAll;
-
-    shellContent.addEventListener("scroll", updateState, { passive: true });
-    window.addEventListener("resize", updateAll);
-
-    if (window.ResizeObserver) {
-      var resizeObserver = new ResizeObserver(updateAll);
-      resizeObserver.observe(shellWindow);
-      resizeObserver.observe(shellContent);
-    }
-
-    updateAll();
-  }
-
   function hydrateFromData() {
     renderAuth();
     renderShellChrome();
@@ -2190,7 +2123,6 @@
   }
 
   bindAppActions();
-  initShellScrollIndicator();
 
   var params = new URLSearchParams(window.location.search);
   var tabParam = params.get("auth");
