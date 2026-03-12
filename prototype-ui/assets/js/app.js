@@ -1554,8 +1554,7 @@
         type: entry.type || "System"
       };
     });
-    var statusHistoryPreview = statusHistoryItems.slice(0, 2);
-    var hiddenStatusHistoryCount = Math.max(0, statusHistoryItems.length - statusHistoryPreview.length);
+    var combinedHistoryItems = decisionItems.concat(statusHistoryItems);
     var contextTaskPreview = contextTasks.slice(0, 1);
     var hiddenContextTaskCount = Math.max(0, contextTasks.length - contextTaskPreview.length);
     var statusFilterValues = threadItems.reduce(function (acc, thread) {
@@ -1578,7 +1577,7 @@
       "</header>" +
       '<div class="zgs-chat-grid">' +
         '<article class="zgs-surface zgs-chat-pane-list">' +
-          '<div class="zgs-chat-list-head"><h3>Rozmowy</h3><span class="zgs-chat-list-count" data-thread-count>' + esc(String(threadItems.length)) + " wątków</span></div>" +
+          '<div class="zgs-chat-list-head"><h3>Rozmowy</h3></div>' +
           '<div class="zgs-chat-list-tools">' +
             '<label class="zgs-chat-list-search"><input type="search" placeholder="Szukaj rozmów..." data-thread-search></label>' +
             '<div class="zgs-chat-list-selects">' +
@@ -1626,17 +1625,14 @@
               '<div class="zgs-chat-compose-actions">' +
                 (Array.isArray(activeThread.composerActions) ? activeThread.composerActions : []).map(function (action, index) {
                   var label = String(action || "");
-                  var isPrimary = String(label).toLowerCase().indexOf("wyślij") !== -1 || index === 1;
-                  return '<button class="zgs-action-btn' + (isPrimary ? " is-primary" : "") + '" type="button">' + esc(label) + "</button>";
+                  var isSendAction = String(label).toLowerCase().indexOf("wyślij") !== -1;
+                  var isPrimary = isSendAction || index === 1;
+                  var sendAttr = isSendAction ? ' data-chat-send-message="1"' : "";
+                  return '<button class="zgs-action-btn' + (isPrimary ? " is-primary" : "") + '" type="button"' + sendAttr + ">" + esc(label) + "</button>";
                 }).join("") +
-              "</div>" +
+            "</div>" +
             "</div>" +
           "</div>" +
-          '<div class="zgs-chat-followup"><h4>' + esc(activeThread.decisionsTitle) + '</h4><ul class="zgs-chat-decision-list">' +
-            decisionItems.map(function (decision) {
-              return '<li><div class="zgs-chat-decision-head"><span class="zgs-chat-decision-time">' + esc(decision.time) + '</span><span class="zgs-chat-decision-tag ' + esc(decisionTypeClass(decision.type)) + '">' + esc(decision.type) + '</span></div><p>' + esc(decision.text) + "</p></li>";
-            }).join("") +
-          "</ul></div>" +
         "</article>" +
         '<article class="zgs-surface zgs-chat-pane-context">' +
           '<h3>' + esc(contextPanel.title) + "</h3>" +
@@ -1667,14 +1663,12 @@
           (contextPanel.linkedObject
             ? '<div class="zgs-chat-linked"><strong>' + esc(contextPanel.linkedObject.value || "") + '</strong><button class="zgs-chat-tool-btn" type="button">' + esc(contextPanel.linkedObject.action || "Otwórz") + "</button></div>"
             : "") +
-          (statusHistoryPreview.length
-            ? '<div class="zgs-chat-context-history"><h4>Historia zmian</h4><ul class="zgs-chat-status-history" data-chat-status-history>' +
-                statusHistoryPreview.map(function (entry) {
+          (combinedHistoryItems.length
+            ? '<div class="zgs-chat-context-history"><h4>Historia zmian i decyzji</h4><ul class="zgs-chat-status-history" data-chat-status-history>' +
+                combinedHistoryItems.map(function (entry) {
                   return '<li><span class="zgs-chat-history-time">' + esc(entry.time) + '</span><p>' + esc(entry.text) + '</p><span class="zgs-chat-decision-tag ' + esc(decisionTypeClass(entry.type)) + '">' + esc(entry.type) + "</span></li>";
                 }).join("") +
-              "</ul>" +
-              (hiddenStatusHistoryCount > 0 ? '<p class="zgs-chat-history-more">+' + esc(String(hiddenStatusHistoryCount)) + " kolejne zmiany</p>" : "") +
-              "</div>"
+              "</ul></div>"
             : "") +
           (contextTaskPreview.length
             ? '<ul class="zgs-chat-context-task-list">' +
@@ -1690,17 +1684,63 @@
     var productionButton = view.querySelector("[data-messenger-send-production]");
     var orderStatusNode = view.querySelector("[data-chat-order-status]");
     var messageList = view.querySelector(".zgs-chat-thread-list");
-    var decisionsList = view.querySelector(".zgs-chat-decision-list");
+    var composeInput = view.querySelector(".zgs-chat-compose-input");
+    var sendMessageButton = view.querySelector("[data-chat-send-message]");
     var statusHistoryList = view.querySelector("[data-chat-status-history]");
     var threadBody = view.querySelector(".zgs-chat-thread");
     var contextPane = view.querySelector(".zgs-chat-pane-context");
     var threadListContainer = view.querySelector("[data-thread-list]");
     var threadListScrollContainer = view.querySelector("[data-thread-scroll]");
-    var threadCountNode = view.querySelector("[data-thread-count]");
     var threadSearchInput = view.querySelector("[data-thread-search]");
     var threadStatusFilter = view.querySelector("[data-thread-status-filter]");
     var threadSortSelect = view.querySelector("[data-thread-sort]");
     var productionApplied = false;
+
+    function getCurrentTimeLabel() {
+      var now = new Date();
+      var hours = String(now.getHours()).padStart(2, "0");
+      var minutes = String(now.getMinutes()).padStart(2, "0");
+      return hours + ":" + minutes;
+    }
+
+    function scrollThreadToBottom() {
+      if (!threadBody) {
+        return;
+      }
+      threadBody.scrollTop = threadBody.scrollHeight;
+    }
+
+    function appendThreadMessage(author, text, type, timeLabel) {
+      if (!messageList) {
+        return;
+      }
+
+      var safeType = type || "user";
+      var threadEntry = document.createElement("li");
+      threadEntry.className = "zgs-thread-entry " + messageTypeClass({ type: safeType });
+      threadEntry.innerHTML =
+        '<div class="zgs-thread-entry-head"><strong>' + esc(author || "Ty") + "</strong><span>" + esc(timeLabel || getCurrentTimeLabel()) + '</span></div>' +
+        '<p class="zgs-thread-entry-text">' + esc(text || "") + "</p>";
+
+      messageList.appendChild(threadEntry);
+      scrollThreadToBottom();
+    }
+
+    function submitComposeMessage() {
+      if (!composeInput) {
+        return;
+      }
+
+      var message = String(composeInput.value || "").trim();
+      if (!message) {
+        composeInput.focus();
+        return;
+      }
+
+      appendThreadMessage("Ty", message, "user", getCurrentTimeLabel());
+      composeInput.value = "";
+      refreshShellScrollIndicator();
+    }
 
     function renderThreadRows(list) {
       if (!threadListContainer) {
@@ -1709,9 +1749,6 @@
 
       if (!list.length) {
         threadListContainer.innerHTML = '<li class="is-empty"><p class="zgs-chat-item-text">Brak rozmów dla wybranych filtrów.</p></li>';
-        if (threadCountNode) {
-          threadCountNode.textContent = "0 wyników";
-        }
         return;
       }
 
@@ -1750,10 +1787,6 @@
           '</div><div class="zgs-chat-item-tools">' + unreadBadge + "</div></div></div>" +
         "</li>";
       }).join("");
-
-      if (threadCountNode) {
-        threadCountNode.textContent = String(list.length) + " wątków";
-      }
     }
 
     function applyThreadFilters() {
@@ -1873,15 +1906,7 @@
         systemMessage.innerHTML =
           '<div class="zgs-thread-entry-head"><strong>System</strong><span>' + esc(activeThread.productionDecisionTime || "09:18") + '</span></div>' +
           '<p class="zgs-thread-entry-text">' + esc(activeThread.productionSystemMessage || "Wątek został przekazany do produkcji.") + "</p>";
-        messageList.insertBefore(systemMessage, messageList.firstChild);
-      }
-
-      if (decisionsList) {
-        var decisionEntry = document.createElement("li");
-        decisionEntry.innerHTML =
-          '<div class="zgs-chat-decision-head"><span class="zgs-chat-decision-time">' + esc(activeThread.productionDecisionTime || "09:18") + '</span><span class="zgs-chat-decision-tag is-decision">Produkcja</span></div>' +
-          '<p>' + esc(activeThread.productionDecision || "Przekazano zamówienie do produkcji.") + "</p>";
-        decisionsList.insertBefore(decisionEntry, decisionsList.firstChild);
+        messageList.appendChild(systemMessage);
       }
 
       if (statusHistoryList) {
@@ -1898,15 +1923,24 @@
         productionButton.disabled = true;
       }
 
-      if (threadBody) {
-        threadBody.scrollTop = 0;
-      }
+      scrollThreadToBottom();
 
       refreshShellScrollIndicator();
     }
 
     if (productionButton) {
       productionButton.addEventListener("click", applyProductionEffect);
+    }
+    if (sendMessageButton) {
+      sendMessageButton.addEventListener("click", submitComposeMessage);
+    }
+    if (composeInput) {
+      composeInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          submitComposeMessage();
+        }
+      });
     }
     if (threadSearchInput) {
       threadSearchInput.addEventListener("input", applyThreadFilters);
@@ -1924,11 +1958,13 @@
     }
 
     applyThreadFilters();
-    initLocalScrollIndicator(threadBody);
-    if (threadListScrollContainer) {
-      initLocalScrollIndicator(threadListScrollContainer);
+
+    if (!messengerParams.get("messengerFocus")) {
+      requestAnimationFrame(function () {
+        scrollThreadToBottom();
+        refreshShellScrollIndicator();
+      });
     }
-    initLocalScrollIndicator(contextPane);
 
     var shellContent = document.querySelector(".zgs-shell-content");
     var messengerFocus = messengerParams.get("messengerFocus");

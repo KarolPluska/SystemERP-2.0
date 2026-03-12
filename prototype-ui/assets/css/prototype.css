@@ -2590,7 +2590,7 @@ textarea {
 }
 
 .zgs-chat-pane-thread {
-  grid-template-rows: auto minmax(250px, 340px) auto minmax(56px, auto);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 9px;
 }
 
@@ -2824,10 +2824,10 @@ textarea {
   flex-shrink: 0;
 }
 
-.zgs-chat-item-text {
+.zgs-surface p.zgs-chat-item-text {
   margin: 0;
   color: #6f8298;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 400;
   line-height: 1.26;
   display: -webkit-box;
@@ -3057,8 +3057,11 @@ textarea {
 
 .zgs-chat-thread-list {
   list-style: none;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   gap: 8px;
+  min-height: 100%;
 }
 
 .zgs-thread-entry {
@@ -3097,9 +3100,9 @@ textarea {
   font-weight: 600;
 }
 
-.zgs-thread-entry-text {
+.zgs-surface p.zgs-thread-entry-text {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
   color: #536881;
   line-height: 1.4;
@@ -3464,6 +3467,7 @@ textarea {
   padding-top: 6px;
   display: grid;
   gap: 3px;
+  min-height: 0;
 }
 
 .zgs-chat-context-history h4 {
@@ -3477,6 +3481,11 @@ textarea {
   list-style: none;
   display: grid;
   gap: 1px;
+  max-height: 152px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  align-content: start;
 }
 
 .zgs-chat-status-history li {
@@ -3596,46 +3605,37 @@ textarea {
   box-shadow: inset 0 0 0 1px rgba(244, 248, 253, 0.42);
 }
 
+.zgs-chat-list-scroll,
 .zgs-chat-thread,
 .zgs-chat-pane-context,
-.zgs-chat-followup {
-  scrollbar-width: none;
+.zgs-chat-status-history {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(67, 88, 113, 0.44) rgba(136, 151, 171, 0.16);
 }
 
+.zgs-chat-list-scroll::-webkit-scrollbar,
 .zgs-chat-thread::-webkit-scrollbar,
 .zgs-chat-pane-context::-webkit-scrollbar,
-.zgs-chat-followup::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+.zgs-chat-status-history::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 
-.zgs-chat-list-scroll {
-  scrollbar-width: none;
+.zgs-chat-list-scroll::-webkit-scrollbar-track,
+.zgs-chat-thread::-webkit-scrollbar-track,
+.zgs-chat-pane-context::-webkit-scrollbar-track,
+.zgs-chat-status-history::-webkit-scrollbar-track {
+  background: rgba(136, 151, 171, 0.16);
+  border-radius: 999px;
 }
 
-.zgs-chat-list-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 0;
-}
-
-.zgs-chat-list-scroll::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 0;
-}
-
-.zgs-chat-list-scroll .zgs-chat-scroll-indicator {
-  right: 0;
-  width: 3px;
-  background: rgba(138, 152, 171, 0.18);
-}
-
-.zgs-chat-list-scroll .zgs-chat-scroll-indicator-thumb {
-  background: rgba(66, 86, 111, 0.4);
+.zgs-chat-list-scroll::-webkit-scrollbar-thumb,
+.zgs-chat-thread::-webkit-scrollbar-thumb,
+.zgs-chat-pane-context::-webkit-scrollbar-thumb,
+.zgs-chat-status-history::-webkit-scrollbar-thumb {
+  background: rgba(67, 88, 113, 0.44);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(244, 248, 253, 0.55);
 }
 
 .zgs-chat-followup h4,
