@@ -265,7 +265,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 }
 
 /* ====== DODATKOWE ELEMENTY ====== */
-#extrasBox{display:none;margin-top:10px}
+#extrasBox{display:none;margin-top:10px;margin-bottom:18px}
 .acc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media (max-width:840px){.acc-grid{grid-template-columns:1fr}}
 
@@ -285,6 +285,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
     "motors motors motors";
 }
 .acc-title{
+  grid-area:title;
   min-height: var(--acc-title-row, 0px);
   min-width:0;
   display:flex; flex-direction:column; justify-content:flex-start; gap:2px; line-height:1.22;
@@ -295,7 +296,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
   font-size:0.96em;
   line-height:1.18;
   white-space:normal;
-  text-wrap:balance;
+  word-break:normal;
+  overflow-wrap:normal;
 }
 .acc-title .acc-sub{display:block;font-weight:500;color:var(--muted)}
 
