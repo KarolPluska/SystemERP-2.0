@@ -275,7 +275,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
   background:var(--bg);border:1px solid var(--line);border-radius:12px;color:var(--text);
   min-height:auto; padding:12px;
   display:grid; gap:10px;
-  grid-template-columns: 1.15fr auto auto;
+  grid-template-columns: minmax(0, 1.15fr) auto auto;
   grid-template-rows: 180px var(--acc-title-row, auto) auto auto auto;
   grid-template-areas:
     "image image image"
@@ -286,16 +286,18 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px}
 }
 .acc-title{
   min-height: var(--acc-title-row, 0px);
+  min-width:0;
   display:flex; flex-direction:column; justify-content:flex-start; gap:2px; line-height:1.22;
 }
-.acc-title .acc-main{display:block;font-weight:500}
-.acc-title .acc-sub{display:block;font-weight:500;color:var(--muted)}
-@media (min-width:841px){
-  .acc-card[data-kind="brama2s"] .acc-title .acc-main{
-    white-space:nowrap;
-    font-size:0.98em;
-  }
+.acc-title .acc-main{
+  display:block;
+  font-weight:500;
+  font-size:0.96em;
+  line-height:1.18;
+  white-space:normal;
+  text-wrap:balance;
 }
+.acc-title .acc-sub{display:block;font-weight:500;color:var(--muted)}
 
 .acc-image{
   grid-area:image; height:180px; border-radius:12px;
