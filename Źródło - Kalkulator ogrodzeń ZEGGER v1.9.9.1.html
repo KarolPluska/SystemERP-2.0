@@ -1140,7 +1140,7 @@ label[for="accAuto-przesuwna"]{
 <div class="row">
     <div class="field">
       <label for="len">Długość ogrodzenia (m)
-        <span class="tip" data-tip="Podaj całkowitą długość ogrodzenia w metrach. Kalkulator automatycznie przeliczy liczbę przęseł i słupków.">?</span>
+        <span class="tip" data-tip="Podaj całkowitą długość ogrodzenia w metrach. Konfigurator automatycznie przeliczy liczbę przęseł i słupków.">?</span>
       </label>
       <input id="len" type="number" min="1" step="10" value="25">
     </div>
@@ -1532,7 +1532,7 @@ label[for="accAuto-przesuwna"]{
     const COPYRIGHT = "© Zegger Tech Sp. z o.o. 2019–2025. All rights reserved.";
     // PUBLIC WATERMARK - visible in developer tools:
     if (!window.__ZEGGER_COPYRIGHT__) window.__ZEGGER_COPYRIGHT__ = COPYRIGHT;
-    console.warn(COPYRIGHT + " | Ten kalkulator i kod podlegają ochronie prawnej.");
+    console.warn(COPYRIGHT + " | Ten konfigurator i kod podlegają ochronie prawnej.");
   } catch(e) {}
 })();
 
@@ -2523,7 +2523,7 @@ label[for="accAuto-przesuwna"]{
             <li>zmienić liczbę modułów (mniej przęseł) i ewentualnie zwiększyć szerokość bramy/furtki.</li>
           </ul>
           <p>Łączna długość Twojej konfiguracji: <b>${totalTxt} m</b> (przęsła: ${panelsTxt} m${postsPart} + elementy dodatkowe: ${extrasTxt} m)</p>
-          <p class="calc-summary">Obecnie kalkulator przyjmuje <b>${spans}</b> przęsła (zaokrąglenie w górę).</p>
+          <p class="calc-summary">Obecnie konfigurator przyjmuje <b>${spans}</b> przęsła (zaokrąglenie w górę).</p>
         `;
 
         // Dane pod PDF (dataset czytany w generatorze)
@@ -3025,7 +3025,7 @@ if (phoneEl) phoneEl.addEventListener('input', function(){
       doc.setDrawColor(230); doc.setLineWidth(0.1); doc.setFont(undefined,'normal');
 
       const rows = [...document.querySelectorAll('#tbody tr')].map(tr => [...tr.children].map(td => td.textContent));
-      if (!rows || rows.length === 0) { doc.setFont(undefined, 'italic'); doc.text('Brak pozycji - w kalkulatorze kliknij „Oblicz”.', marginX, y + 12); doc.setFont(undefined, 'normal'); y += 26; }
+      if (!rows || rows.length === 0) { doc.setFont(undefined, 'italic'); doc.text('Brak pozycji - w konfiguratorze kliknij „Oblicz”.', marginX, y + 12); doc.setFont(undefined, 'normal'); y += 26; }
       rows.forEach((r, i) => {
         const rh = 16; const elLines = doc.splitTextToSize(r[0], (colX.qty - 10) - (colX.el));
         const rowHeight2 = rh * Math.max(elLines.length,1);
@@ -3293,7 +3293,7 @@ if (phoneEl) phoneEl.addEventListener('input', function(){
         const postsTxt  = postsLen.toLocaleString('pl-PL',{minimumFractionDigits:2, maximumFractionDigits:2});
         const postsPart = (postsLen > 0) ? ` + słupki: ${postsTxt} m` : '';
         const totalInfo = `Łączna długość Twojej konfiguracji: ${totalTxt} m (przęsła: ${panelsTxt} m${postsPart} + elementy dodatkowe: ${extrasTxt} m)`;
-        const summary = `Obecnie kalkulator przyjmuje ${spans} przęsła (zaokrąglenie w górę).`;
+        const summary = `Obecnie konfigurator przyjmuje ${spans} przęsła (zaokrąglenie w górę).`;
 
         doc.setFontSize(10);
         const headH  = 14, lineH = 12;
@@ -3763,7 +3763,7 @@ try {
 
     const steps=[
       {sel:'.calc-title',title:'Start',note:'Ten samouczek pokaże główne funkcje i kolejność działań.',tip:'Steruj przyciskami Wstecz/Dalej.'},
-      {sel:'#len',title:'Długość ogrodzenia',note:'Wpisz łączną długość w metrach. Kalkulator dopasuje liczbę modułów.',tip:'Zaokrąglamy do pełnych przęseł.'},
+      {sel:'#len',title:'Długość ogrodzenia',note:'Wpisz łączną długość w metrach. Konfigurator dopasuje liczbę modułów.',tip:'Zaokrąglamy do pełnych przęseł.'},
       {sel:'#type',title:'System i szerokość',note:'Wybierz system i szerokość modułu. To ustala liczbę elementów i cennik.',tip:'Palisada: kilka szerokości. Panel 3D: 2500 mm.'},
       {sel:'#model',title:'Wzór',note:'Wybierz wzór zgodny z systemem. Ceny zależą od wzoru.',tip:'Podgląd ułatwia wybór serii.'},
       {sel:'#height',title:'Wysokość [mm]',note:'Ustaw wysokość przęseł [mm]. Wpływa na ilość materiału i cenę.',tip:'Dla paneli zmienia liczbę obejm.'},
